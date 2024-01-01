@@ -45,7 +45,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)
 end
---e1 functiona
+--e1 function
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and re:IsActiveType(TYPE_MONSTER) and Duel.IsChainNegatable(ev)
 end

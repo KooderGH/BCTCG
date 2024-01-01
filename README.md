@@ -1,3 +1,4 @@
 # BCTCG
-Everything BCTCG (WIP on merge)
-Managed by Gideon.
+Everything BCTCG
+
+Managed by Gideon and Kon.

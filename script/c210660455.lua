@@ -1,5 +1,5 @@
 --Wonder MOMOCO
---Scripted by Gideon
+--Scripted by Gideon. Got help from naim and pyrQ.
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your Hand, GY, or Banish Zone when there is 5 or more Monster's banished in your Banish Zone with different monster types. Then move this card to your Extra Monster Zone. 
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
@@ -87,7 +87,18 @@ function s.initial_effect(c)
 	c:RegisterEffect(e9)
 	--(4)Finish
 	--(5)Start
-	
+	--Banish
+	local e10=Effect.CreateEffect(c)
+	e10:SetDescription(aux.Stringid(id,1))
+	e10:SetCategory(CATEGORY_REMOVE)
+	e10:SetType(EFFECT_TYPE_QUICK_O)
+	e10:SetCode(EVENT_FREE_CHAIN)
+	e10:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e10:SetRange(LOCATION_MZONE)
+	e10:SetTarget(s.rmtg)
+	e10:SetOperation(s.rmop)
+	e10:SetCountLimit(1)
+	c:RegisterEffect(e10)
 end
 --(1) functions
 function s.banishfilter(c)
@@ -114,7 +125,7 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
         Duel.MoveSequence(c,selected)
     end
 end
---(3) functions
+--(4) functions
 function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,e:GetHandler()) end
 end
@@ -142,4 +153,19 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 			tc:RegisterEffect(e3)
 		end
 	end
+end
+--(5)
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToRemove() end
+    local gt=Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0)//2
+    if chk==0 then return gt>0 and Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+    local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,gt,nil)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+    local tg=Duel.GetTargetCards(e)
+    if #tg>0 then
+        Duel.Remove(tg,POS_FACEUP,REASON_EFFECT)
+    end
 end

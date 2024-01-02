@@ -50,8 +50,8 @@ function s.stopfilter(e,c)
 	return c:GetCounter(0x1019)~=0
 end
 --e2
-function s.levelfilter(e,c)
-	return c:IsLevelAbove(3) and c:IsFaceup()
+function s.levelfilter(c)
+	return c:IsLevelAbove(4) and c:IsFaceup()
 end
 function s.fcoperation(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end

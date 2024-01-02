@@ -7,7 +7,7 @@
 -- (5) During either player turn: You can Target 1 card on the field for each 2 cards you have in your Banish Zone; Banish them.
 -- (6) Once per turn (Igntion): You can banish 3 cards from your GY: Draw 1 card.
 -- (7) If there is 30 or more card's total counting from both player's Banish Zone's, You can activate this effect (Igntion): Set your opponent's LP to 0.
--- (8) When this card is destroyed; Add 4 cards from your Banish Zone to your Deck, shuffle the deck, then draw 1 card.
+-- (8) When this card is destroyed and set to the GY; Add 4 cards from your Banish Zone to your Deck, shuffle the deck, then draw 1 card.
 local s,id=GetID()
 function s.initial_effect(c)
 --(1)Start
@@ -128,8 +128,10 @@ function s.initial_effect(c)
 	--When destroyed, shuffle 4 banish, draw 1
 	local e13=Effect.CreateEffect(c)
 	e13:SetDescription(aux.Stringid(id,4))
-	e13:SetCode(EVENT_DESTROYED)
+	e13:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e13:SetCode(EVENT_TO_GRAVE)
 	e13:SetCountLimit(1)
+	e13:SetCondition(s.shufflecon)
 	e13:SetTarget(s.shufftarget)
 	e13:SetOperation(s.shuffop)
 	c:RegisterEffect(e13)
@@ -229,7 +231,7 @@ function s.banishwinfilter(c)
     return c:IsFaceup() or c:IsFacedown()
 end
 function s.wincon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetMatchingGroup(s.banishwinfilter,tp,LOCATION_REMOVED,LOCATION_REMOVED,nil)>=30
+    return Duel.GetMatchingGroupCount(s.banishwinfilter,tp,LOCATION_REMOVED,LOCATION_REMOVED,nil)>=30
 end 
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.SetLP(1-tp,0)
@@ -237,6 +239,9 @@ end
 --(8)
 function s.dsfilter(c)
 	return c:IsAbleToDeck()
+end
+function s.shufflecon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsReason(REASON_DESTROY)
 end
 function s.shufftarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and s.dsfilter(chkc) end
@@ -254,7 +259,7 @@ function s.shuffop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetOperatedGroup()
 	if g:IsExists(Card.IsLocation,1,nil,LOCATION_DECK) then Duel.ShuffleDeck(tp) end
 	local ct=g:FilterCount(Card.IsLocation,nil,LOCATION_DECK+LOCATION_EXTRA)
-	if ct==5 then
+	if ct==4 then
 		Duel.BreakEffect()
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end

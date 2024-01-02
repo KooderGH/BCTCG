@@ -51,7 +51,7 @@ function s.stopfilter(e,c)
 end
 --e2
 function s.levelfilter(e,c)
-	return IsLevelAbove(3) and Card.IsFaceup()
+	return c:IsLevelAbove(3) and c:IsFaceup()
 end
 function s.fcoperation(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end

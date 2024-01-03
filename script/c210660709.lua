@@ -9,6 +9,7 @@ function s.initial_effect(c)
 	--Can only control one
 	c:SetUniqueOnField(1,0,id)
 	--special summon
+	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_IGNITION)

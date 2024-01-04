@@ -21,7 +21,6 @@ function s.initial_effect(c)
 	e3:SetValue(1)
 	c:RegisterEffect(e3)
 end
-s.material_setcode={0x93,0x1093}
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
 	return c:IsRace(RACE_MACHINE,fc,sumtype,tp) and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))

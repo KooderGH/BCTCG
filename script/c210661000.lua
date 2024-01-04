@@ -60,7 +60,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e7)
 	--Halve opponent's LP
 	local e8=Effect.CreateEffect(c)
-	e8:SetDescription(aux.Stringid(id,0))
+	e8:SetDescription(aux.Stringid(id,1))
 	e8:SetType(EFFECT_TYPE_IGNITION)
     e8:SetRange(LOCATION_MZONE)
 	e8:SetCost(s.lpcost)

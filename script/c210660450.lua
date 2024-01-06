@@ -4,7 +4,7 @@
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
 -- (5) Unaffected by effects other than its own.
--- (6) When card(s) on your side of the field are destroyed by card effect(s), Place one Castle Counter on this card.
+-- (6) Each time card(s) on your side of the field are destroyed by card effect(s): Place one Castle Counter on this card.
 -- (7) When this card has 10 Castle Counters, you win the duel.
 -- (8) During each end phase: Gain 1000 LP for each Dragon monster you control.
 -- (9) While you have no cards in your hand: You cannot lose the duel by any means.
@@ -78,6 +78,61 @@ function s.initial_effect(c)
 	e8:SetValue(1)
 	c:RegisterEffect(e8)
 	--(3)Finish
+	--(4)Start
+	local e9=Effect.CreateEffect(c)
+	e9:SetType(EFFECT_TYPE_SINGLE)
+	e9:SetCode(EFFECT_SET_POSITION)
+	e9:SetRange(LOCATION_MZONE)
+	e9:SetValue(POS_FACEUP_DEFENSE)
+	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	c:RegisterEffect(e9)
+	--(4)Finish
+	--(5)Start
+	--Unaffected by effects other than its own.
+	--Unnafected by other cards' effects
+	local e10=Effect.CreateEffect(c)
+	e10:SetType(EFFECT_TYPE_SINGLE)
+	e10:SetCode(EFFECT_IMMUNE_EFFECT)
+	e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e10:SetRange(LOCATION_MZONE)
+	e10:SetValue(s.efilter)
+	c:RegisterEffect(e10)
+	--(5)Finish
+	--(6)Start
+	--When card(s) on destroyed by card effect(s) Place Castle Counter
+	c:EnableCounterPermit(0x6000)
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e11:SetProperty(EFFECT_FLAG_DELAY)
+	e11:SetRange(LOCATION_MZONE)
+	e11:SetCode(EVENT_DESTROYED)
+	e11:SetCondition(s.ctcon)
+	e11:SetOperation(s.ctop)
+	c:RegisterEffect(e11)
+	--(6)Finish
+	--(7)Start
+	local e12=Effect.CreateEffect(c)
+	e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e12:SetProperty(EFFECT_FLAG_DELAY)
+	e12:SetRange(LOCATION_MZONE)
+	e12:SetCondition(s.wincon)
+	e12:SetOperation(s.winop)
+	c:RegisterEffect(e12)
+	--(7)Finish
+	--(8)Start
+	local e13=Effect.CreateEffect(c)
+	e13:SetDescription(aux.Stringid(id,1))
+	e13:SetCategory(CATEGORY_RECOVER)
+	e13:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+	e13:SetCode(EVENT_PHASE+PHASE_END)
+	e13:SetRange(LOCATION_MZONE)
+	e13:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e13:SetCountLimit(1)
+	e13:SetTarget(s.rectg)
+	e13:SetOperation(s.recop)
+	c:RegisterEffect(e13)
+	--(8)Finish
+	--(9)Start
 end
 --(1)
 function s.cfilter(c,tp)
@@ -116,4 +171,38 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
         selected=selected==0x20 and 5 or 6
         Duel.MoveSequence(c,selected)
     end
+end
+--(5)
+function s.efilter(e,te)
+	return te:GetOwner()~=e:GetOwner()
+end
+--(6)
+s.counter_list={0x6000}
+function s.ctfilter(c,tp)
+	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousControler(tp) and c:IsReason(REASON_EFFECT)
+end
+function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.ctfilter,1,nil,tp)
+end
+function s.ctop(e,tp,eg,ep,ev,re,r,rp)
+	e:GetHandler():AddCounter(0x6000,1)
+end
+--(7)
+function s.wincon(e,c)
+	return card.GetCounter(0,1,1,0x6000)>=10
+end
+function s.winop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Win(tp,0x662)
+end
+--(8)
+function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local ct=Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_DRAGON),tp,LOCATION_MZONE,0,nil)
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(ct*1000)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,ct*1000)
+end
+function s.recop(e,tp,eg,ep,ev,re,r,rp)
+	local ct=Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_DRAGON),tp,LOCATION_MZONE,0,nil)
+	Duel.Recover(tp,ct*1000,REASON_EFFECT)
 end

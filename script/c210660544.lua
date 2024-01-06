@@ -3,10 +3,10 @@
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand by discarding 2 card's from your hand while controlling no monsters. Then move this card to your Extra Monster Zone. 
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
--- (4) When this card is Special Summoned; Delete half your opponent's deck. (Kyosaka Nanaho cut's your deck in half, removing it from the game. These card's cannot be recovered by any means.)
+-- (4) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
 -- (5) Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
 -- (6) This card can attack your opponents monsters once each.
--- (7) If this card is in your GY: You can delete 3 cards from top of your deck; Add this card to your hand. (These card's cannot be recovered by any means.)
+-- (7) If this card is in your GY: You can banish 3 cards from top of your deck facedown; Add this card to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
 	--(1)Start
@@ -74,6 +74,13 @@ function s.initial_effect(c)
 	e8:SetValue(1)
 	c:RegisterEffect(e8)
 	--(3)Finish
+	--(4)Start
+	local e9=Effect.CreateEffect(c)
+	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e9:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e9:SetTarget(s.handtg)
+	e9:SetOperation(s.handop)
+	c:RegisterEffect(e9)
 end
 --(1)
 function s.ssummoncon(e,c)
@@ -116,3 +123,4 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
         Duel.MoveSequence(c,selected)
     end
 end
+--4

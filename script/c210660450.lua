@@ -135,6 +135,20 @@ function s.initial_effect(c)
 	c:RegisterEffect(e13)
 	--(8)Finish
 	--(9)Start
+	local e14=Effect.CreateEffect(c)
+	e14:SetType(EFFECT_TYPE_FIELD)
+	e14:SetCode(EFFECT_CANNOT_LOSE_DECK)
+	e14:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e14:SetRange(LOCATION_MZONE)
+	e14:SetTargetRange(1,0)
+	e14:SetCondition(s.losecon)
+	c:RegisterEffect(e14)
+	local e15=e14:Clone()
+	e15:SetCode(EFFECT_CANNOT_LOSE_LP)
+	c:RegisterEffect(e16)
+	local e16=e14:Clone()
+	e16:SetCode(EFFECT_CANNOT_LOSE_EFFECT)
+	c:RegisterEffect(e16)
 end
 --(1)
 function s.cfilter(c,tp)
@@ -207,4 +221,8 @@ end
 function s.recop(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_DRAGON),tp,LOCATION_MZONE,0,nil)
 	Duel.Recover(tp,ct*1000,REASON_EFFECT)
+end
+--(9)
+function s.losecon(e)
+	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0
 end

@@ -192,7 +192,7 @@ function s.wincon(e,c)
 	return card.GetCounter(0x4000)>=1
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Win(tp,0x662)
+	Duel.Win(tp,0x62)
 end
 --(8)
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)

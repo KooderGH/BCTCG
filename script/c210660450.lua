@@ -111,9 +111,11 @@ function s.initial_effect(c)
 	c:RegisterEffect(e11)
 	--(6)Finish
 	--(7)Start
+	--Win con
 	local e12=Effect.CreateEffect(c)
 	e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e12:SetProperty(EFFECT_FLAG_DELAY)
+	e12:SetCode(EVENT_ADJUST)
 	e12:SetRange(LOCATION_MZONE)
 	e12:SetCondition(s.wincon)
 	e12:SetOperation(s.winop)
@@ -188,8 +190,8 @@ function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():AddCounter(0x4000,1)
 end
 --(7)
-function s.wincon(e,c)
-	return card.GetCounter(0x4000)>=1
+function s.wincon(e)
+	return e:GetHandler():GetCounter(0x4000)>=10
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Win(tp,0x62)

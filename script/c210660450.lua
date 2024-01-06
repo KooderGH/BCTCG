@@ -189,7 +189,7 @@ function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(7)
 function s.wincon(e,c)
-	return card.GetCounter(0,1,1,0x6000)>=10
+	return card.GetCounter(0x6000)>=10
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Win(tp,0x662)

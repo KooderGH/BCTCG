@@ -100,7 +100,7 @@ function s.initial_effect(c)
 	--(5)Finish
 	--(6)Start
 	--When card(s) on destroyed by card effect(s) Place Castle Counter
-	c:EnableCounterPermit(0x6000)
+	c:EnableCounterPermit(0x4000)
 	local e11=Effect.CreateEffect(c)
 	e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e11:SetProperty(EFFECT_FLAG_DELAY)
@@ -177,7 +177,7 @@ function s.efilter(e,te)
 	return te:GetOwner()~=e:GetOwner()
 end
 --(6)
-s.counter_list={0x6000}
+s.counter_list={0x4000}
 function s.ctfilter(c,tp)
 	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousControler(tp) and c:IsReason(REASON_EFFECT)
 end
@@ -185,11 +185,11 @@ function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.ctfilter,1,nil,tp)
 end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
-	e:GetHandler():AddCounter(0x6000,1)
+	e:GetHandler():AddCounter(0x4000,1)
 end
 --(7)
 function s.wincon(e,c)
-	return card.GetCounter(0x6000)>=10
+	return card.GetCounter(0x4000)>=1
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Win(tp,0x662)

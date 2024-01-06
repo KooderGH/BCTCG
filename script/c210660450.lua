@@ -89,7 +89,6 @@ function s.initial_effect(c)
 	--(4)Finish
 	--(5)Start
 	--Unaffected by effects other than its own.
-	--Unnafected by other cards' effects
 	local e10=Effect.CreateEffect(c)
 	e10:SetType(EFFECT_TYPE_SINGLE)
 	e10:SetCode(EFFECT_IMMUNE_EFFECT)
@@ -122,6 +121,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e12)
 	--(7)Finish
 	--(8)Start
+	--Heal 1000 for each dragon controlled
 	local e13=Effect.CreateEffect(c)
 	e13:SetDescription(aux.Stringid(id,1))
 	e13:SetCategory(CATEGORY_RECOVER)
@@ -135,6 +135,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e13)
 	--(8)Finish
 	--(9)Start
+	--Cannot lose if 0 cards in hand
 	local e14=Effect.CreateEffect(c)
 	e14:SetType(EFFECT_TYPE_FIELD)
 	e14:SetCode(EFFECT_CANNOT_LOSE_DECK)

@@ -32,6 +32,7 @@ function s.initial_effect(c)
 	e4:SetCode(EVENT_BATTLE_DESTROYING)
 	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e4:SetRange(LOCATION_MZONE)
+	e4:SetCondition(s.reccon)
 	e4:SetTarget(s.destg)
 	e4:SetOperation(s.desop)
 	c:RegisterEffect(e4)
@@ -44,6 +45,11 @@ function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.atkfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*500
 end
 --e4
+function s.reccon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	return c:IsRelateToBattle()
+end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end

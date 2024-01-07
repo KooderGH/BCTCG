@@ -1,0 +1,14 @@
+--Mighty Kristual Muu
+--Scripted by Gideon
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If your LP are 2000 or lower than your opponent's and you control a EARTH Machine monster, You can Special Summon this card from your hand in Defense Position, then move this card to your Extra Monster Zone. 
+-- (2) Cannot be returned to hand, banished, or tributed.
+-- (3) Cannot be targeted by card effects.
+-- (4) This card's Position cannot be changed.
+-- (5) Card's you control cannot be returned to hand or banished.
+-- (6) If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand.
+-- (7) This card gains the following effect(s), based on the number of Earth Machine Monster(s) you control except "Mighty Kristul Muu":
+-- * 1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
+-- * 2+: This card becomes uneffected by card effects except from itself.
+-- * 3+: Machine type monsters you control gain 500 ATK/DEF for each Machine type monster you control.
+-- * 4+: Machine type monsters you control can attack your opponents LP directly.
+-- * 5+: Once per turn (Ignition): You can draw 2 cards.

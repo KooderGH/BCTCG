@@ -37,6 +37,7 @@ function s.initial_effect(c)
     e4:SetCode(EVENT_BATTLE_DESTROYING)
     e4:SetCondition(s.atkcon)
     e4:SetOperation(s.atkop)
+	e4:SetReset(RESET_EVENT+RESETS_STANDARD)
     c:RegisterEffect(e4)
 end
 function s.spcon(e,c)

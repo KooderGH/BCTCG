@@ -1,7 +1,7 @@
 --Eva Unit-08
---Scripted by Konstak. e3 target fixing by Gideon.
+--Scripted by Konstak. e3 target fixing by Gideon. Nerf by gid
 --Effect:
---(1) You can Special Summon this card from your hand if you control no Monsters OR if you control a Cyverse Monster.
+--(1) You can Special Summon this card from your hand if you control no Monsters OR if you control a Cyverse Monster. Can only SS once per turn added -Gid
 --(2) Cannot be attacked while you control another monster.
 --(3) During your main phase: You can target 1 spell or trap card you opponent controls, destroy it. You can only active this effect of "Eva Unit-08" once per turn.
 local s,id=GetID()
@@ -13,6 +13,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCondition(s.spcon)
+	e1:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
 	--cannot be battle target
 	local e2=Effect.CreateEffect(c)

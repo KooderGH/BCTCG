@@ -9,6 +9,7 @@
 -- (7) All effects that add or subtract ATK/DEF are reversed. This effect cannot be negated.
 -- (8) When this card destroys an opponent's monster by battle and sends it to the GY: Special Summon that monster to your field. This effect cannot be negated.
 -- (9) When this card leaves the field: You can target 1 Monster in either GY; Special Summon it
+-- (10)During the battle phase: This card is unaffected by other card effects.
 local s,id=GetID()
 function s.initial_effect(c)
 	--(1)Start
@@ -145,6 +146,15 @@ function s.initial_effect(c)
 	e16:SetOperation(s.gactivate)
 	c:RegisterEffect(e16)
 	--(9)Finish
+	--(10)Start
+	--During the battle phase: This card is unaffected by other card effects.
+	local e17=Effect.CreateEffect(c)
+	e17:SetType(EFFECT_TYPE_SINGLE)
+	e17:SetCode(EFFECT_IMMUNE_EFFECT)
+	e17:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e17:SetRange(LOCATION_MZONE)
+	e17:SetCondition(s.imcon)
+	c:RegisterEffect(e17)
 end
 --(1)
 function s.ssummoncon(e,c)
@@ -227,4 +237,8 @@ function s.gactivate(e,tp,eg,ep,ev,re,r,rp)
 	if tc:IsRelateToEffect(e) then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
+end
+--(10)
+function s.imcon(e)
+	return Duel.GetCurrentPhase()==PHASE_BATTLE
 end

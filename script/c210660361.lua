@@ -14,7 +14,6 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetCost(function(e,_,_,_,_,_,_,_,chk)if chk==0 then return not e:GetHandler():IsPublic()end end)
 	e1:SetOperation(s.revop)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
 	c:RegisterEffect(e1)
 	--Cannot be destroyed by battle (2)
 	local e2=Effect.CreateEffect(c)
@@ -101,6 +100,9 @@ function s.revop(e,tp,eg,ep,ev,re,r,rp)
 	local e5=e4:Clone()
 	e5:SetCode(EFFECT_CANNOT_SUMMON)
 	c:RegisterEffect(e5)
+	local e6=e4:Clone()
+	e6:SetCode(EFFECT_CANNOT_MSET)
+	c:RegisterEffect(e6)
 end
 --0x1019 = Fog Counter
 s.counter_place_list={0x1019}

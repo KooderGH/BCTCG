@@ -9,7 +9,7 @@
 -- (7) This card gains the following effect(s), based on the number of Earth Machine Monster(s) you control except "Mighty Kristul Muu":
 -- * 1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
 -- * 2+: This card becomes uneffected by card effects except from itself.
--- * 3+: Machine type monsters you control gain 500 ATK/DEF for each Machine type monster you control.
+-- * 3+: All monsters you control gain 500 ATK/DEF for each Machine type monster you control.
 -- * 4+: Machine type monsters you control can attack your opponents LP directly.
 -- * 5+: Once per turn (Ignition): You can draw 2 cards.
 local s,id=GetID()
@@ -134,9 +134,50 @@ function s.initial_effect(c)
 	e14:SetCondition(s.defcon)
 	e14:SetOperation(s.defop)
 	c:RegisterEffect(e14)
-	--3+: Machine type monsters you control gain 500 ATK/DEF for each Machine type monster you control.
+	--2+: This card becomes uneffected by card effects except from itself.
+	local e15=Effect.CreateEffect(c)
+	e15:SetType(EFFECT_TYPE_SINGLE)
+	e15:SetCode(EFFECT_IMMUNE_EFFECT)
+	e15:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e15:SetRange(LOCATION_MZONE)
+	e15:SetCountLimit(2)
+	e15:SetCondition(s.imcon)
+	c:RegisterEffect(e15)
+	--3+: All monsters you control gain 500 ATK/DEF for each Machine type monster on the field
+	local e16=Effect.CreateEffect(c)
+	e16:SetType(EFFECT_TYPE_FIELD)
+	e16:SetCode(EFFECT_UPDATE_ATTACK)
+	e16:SetRange(LOCATION_MZONE)
+	e16:SetTargetRange(LOCATION_MZONE,0)
+	e16:SetCountLimit(3)
+	e16:SetCondition(s.emachcountcondition)
+	e16:SetValue(s.adval)
+	c:RegisterEffect(e16)
+	local e17=e16:Clone()
+	e17:SetCode(EFFECT_UPDATE_DEFENSE)
+	c:RegisterEffect(e17)
 	--4+: Machine type monsters you control can attack your opponents LP directly.
+	local e18=Effect.CreateEffect(c)
+	e18:SetType(EFFECT_TYPE_FIELD)
+	e18:SetCode(EFFECT_DIRECT_ATTACK)
+	e18:SetRange(LOCATION_MZONE)
+	e18:SetTargetRange(LOCATION_MZONE,0)
+	e18:SetCountLimit(4)
+	e18:SetCondition(s.emachcountcondition)
+	e18:SetTarget(s.dirtg)
+	c:RegisterEffect(e18)
 	--5+: Once per turn (Ignition): You can draw 2 cards.
+	local e19=Effect.CreateEffect(c)
+	e19:SetDescription(aux.Stringid(id,2))
+	e19:SetCategory(CATEGORY_DRAW)
+	e19:SetType(EFFECT_TYPE_IGNITION)
+	e19:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e19:SetCode(EVENT_FREE_CHAIN)
+	e19:SetCondition(s.emachcountcondition)
+	e19:SetCountLimit(5)
+	e19:SetTarget(s.drawtarget)
+	e19:SetOperation(s.drawop)
+	c:RegisterEffect(e19)
 end
 --1
 function s.emachfilter(c)
@@ -204,4 +245,31 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
 		c:RegisterEffect(e1)
 	end
+end
+--Immune
+function s.imcon(e)
+	local c=e:GetHandler()
+	return c~=re:GetOwner() and s.emachcountcondition(e) and not c:IsStatus(STATUS_BATTLE_DESTROYED)
+end
+--Atk Def gain
+function s.adval(e)
+	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE))*500
+end
+--direct attack
+function s.easymechfilter(c)
+	return c:IsFaceup() and c:IsRace(RACE_MACHINE)
+end
+function s.dirtg(e,c)
+	return Duel.IsExistingMatchingCard(s.easymechfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+end
+--draw
+function s.drawtarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,2) end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(2)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
+end
+function s.drawop(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Draw(p,d,REASON_EFFECT)
 end

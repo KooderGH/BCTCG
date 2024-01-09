@@ -154,6 +154,7 @@ function s.initial_effect(c)
 	e17:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e17:SetRange(LOCATION_MZONE)
 	e17:SetCondition(s.imcon)
+	e17:SetValue(1)
 	c:RegisterEffect(e17)
 end
 --(1)

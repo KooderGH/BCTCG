@@ -86,6 +86,7 @@ function s.revop(e,tp,eg,ep,ev,re,r,rp)
 	e3:SetCode(EVENT_CHAIN_SOLVED)
 	e3:SetRange(LOCATION_HAND)
 	e3:SetOperation(s.acop)
+	e3:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
 	c:RegisterEffect(e3)
 	--Cannot Summon Aer while revealed
 	local e4=Effect.CreateEffect(c)

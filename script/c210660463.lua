@@ -221,9 +221,9 @@ function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(7)Core
 function s.emachfiltertwo(c)
-    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and not C:IsCode(id)
+    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and not c:IsCode(id)
 end
-function s.emachcountcondition(e)
+function s.emachcountcondition(e,c)
     local tp=e:GetHandlerPlayer()
     return Duel.GetMatchingGroupCount(s.emachfiltertwo,tp,LOCATION_MZONE,0,nil)>=e:GetLabel()
 end
@@ -253,7 +253,7 @@ function s.imcon(e)
 end
 --Atk Def gain
 function s.adval(e)
-	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE))*500
+	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE),LOCATION_MZONE,LOCATION_MZONE,nil)*500
 end
 --direct attack
 function s.easymechfilter(c)

@@ -48,7 +48,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
     --Once destroyed Special Summon 1 EARTH Machine Monster
 	local e7=Effect.CreateEffect(c)
-	e7:SetDescription(aux.Stringid(id,0))
+	e7:SetDescription(aux.Stringid(id,1))
 	e7:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP)

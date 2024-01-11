@@ -1,7 +1,7 @@
 --Papaluga
 --Scripted by Gideon. Had aid from Naim
 -- (1) Cannot be destroyed by battle.
--- (2) The ATK of non-Fiend monsters on the field becomes 200.
+-- (2) The ATK of non-Fiend monsters on the field becomes 400.
 -- (3) If you control 4 or more Fiend monsters, negate the effects of all non-Fiend monsters your opponent controls.
 -- (4) If you control less than 4 Fiend monsters, negate the effects of all non-Fiend monsters you control.
 local s,id=GetID()
@@ -21,7 +21,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTarget(s.atktarget)
 	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e2:SetValue(200)
+	e2:SetValue(400)
 	c:RegisterEffect(e2)
 	--3
 	local e3=Effect.CreateEffect(c)

@@ -37,6 +37,7 @@ function s.initial_effect(c)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e4:SetCode(EVENT_BATTLE_DESTROYING)
+    e4:SetCondition(s.atkcon)
     e4:SetTarget(s.atktg)
     e4:SetOperation(s.atkop)
     c:RegisterEffect(e4)
@@ -56,6 +57,11 @@ end
 --Destroy and add function
 function s.filter2(c)
 	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+end
+function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local bc=c:GetBattleTarget()
+    return c:IsRelateToBattle() and bc:IsMonster()
 end
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_DECK,0,1,nil) end

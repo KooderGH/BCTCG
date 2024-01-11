@@ -84,7 +84,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Destroyed by effect and can add function (3)
 function s.drefilter(c)
-	return c:IsRace(RACE_MACHINE)
+	return c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
 end
 function s.drecon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsReason(REASON_EFFECT)
@@ -103,7 +103,7 @@ function s.dreop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Summoned by effect and can add function (4)
 function s.smfilter(c)
-	return c:IsLevel(12) and c:IsRace(RACE_MACHINE)
+	return c:IsLevel(12) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
 end
 function s.smcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,e:GetHandler()) end

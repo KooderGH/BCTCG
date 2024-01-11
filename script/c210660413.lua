@@ -31,13 +31,11 @@ function s.initial_effect(c)
     --gain Atk
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,0))
-    e4:SetCode(EFFECT_UPDATE_ATTACK)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e4:SetCode(EVENT_BATTLE_DESTROYING)
     e4:SetCondition(s.atkcon)
     e4:SetOperation(s.atkop)
-	e4:SetReset(RESET_EVENT+RESETS_STANDARD)
     c:RegisterEffect(e4)
 end
 function s.spcon(e,c)
@@ -71,6 +69,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_ATTACK)
 		e1:SetValue(400)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
 		c:RegisterEffect(e1)
 	end
 end

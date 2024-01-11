@@ -79,7 +79,7 @@ end
 function s.smop(e,tp,eg,ep,ev,re,r,rp)
     local tg=Duel.GetTargetCards(e)
     if #tg>0 then
-        Duel.Destroy(tg,POS_FACEUP,REASON_EFFECT)
+        Duel.Destroy(tg,REASON_EFFECT)
     end
 end
 --Destroy and add function

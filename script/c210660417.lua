@@ -1,0 +1,115 @@
+--Mighty Thermae D-Lux
+--Scripted by Konstak
+--Effect
+-- (1) If you control a EARTH Machine monster: You can Special Summon this card from your hand by paying 500 LP.
+-- (2) (Quick effect) You destroy all Set cards your opponent controls. You can only use this effect of Mighty Thermae D-Lux once per Duel.
+-- (3) You can Tribute this card; Add 2 Level 4 or lower Earth Machine type monsters from your deck to your hand.
+-- (4) If this card deals direct battle damage; You can add one Trap card from your Deck to your hand.
+local s,id=GetID()
+function s.initial_effect(c)
+    --Special Summon this card
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCondition(s.spcon)
+    e1:SetOperation(s.spop)
+    c:RegisterEffect(e1)
+    --Destroy All set monsters opp controls
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_DESTROY)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetCode(EVENT_FREE_CHAIN)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+	e2:SetTarget(s.destg)
+	e2:SetOperation(s.desop)
+	c:RegisterEffect(e2)
+    --Tribute add
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCost(s.trcost)
+	e3:SetTarget(s.trtg)
+	e3:SetOperation(s.trop)
+	c:RegisterEffect(e3)
+    --deal direct damage add
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
+	e4:SetCategory(CATEGORY_SEARCH)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e4:SetCode(EVENT_BATTLE_DAMAGE)
+	e4:SetCondition(s.srcon)
+	e4:SetTarget(s.srtg)
+	e4:SetOperation(s.srop)
+	c:RegisterEffect(e4)
+end
+--Special summon function
+function s.filter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE)
+end
+function s.spcon(e,c)
+	if c==nil then return true end
+	local tp=e:GetHandlerPlayer()
+	return Duel.IsExistingMatchingCard(s.filter,c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(c:GetControler(),1000)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
+	Duel.PayLPCost(tp,500)
+end
+--destroy all set cards your opp controls function
+function s.filter2(c)
+	return c:IsFacedown()
+end
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local g=Duel.GetMatchingGroup(s.filter2,tp,0,LOCATION_ONFIELD,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(s.filter2,tp,0,LOCATION_ONFIELD,nil)
+	Duel.Destroy(g,REASON_EFFECT)
+end
+--tribute add function 
+function s.filter3(c)
+	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+end
+function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsReleasable() end
+	Duel.Release(e:GetHandler(),REASON_COST)
+end
+function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.dfilter,tp,LOCATION_DECK,0,2,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
+end
+function s.trop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_DECK,0,2,2,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
+end
+--deal direct damage add function
+function s.filter4(c)
+	return c:IsFacedown() and c:IsTrap() and c:IsAbleToHand()
+end
+function s.srcon(e,tp,eg,ep,ev,re,r,rp)
+	return ep~=tp and Duel.GetAttackTarget()==nil
+end
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter4,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.filter4,tp,LOCATION_DECK,0,1,1,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
+end

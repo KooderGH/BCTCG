@@ -37,6 +37,7 @@ function s.initial_effect(c)
 	e3:SetCost(s.trcost)
 	e3:SetTarget(s.trtg)
 	e3:SetOperation(s.trop)
+	e3:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e3)
     --deal direct damage add
 	local e4=Effect.CreateEffect(c)
@@ -76,7 +77,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --tribute add function 
 function s.tributefilter(c)
-	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand() and not c:IsCode(id)
 end
 function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsReleasable() end

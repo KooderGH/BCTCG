@@ -45,7 +45,7 @@ function s.initial_effect(c)
     --Can banish zombie monsters
     local e6=Effect.CreateEffect(c)
     e6:SetDescription(aux.Stringid(id,1))
-    e6:SetCategory(CATEGORY_DESTROY)
+    e6:SetCategory(CATEGORY_REMOVE)
     e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e6:SetCode(EVENT_BATTLE_START)
     e6:SetTarget(s.bntg)

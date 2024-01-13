@@ -70,11 +70,12 @@ function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local rg=hg:Select(tp,1,#hg,nil)
 	Duel.ConfirmCards(1-tp,rg)
 	Duel.ShuffleHand(tp)
+	Duel.SetTargetParam(rg)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,#rg)
 end
 function s.shdop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=#rg
-	local tc=nil
-	for i=1,ct do
+	local rg=Duel.GetTargetCount(nil,0,0,0,0)
+	for i=1,rg do
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
 	local e1=Effect.CreateEffect(e:GetHandler())

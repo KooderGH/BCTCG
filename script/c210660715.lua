@@ -54,7 +54,7 @@ function s.cfilter(c)
 	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and not c:IsPublic()
 end
 function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	dg=Duel.Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_HAND,0,1,nil)
+	dg=Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_HAND,0,1,nil)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,dg) end
 end
 function s.shdop(e,tp,eg,ep,ev,re,r,rp)

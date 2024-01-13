@@ -1,5 +1,5 @@
 --Mighty Sphinx Korps
---Scripted by Konstak
+--Scripted by Konstak and Gideon. 
 --Effect
 -- (1) You can Special Summon this card from your hand when your LP are 6000 or lower.
 -- (2) Cannot be tributed.
@@ -63,16 +63,15 @@ function s.cfilter(c)
 	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and not c:IsPublic()
 end
 function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	dg=Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_HAND,0,1,nil)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,dg) end
-end
-function s.shdop(e,tp,eg,ep,ev,re,r,rp)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,1) end
 	local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
 	if #hg==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
 	local rg=hg:Select(tp,1,#hg,nil)
 	Duel.ConfirmCards(1-tp,rg)
 	Duel.ShuffleHand(tp)
+end
+function s.shdop(e,tp,eg,ep,ev,re,r,rp)
 	local ct=#rg
 	local tc=nil
 	for i=1,ct do

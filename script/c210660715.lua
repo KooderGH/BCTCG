@@ -67,7 +67,6 @@ function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,dg) end
 end
 function s.shdop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
 	if #hg==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
@@ -85,7 +84,7 @@ function s.shdop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetCountLimit(1)
 	e1:SetReset(RESET_PHASE+PHASE_END)
 	e1:SetOperation(s.disop)
-	Duel.RegisterEffect(e1,p)
+	Duel.RegisterEffect(e1,tp)
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(e:GetOwnerPlayer(),LOCATION_HAND,0)
@@ -95,7 +94,7 @@ end
 function s.gfilter(c)
 	return c:IsMonster() and c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsAbleToDeck()
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.gravtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc) end
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,1)
 		and Duel.IsExistingTarget(s.gfilter,tp,LOCATION_GRAVE,0,3,nil) end
@@ -104,7 +103,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,#g,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.gravop(e,tp,eg,ep,ev,re,r,rp)
 	local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
 	if not tg or tg:FilterCount(Card.IsRelateToEffect,nil,e)~=3 then return end
 	Duel.SendtoDeck(tg,nil,0,REASON_EFFECT)

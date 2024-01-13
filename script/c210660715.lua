@@ -51,13 +51,13 @@ function s.spcon(e)
 end
 --E4
 function s.cfilter(c)
-	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) not c:IsPublic()
+	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and not c:IsPublic()
 end
 function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	dg=Duel.Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_HAND,0,1,nil)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,dg) end
 end
-function s.counterop(s.shdop)
+function s.shdop(e,tp,eg,ep,ev,re,r,rp)
 	local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
 	if #hg==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)

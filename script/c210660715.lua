@@ -35,7 +35,6 @@ function s.initial_effect(c)
 	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e4:SetCode(EVENT_SUMMON_SUCCESS)
 	e4:SetCountLimit(1,id)
-    --e4:SetCost(s.shdcost)
 	e4:SetTarget(s.shdtg)
 	e4:SetOperation(s.shdop)
 	c:RegisterEffect(e4)
@@ -50,19 +49,24 @@ function s.spcon(e)
 	local tp=e:GetHandlerPlayer()
 	return Duel.GetLP(tp)<=6000
 end
-
-function s.shdfilter(c)
-	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsAbleToHand()
+--E4
+function s.cfilter(c)
+	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) not c:IsPublic()
 end
 function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local h1=Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.shdfilter,tp,LOCATION_DECK,0,h1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+	dg=Duel.Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_HAND,0,1,nil)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,dg) end
 end
-function s.shdop(e,tp,eg,ep,ev,re,r,rp)
-	local h1=Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)
-	local g=Duel.GetFieldGroup(tp,LOCATION_HAND,0)
-	Duel.SendtoDeck(g,REASON_EFFECT)
-	Duel.BreakEffect()
-	Duel.Draw(tp,h1,REASON_EFFECT)
+function s.counterop(s.shdop)
+	local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
+	if #hg==0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
+	local rg=hg:Select(tp,1,#hg,nil)
+	Duel.ConfirmCards(1-tp,rg)
+	Duel.ShuffleHand(tp)
+	local ct=#rg
+	local tc=nil
+	for i=1,ct do
+		Duel.Draw(tp,1,REASON_EFFECT)
+	end
 end

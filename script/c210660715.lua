@@ -70,7 +70,6 @@ function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local rg=hg:Select(tp,1,#hg,nil)
 	Duel.ConfirmCards(1-tp,rg)
 	Duel.ShuffleHand(tp)
-	Duel.SetTargetParam(rg)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,#rg)
 end
 function s.shdop(e,tp,eg,ep,ev,re,r,rp)

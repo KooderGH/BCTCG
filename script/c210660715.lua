@@ -35,6 +35,7 @@ function s.initial_effect(c)
 	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e4:SetCode(EVENT_SUMMON_SUCCESS)
 	e4:SetCountLimit(1,id)
+	e4:SetCost(s.shdcost)
 	e4:SetTarget(s.shdtg)
 	e4:SetOperation(s.shdop)
 	c:RegisterEffect(e4)
@@ -60,34 +61,43 @@ function s.spcon(e)
 end
 --E4
 function s.cfilter(c)
-	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and not c:IsPublic()
+    return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_EARTH) and not c:IsPublic()
+end
+function s.shdcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsPlayerCanDraw(tp,1)
+        and Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) end
+    local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
+    local ct=1
+    if #hg>=2 then
+        for i=2,#hg do
+            if Duel.IsPlayerCanDraw(tp,i) then
+                ct=ct+1
+            end
+        end
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
+    local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_HAND,0,1,ct,nil)
+    e:SetLabel(#g)
+    Duel.ConfirmCards(1-tp,g)
+    Duel.ShuffleHand(tp)
 end
 function s.shdtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) and Duel.IsPlayerCanDraw(tp,1) end
-	local hg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,nil)
-	if #hg==0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
-	local rg=hg:Select(tp,1,#hg,nil)
-	Duel.ConfirmCards(1-tp,rg)
-	Duel.ShuffleHand(tp)
-	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,#rg)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,e:GetLabel())
 end
 function s.shdop(e,tp,eg,ep,ev,re,r,rp)
-	local rg=Duel.GetTargetCount(nil,0,0,0,0)
-	for i=1,rg do
-		Duel.Draw(tp,1,REASON_EFFECT)
-	end
-	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e1:SetCode(EVENT_PHASE+PHASE_END)
-	e1:SetCountLimit(1)
-	e1:SetReset(RESET_PHASE+PHASE_END)
-	e1:SetOperation(s.disop)
-	Duel.RegisterEffect(e1,tp)
+    Duel.Draw(tp,e:GetLabel(),REASON_EFFECT)
+    local e1=Effect.CreateEffect(e:GetHandler())
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e1:SetCode(EVENT_PHASE+PHASE_END)
+    e1:SetCountLimit(1)
+    e1:SetReset(RESET_PHASE|PHASE_END)
+    e1:SetOperation(s.disop)
+    Duel.RegisterEffect(e1,tp)
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetFieldGroup(e:GetOwnerPlayer(),LOCATION_HAND,0)
-	Duel.SendtoGrave(g,REASON_EFFECT+REASON_DISCARD)
+    local g=Duel.GetFieldGroup(e:GetOwnerPlayer(),LOCATION_HAND,0)
+    Duel.SendtoGrave(g,REASON_EFFECT|REASON_DISCARD)
 end
 --e7
 function s.gfilter(c)

@@ -57,16 +57,13 @@ function s.spcon(e,c)
 	if c==nil then return true end
 	local tp=c:GetControler()
 	local c=e:GetHandler()
-	local g=nil
-	local rg2=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
-	local rg=Duel.IsPlayerAffectedByEffect(tp,CARD_SPIRIT_ELIMINATION) and rg2
-	return aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0)
+	local rg=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
+	return aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),0)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
 	local c=e:GetHandler()
-	local rg2=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
-	local rg=Duel.IsPlayerAffectedByEffect(tp,CARD_SPIRIT_ELIMINATION) and rg1 or rg2
-	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_REMOVE,nil,nil,true)
+	local rg=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
+	local g=aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),1,tp,HINTMSG_REMOVE,nil,nil,true)
 	if #g>0 then
 		g:KeepAlive()
 		e:SetLabelObject(g)

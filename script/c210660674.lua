@@ -60,13 +60,13 @@ function s.spcon(e,c)
 	local g=nil
 	local rg2=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
 	local rg=Duel.IsPlayerAffectedByEffect(tp,CARD_SPIRIT_ELIMINATION) and rg2
-	return aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),0)
+	return aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
 	local c=e:GetHandler()
 	local rg2=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
 	local rg=Duel.IsPlayerAffectedByEffect(tp,CARD_SPIRIT_ELIMINATION) and rg1 or rg2
-	local g=aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),1,tp,HINTMSG_REMOVE,nil,nil,true)
+	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_REMOVE,nil,nil,true)
 	if #g>0 then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -129,17 +129,13 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	e2:SetCode(EVENT_PHASE+PHASE_STANDBY)
 	e2:SetRange(LOCATION_SZONE)
 	e2:SetCountLimit(1)
-	e2:SetCondition(s.descon)
 	e2:SetTarget(s.destg)
 	e2:SetOperation(s.desop)
-	e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_OPPO_TURN+RESET_PHASE+PHASE_STANDBY)
+	e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_STANDBY)
 	c:RegisterEffect(e2)
 end
 function s.eqlimit(e,c)
 	return e:GetOwner()==c
-end
-function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()~=tp
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

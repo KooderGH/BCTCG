@@ -1,28 +1,34 @@
---Type-K41 Defense
+--Type-K41 Defence
 --Scripted by Konstak.
 --Effects:
 --"Mighty Kristul Muu" (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
---(2) Must first be Special Summoned (from your Extra Deck) in Defense Position by sending the above card from your field to the GY. This Card Summon cannot be negated.
+--(2) Must first be Special Summoned (from your Extra Deck) in Defense Position by sending "Mighty Kristul Muu" from your field to the GY. This Card Summon cannot be negated.
 --(3) Cannot be returned to hand, Banished, or Tributed.
 --(4) This card cannot be targeted by card effects.
 --(5) This card's Position cannot be changed.
 --(6) During your End Phase; This card loses 300 DEF.
 --(7) If this card is in your GY: You can pay 3000 LP; Add this card to your Extra Deck.
---(8) This card is uneffected by card effects except from itself.
---(9) You take no battle damage from battles involving this card.
+--(8) You take no battle damage from battles involving this card.
+--(9) Your opponent takes no battle damage involving this card.
 --(10) While you control this face-up card, you must skip your draw phase.
 --(11) While you control this face-up card, ATK and DEF of Non-Dark Machine monsters you control becomes 0.
 --(12) While you control this face-up card, you cannot activate T/S.
 --(13) When this card is special summoned, Destroy all Monsters, Spells and Trap cards you currently control.
 --(14) If you would take effect damage, decrease this card's DEF by that damage, instead.
--- (WIP)
+--(15) This card is uneffected by card effects except from itself.
+--(16) While you control this face-up card, All Dark Machine monsters you control gain 500 ATK/DEF.
+--(17) Once per turn (Igntion): You can Special Summon 1 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 0/DEF 1000). These token's cannot be destroyed by battle and cannot attack.
+--(18) Once per turn (Igntion): You can Special Summon 1 "Driller K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 0). These token's cannot be targeted by card effects and cannot attack.
+--(19) Once per turn (Igntion): You can Special Summon 1 "Thermae K41 Token" (Machine/DARK/Level 2/ATK 500/DEF 1500). These token's cannot be destroyed by card effects and cannot attack.
+--(20) You can only activate each effect of "Type-K41 Defence" twice per turn.
+
 local s,id=GetID()
 function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
-	Fusion.AddProcMix(c,true,true,210660463)
-	--Fusion.AddProcMixRep(c,true,true,s.fil,1,4)
+	--Fusion.AddProcMix(c,true,true,210660463)
+	Fusion.AddProcMixRep(c,true,true,s.fil,1,4)
 	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)
     --cannot be fusion material (1)
 	local e1=Effect.CreateEffect(c)
@@ -92,20 +98,16 @@ function s.initial_effect(c)
 	e10:SetTarget(s.graverecoverytg)
 	e10:SetOperation(s.graverecoveryop)
 	c:RegisterEffect(e10)
-	--This card is uneffected by card effects except from itself. (8)
-    local e11=Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_SINGLE)
-    e11:SetCode(EFFECT_IMMUNE_EFFECT)
-    e11:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e11:SetRange(LOCATION_MZONE)
-    e11:SetCondition(s.imcon)
-    e11:SetValue(1)
-    c:RegisterEffect(e11)
-	--No battle damage (9)
+	--No battle damage (8)
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_SINGLE)
+	e11:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+	e11:SetValue(1)
+	c:RegisterEffect(e11)
+    --opponent no battle damage (9)
 	local e12=Effect.CreateEffect(c)
 	e12:SetType(EFFECT_TYPE_SINGLE)
-	e12:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-	e12:SetValue(1)
+	e12:SetCode(EFFECT_NO_BATTLE_DAMAGE)
 	c:RegisterEffect(e12)
 	--Skip Draw Phase (10)
 	local e13=Effect.CreateEffect(c)
@@ -115,59 +117,62 @@ function s.initial_effect(c)
 	e13:SetTargetRange(1,0)
 	e13:SetCode(EFFECT_SKIP_DP)
 	c:RegisterEffect(e13)
-    --opponent no battle damage (11)
+	--The ATK of non-Dark Machine monsters on the field becomes 0. (11)
 	local e14=Effect.CreateEffect(c)
-	e14:SetType(EFFECT_TYPE_SINGLE)
-	e14:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+	e14:SetDescription(aux.Stringid(id,0))
+	e14:SetCategory(CATEGORY_ATKCHANGE)
+	e14:SetType(EFFECT_TYPE_FIELD)
+	e14:SetCode(EFFECT_SET_ATTACK)
+	e14:SetRange(LOCATION_MZONE)
+	e14:SetTarget(s.atktarget)
+	e14:SetTargetRange(LOCATION_MZONE,0)
+	e14:SetValue(0)
 	c:RegisterEffect(e14)
-	--The ATK of non-Dark Machine monsters on the field becomes 0. (12)
-	local e15=Effect.CreateEffect(c)
-	e15:SetDescription(aux.Stringid(id,0))
-	e15:SetCategory(CATEGORY_ATKCHANGE)
-	e15:SetType(EFFECT_TYPE_FIELD)
-	e15:SetCode(EFFECT_SET_ATTACK)
-	e15:SetRange(LOCATION_MZONE)
-	e15:SetTarget(s.atktarget)
-	e15:SetTargetRange(LOCATION_MZONE,0)
-	e15:SetValue(0)
+	local e15=e14:Clone()
+	e15:SetCode(EFFECT_SET_DEFENSE)
 	c:RegisterEffect(e15)
-	local e16=e15:Clone()
-	e16:SetCode(EFFECT_SET_DEFENSE)
+	--disable traps and spells from your field
+	local e16=Effect.CreateEffect(c)
+	e16:SetType(EFFECT_TYPE_FIELD)
+	e16:SetCode(EFFECT_DISABLE)
+	e16:SetRange(LOCATION_MZONE)
+	e16:SetTargetRange(LOCATION_SZONE,0)
+	e16:SetTarget(s.distg)
 	c:RegisterEffect(e16)
-	--disable traps and spells
-	local e17=Effect.CreateEffect(c)
-	e17:SetType(EFFECT_TYPE_FIELD)
-	e17:SetCode(EFFECT_DISABLE)
-	e17:SetRange(LOCATION_MZONE)
-	e17:SetTargetRange(LOCATION_SZONE,0)
-	e17:SetTarget(s.distg)
-	c:RegisterEffect(e17)
 	--disable activating effects Chain
-	local e18=Effect.CreateEffect(c)
-	e18:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e18:SetCode(EVENT_CHAIN_SOLVING)
-	e18:SetRange(LOCATION_MZONE)
-	e18:SetOperation(s.disop)
-	c:RegisterEffect(e18)
+	local e17=Effect.CreateEffect(c)
+	e17:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e17:SetCode(EVENT_CHAIN_SOLVING)
+	e17:SetRange(LOCATION_MZONE)
+	e17:SetOperation(s.disop)
+	c:RegisterEffect(e17)
     --destroy all spells/traps
-    local e19=Effect.CreateEffect(c)
-    e19:SetDescription(aux.Stringid(id,0))
-    e19:SetCategory(CATEGORY_DESTROY)
-    e19:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e19:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
-    e19:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e19:SetTarget(s.smtg)
-    e19:SetOperation(s.smop)
-    c:RegisterEffect(e19)
+    local e18=Effect.CreateEffect(c)
+    e18:SetDescription(aux.Stringid(id,0))
+    e18:SetCategory(CATEGORY_DESTROY)
+    e18:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e18:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
+    e18:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e18:SetTarget(s.smtg)
+    e18:SetOperation(s.smop)
+    c:RegisterEffect(e18)
 	--You take no effect damage and apply it into the def
-    local e20=Effect.CreateEffect(c)
-    e20:SetType(EFFECT_TYPE_FIELD)
-    e20:SetCode(EFFECT_CHANGE_DAMAGE)
-    e20:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e20:SetRange(LOCATION_MZONE)
-    e20:SetTargetRange(1,0)
-    e20:SetValue(s.dmgvalue2)
-    c:RegisterEffect(e20)
+    local e19=Effect.CreateEffect(c)
+    e19:SetType(EFFECT_TYPE_FIELD)
+    e19:SetCode(EFFECT_CHANGE_DAMAGE)
+    e19:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e19:SetRange(LOCATION_MZONE)
+    e19:SetTargetRange(1,0)
+    e19:SetValue(s.dmgvalue2)
+    c:RegisterEffect(e19)
+    --This card is uneffected by card effects except from itself.
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_IMMUNE_EFFECT)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetValue(s.efilter)
+    c:RegisterEffect(e1)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -216,11 +221,6 @@ function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,e:GetHandler())
 	end
 end
---(8) uneffected by card effects
-function s.imcon(e,re)
-    local c=e:GetHandler()
-    return c~=re:GetOwner() and not c:IsStatus(STATUS_BATTLE_DESTROYED)
-end
 --(9) non-dark machine monsters function
 function s.atktarget(e,c)
 	return not (c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_DARK))
@@ -266,4 +266,8 @@ function s.dmgvalue2(e,re,val,r,rp,rc)
     else
         return val
     end
+end
+--(15) This card is uneffected by card effects except from itself.
+function s.efilter(e,te)
+    return te:GetOwner()~=e:GetOwner()
 end

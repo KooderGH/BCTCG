@@ -153,18 +153,27 @@ function s.initial_effect(c)
 	e16:SetTarget(s.graverecoverytg)
 	e16:SetOperation(s.graverecoveryop)
 	c:RegisterEffect(e16)
-
 	--(+11) Unfinished!
-	--Token test
+	--lower this card's DEF by 500 to Special Summon 1 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 0/DEF 1000).
 	local e17=Effect.CreateEffect(c)
 	e17:SetDescription(aux.Stringid(id,2))
 	e17:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
 	e17:SetType(EFFECT_TYPE_IGNITION)
 	e17:SetRange(LOCATION_MZONE)
-	e17:SetCountLimit(1)
+	e17:SetCountLimit(2,{id,1},EFFECT_COUNT_CODE_OATH)
 	e17:SetTarget(s.ssttg)
 	e17:SetOperation(s.sstpop)
 	c:RegisterEffect(e17)
+
+	local e18=Effect.CreateEffect(c)
+	e18:SetDescription(aux.Stringid(id,3))
+	e18:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+	e18:SetType(EFFECT_TYPE_IGNITION)
+	e18:SetRange(LOCATION_MZONE)
+	e18:SetCountLimit(2,{id,1},EFFECT_COUNT_CODE_OATH)
+	e18:SetTarget(s.ssttg2)
+	e18:SetOperation(s.sstpop2)
+	c:RegisterEffect(e18)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -251,6 +260,14 @@ end
 function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668001,0,TYPES_TOKEN,0,1000,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local c=e:GetHandler()
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_DEFENSE)
+		e1:SetValue(-500)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+		c:RegisterEffect(e1)
+
 		local token1=Duel.CreateToken(tp,210668001)
 		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
 	    --Cannot be destroyed (1)
@@ -261,25 +278,92 @@ function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
         token1:RegisterEffect(e2,true)
 	    --Place in Szone (1)
         local e3=Effect.CreateEffect(e:GetHandler())
-		e3:SetDescription(aux.Stringid(id,3))
+		e3:SetDescription(aux.Stringid(id,4))
 	    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
 	    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
 	    e3:SetRange(LOCATION_MZONE)
-		e3:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+		e3:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
 	    e3:SetTarget(s.spelltarget)
 	    e3:SetOperation(s.spellop)
         token1:RegisterEffect(e3)
 		Duel.SpecialSummonComplete()
 	    --Place as Mzone (1)
         local e4=Effect.CreateEffect(e:GetHandler())
-		e4:SetDescription(aux.Stringid(id,4))
+		e4:SetDescription(aux.Stringid(id,5))
 	    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
 	    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
 	    e4:SetRange(LOCATION_SZONE)
-		e4:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+		e4:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
 	    e4:SetTarget(s.spelltarget2)
 	    e4:SetOperation(s.spellop2)
         token1:RegisterEffect(e4)
+		Duel.SpecialSummonComplete()
+	end
+end
+function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
+end
+function s.spellop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local c=e:GetHandler()
+	Duel.MoveToField(c,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+end
+function s.spelltarget2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
+end
+function s.spellop2(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local c=e:GetHandler()
+	Duel.MoveToField(c,tp,tp,LOCATION_MZONE,POS_FACEUP,true)
+end
+--Special Summon Driller K41 function
+s.listed_names={210668002}
+function s.ssttg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
+end
+function s.sstpop2(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668002,0,TYPES_TOKEN,1000,0,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local c=e:GetHandler()
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_DEFENSE)
+		e1:SetValue(-500)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+		c:RegisterEffect(e1)
+
+		local token2=Duel.CreateToken(tp,210668002)
+		Duel.SpecialSummonStep(token2,0,tp,tp,false,false,POS_FACEUP)
+	    --Cannot be destroyed (1)
+        local e2=Effect.CreateEffect(e:GetHandler())
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+		e2:SetValue(1)
+        token2:RegisterEffect(e2,true)
+	    --Place in Szone (1)
+        local e3=Effect.CreateEffect(e:GetHandler())
+		e3:SetDescription(aux.Stringid(id,4))
+	    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
+	    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
+	    e3:SetRange(LOCATION_MZONE)
+		e3:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
+	    e3:SetTarget(s.spelltarget)
+	    e3:SetOperation(s.spellop)
+        token2:RegisterEffect(e3)
+		Duel.SpecialSummonComplete()
+	    --Place as Mzone (1)
+        local e4=Effect.CreateEffect(e:GetHandler())
+		e4:SetDescription(aux.Stringid(id,5))
+	    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
+	    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
+	    e4:SetRange(LOCATION_SZONE)
+		e4:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
+	    e4:SetTarget(s.spelltarget2)
+	    e4:SetOperation(s.spellop2)
+        token2:RegisterEffect(e4)
 		Duel.SpecialSummonComplete()
 	end
 end

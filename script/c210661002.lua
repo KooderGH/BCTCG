@@ -124,9 +124,15 @@ function s.initial_effect(c)
     e13:SetTarget(s.smtg)
     e13:SetOperation(s.smop)
     c:RegisterEffect(e13)
-	--(8) Missing
-
-
+	--effect damage to lp (8)
+	local e14=Effect.CreateEffect(c)
+	e14:SetType(EFFECT_TYPE_FIELD)
+	e14:SetCode(EFFECT_REVERSE_DAMAGE)
+	e14:SetRange(LOCATION_MZONE)
+	e14:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e14:SetTargetRange(1,0)
+	e14:SetValue(s.rev)
+	c:RegisterEffect(e14)
 	--Remove 300 Def each end phase (9)
 	local e15=Effect.CreateEffect(c)
 	e15:SetDescription(aux.Stringid(id,0))
@@ -149,8 +155,6 @@ function s.initial_effect(c)
 	c:RegisterEffect(e16)
 
 	--(+11) Unfinished!
-
-
 	--Token test
 	local e17=Effect.CreateEffect(c)
 	e17:SetDescription(aux.Stringid(id,2))
@@ -202,7 +206,11 @@ function s.smop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetMatchingGroup(s.summonfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,e:GetHandler())
 	Duel.Destroy(sg,REASON_EFFECT)
 end
---Def -300 function
+--(8) effect damage to LP function
+function s.rev(e,re,r,rp,rc)
+	return (r&REASON_EFFECT)~=0
+end
+--(9) Def -300 function
 function s.defcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp
 end
@@ -217,7 +225,7 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterEffect(e1)
 	end
 end
---GY to extra deck function
+--(10) GY to extra deck function
 function s.graverecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLPCost(tp,3000) end
 	Duel.PayLPCost(tp,3000)

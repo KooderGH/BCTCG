@@ -1,27 +1,37 @@
 --Type-K41 Defence
 --Scripted by Konstak.
 --Effects:
---"Mighty Kristul Muu" (Fusion Monster)
+--1 "Mighty Kristul Muu" (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
---(2) Must first be Special Summoned (from your Extra Deck) in Defense Position by sending "Mighty Kristul Muu" from your field to the GY. This Card Summon cannot be negated.
+--(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending "Mighty Kristul Muu" from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
 --(3) Cannot be returned to hand, Banished, or Tributed.
---(4) This card cannot be targeted by card effects.
+--(4) This card cannot be targeted by card effects and is unaffected by card effects except from itself.
 --(5) This card's Position cannot be changed.
---(6) During your End Phase; This card loses 300 DEF.
---(7) If this card is in your GY: You can pay 3000 LP; Add this card to your Extra Deck.
---(8) You take no battle damage from battles involving this card.
---(9) Your opponent takes no battle damage involving this card.
---(10) While you control this face-up card, you must skip your draw phase.
---(11) While you control this face-up card, ATK and DEF of Non-Dark Machine monsters you control becomes 0.
---(12) While you control this face-up card, you cannot activate T/S.
---(13) When this card is special summoned, Destroy all Monsters, Spells and Trap cards you currently control.
---(14) If you would take effect damage, decrease this card's DEF by that damage, instead.
---(15) This card is uneffected by card effects except from itself.
---(16) While you control this face-up card, All Dark Machine monsters you control gain 500 ATK/DEF.
---(17) Once per turn (Igntion): You can Special Summon 1 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 0/DEF 1000). These token's cannot be destroyed by battle and cannot attack.
---(18) Once per turn (Igntion): You can Special Summon 1 "Driller K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 0). These token's cannot be targeted by card effects and cannot attack.
---(19) Once per turn (Igntion): You can Special Summon 1 "Thermae K41 Token" (Machine/DARK/Level 2/ATK 500/DEF 1500). These token's cannot be destroyed by card effects and cannot attack.
---(20) You can only activate each effect of "Type-K41 Defence" twice per turn.
+--(6) Neither player takes no battle damage from battles involving this card and other monsters you control cannot declare an attack.
+--(7) When this card is Special Summoned, Destroy all card's on the field except this card. Neither player can activate cards or effects in response to this effect. 
+--(8) If you would take effect damage, increase your LP by the same amount instead.
+--(9) During your End Phase; This card loses 300 DEF.
+--(10) If this card is in your GY: You can pay 3000 LP; Add this card to your Extra Deck.
+--(11) You can only activate the following effects of "Type-K41 Defense" twice per turn (Igntion):
+--* You can lower this card's DEF by 500 to Special Summon 1 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 0/DEF 1000). These token's cannot be destroyed by battle.
+--* You can lower this card's DEF by 500 to Special Summon 1 "Driller K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 0). These token's cannot be targeted by card effects.
+--* You can lower this card's DEF by 500 to Special Summon 1 "Thermae K41 Token" (Machine/DARK/Level 2/ATK 500/DEF 1500). These token's cannot be destroyed by card effects.
+--(12) This card gains the following effect(s) of depending on the number of "Piledriver K41 Token" you control.
+--*+1: Once per turn (Ignition): You can move one "Piledriver K41 Token" to a unoccupied Card Zone.
+--*+2: During each player's Standby Phase: This card gains 1000 DEF.
+--*+3: Once per turn (Ignition): You can Tribute one Token on the field; Add one card from your GY to your hand.
+--*+4: Your opponent cannot Set cards.
+--(13) This card gains the following effect(s) of depending on the number of "Driller K41 Token" you control.
+--*+1: Once per turn (Ignition): You can move one "Driller K41 Token" to a unoccupied Card Zone.
+--*+2: During each player's Standby Phase: Discard the top of your opponent's deck equal to the amount of monster's you control.
+--*+3: Once per turn (Ignition): You can target cards in your opponent's GY based on the number of "Driller K41 Token"'s you control; Banish those targets.
+--*+4: During your End Phase; Draw 1 card.
+--(14) This card gains the following effect(s) of depending on the number of "Thermae K41 Token" you control.
+--*+1: Once per turn (Ignition): You can move one "Thermae K41 Token" to a unoccupied Card Zone.
+--*+2: During your Opponent's End Phase: Roll a six-sided die. Treat your opponent's Zone Columns as numbers 1-5, counting from your right and destroy the cards that are in the same Column as the result. If the result is 6, roll again.  
+--*+3: Once per turn (Ignition): You can choose 1 of your opponent's unused Zones. Those zones cannot be used while "Type-K41 Defense" is face-up on the field.
+--*+4: Once per turn (Ignition): You can activate this effect; Your opponent discards as many cards as possible from their hand, then, draws the same number of cards they discarded.
+--(15) When this card is destroyed by battle; Destroy all cards you control. It is now the End Phase of this turn.
 
 local s,id=GetID()
 function s.initial_effect(c)
@@ -37,7 +47,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_CANNOT_BE_FUSION_MATERIAL)
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
-	--Summon cannot be disabled (2)
+	--Summon cannot be negated (2)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
@@ -70,109 +80,87 @@ function s.initial_effect(c)
 	e7:SetRange(LOCATION_MZONE)
 	e7:SetValue(1)
 	c:RegisterEffect(e7)
+    --This card is uneffected by card effects except from itself. (4)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_IMMUNE_EFFECT)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetValue(s.efilter)
+    c:RegisterEffect(e8)
 	--This card's Position cannot be changed. (5)
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE)
-	e8:SetCode(EFFECT_SET_POSITION)
-	e8:SetRange(LOCATION_MZONE)
-	e8:SetValue(POS_FACEUP_DEFENSE)
-	e8:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	c:RegisterEffect(e8)
-	--Remove 200 Def each end phase (6)
 	local e9=Effect.CreateEffect(c)
-	e9:SetDescription(aux.Stringid(id,1))
-	e9:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+	e9:SetType(EFFECT_TYPE_SINGLE)
+	e9:SetCode(EFFECT_SET_POSITION)
 	e9:SetRange(LOCATION_MZONE)
-	e9:SetCode(EVENT_PHASE+PHASE_END)
-	e9:SetCountLimit(1)
-	e9:SetCondition(s.defcon)
-	e9:SetOperation(s.defop)
+	e9:SetValue(POS_FACEUP_DEFENSE)
+	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	c:RegisterEffect(e9)
-	--If this card is in your GY: You can pay 3000 LP to send this card to your extra deck (7)
+	--No battle damage (6)
 	local e10=Effect.CreateEffect(c)
-	e10:SetDescription(aux.Stringid(id,0))
-	e10:SetCategory(CATEGORY_TODECK)
-	e10:SetType(EFFECT_TYPE_IGNITION)
-	e10:SetRange(LOCATION_GRAVE)
-	e10:SetCost(s.graverecoverycost)
-	e10:SetTarget(s.graverecoverytg)
-	e10:SetOperation(s.graverecoveryop)
+	e10:SetType(EFFECT_TYPE_SINGLE)
+	e10:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+	e10:SetValue(1)
 	c:RegisterEffect(e10)
-	--No battle damage (8)
+    --opponent no battle damage (6)
 	local e11=Effect.CreateEffect(c)
 	e11:SetType(EFFECT_TYPE_SINGLE)
-	e11:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-	e11:SetValue(1)
+	e11:SetCode(EFFECT_NO_BATTLE_DAMAGE)
 	c:RegisterEffect(e11)
-    --opponent no battle damage (9)
+	--cannot announce (6)
 	local e12=Effect.CreateEffect(c)
-	e12:SetType(EFFECT_TYPE_SINGLE)
-	e12:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+	e12:SetType(EFFECT_TYPE_FIELD)
+	e12:SetRange(LOCATION_MZONE)
+	e12:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
+	e12:SetTargetRange(LOCATION_MZONE,0)
+	e12:SetTarget(s.antarget)
 	c:RegisterEffect(e12)
-	--Skip Draw Phase (10)
-	local e13=Effect.CreateEffect(c)
-	e13:SetType(EFFECT_TYPE_FIELD)
-	e13:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e13:SetRange(LOCATION_MZONE)
-	e13:SetTargetRange(1,0)
-	e13:SetCode(EFFECT_SKIP_DP)
-	c:RegisterEffect(e13)
-	--The ATK of non-Dark Machine monsters on the field becomes 0. (11)
-	local e14=Effect.CreateEffect(c)
-	e14:SetDescription(aux.Stringid(id,0))
-	e14:SetCategory(CATEGORY_ATKCHANGE)
-	e14:SetType(EFFECT_TYPE_FIELD)
-	e14:SetCode(EFFECT_SET_ATTACK)
-	e14:SetRange(LOCATION_MZONE)
-	e14:SetTarget(s.atktarget)
-	e14:SetTargetRange(LOCATION_MZONE,0)
-	e14:SetValue(0)
-	c:RegisterEffect(e14)
-	local e15=e14:Clone()
-	e15:SetCode(EFFECT_SET_DEFENSE)
+    --destroy all spells/traps/monsters (7)
+    local e13=Effect.CreateEffect(c)
+    e13:SetCategory(CATEGORY_DESTROY)
+    e13:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e13:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
+    e13:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e13:SetTarget(s.smtg)
+    e13:SetOperation(s.smop)
+    c:RegisterEffect(e13)
+	--(8) Missing
+
+
+	--Remove 300 Def each end phase (9)
+	local e15=Effect.CreateEffect(c)
+	e15:SetDescription(aux.Stringid(id,0))
+	e15:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+	e15:SetRange(LOCATION_MZONE)
+	e15:SetCode(EVENT_PHASE+PHASE_END)
+	e15:SetCountLimit(1)
+	e15:SetCondition(s.defcon)
+	e15:SetOperation(s.defop)
 	c:RegisterEffect(e15)
-	--disable traps and spells from your field
+	--If this card is in your GY: You can pay 3000 LP to send this card to your extra deck (10)
 	local e16=Effect.CreateEffect(c)
-	e16:SetType(EFFECT_TYPE_FIELD)
-	e16:SetCode(EFFECT_DISABLE)
-	e16:SetRange(LOCATION_MZONE)
-	e16:SetTargetRange(LOCATION_SZONE,0)
-	e16:SetTarget(s.distg)
+	e16:SetDescription(aux.Stringid(id,1))
+	e16:SetCategory(CATEGORY_TODECK)
+	e16:SetType(EFFECT_TYPE_IGNITION)
+	e16:SetRange(LOCATION_GRAVE)
+	e16:SetCost(s.graverecoverycost)
+	e16:SetTarget(s.graverecoverytg)
+	e16:SetOperation(s.graverecoveryop)
 	c:RegisterEffect(e16)
-	--disable activating effects Chain
+
+	--(+11) Unfinished!
+
+
+	--Token test
 	local e17=Effect.CreateEffect(c)
-	e17:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e17:SetCode(EVENT_CHAIN_SOLVING)
+	e17:SetDescription(aux.Stringid(id,2))
+	e17:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+	e17:SetType(EFFECT_TYPE_IGNITION)
 	e17:SetRange(LOCATION_MZONE)
-	e17:SetOperation(s.disop)
+	e17:SetCountLimit(1)
+	e17:SetTarget(s.ssttg)
+	e17:SetOperation(s.sstpop)
 	c:RegisterEffect(e17)
-    --destroy all spells/traps
-    local e18=Effect.CreateEffect(c)
-    e18:SetDescription(aux.Stringid(id,0))
-    e18:SetCategory(CATEGORY_DESTROY)
-    e18:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e18:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
-    e18:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e18:SetTarget(s.smtg)
-    e18:SetOperation(s.smop)
-    c:RegisterEffect(e18)
-	--You take no effect damage and apply it into the def
-    local e19=Effect.CreateEffect(c)
-    e19:SetType(EFFECT_TYPE_FIELD)
-    e19:SetCode(EFFECT_CHANGE_DAMAGE)
-    e19:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e19:SetRange(LOCATION_MZONE)
-    e19:SetTargetRange(1,0)
-    e19:SetValue(s.dmgvalue2)
-    c:RegisterEffect(e19)
-    --This card is uneffected by card effects except from itself.
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_IMMUNE_EFFECT)
-    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetValue(s.efilter)
-    c:RegisterEffect(e1)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -191,7 +179,30 @@ end
 function s.contactop(g,tp,c)
 	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
 end
---Def -300 function 
+--(6) This card is uneffected by card effects except from itself.
+function s.efilter(e,te)
+    return te:GetOwner()~=e:GetOwner()
+end
+--(6) cannot announce
+function s.antarget(e,c)
+	return c~=e:GetHandler()
+end
+--(7) Destroy all S/T/M on the field
+function s.summonfilter(c)
+	return c:IsType(TYPE_SPELL+TYPE_TRAP+TYPE_MONSTER)
+end
+function s.smtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.IsExistingMatchingCard(s.summonfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
+	local sg=Duel.GetMatchingGroup(s.summonfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,c)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
+	Duel.SetChainLimit(aux.FALSE)
+end
+function s.smop(e,tp,eg,ep,ev,re,r,rp)
+	local sg=Duel.GetMatchingGroup(s.summonfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,e:GetHandler())
+	Duel.Destroy(sg,REASON_EFFECT)
+end
+--Def -300 function
 function s.defcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp
 end
@@ -206,7 +217,7 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterEffect(e1)
 	end
 end
---(7) GY to extra deck function
+--GY to extra deck function
 function s.graverecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLPCost(tp,3000) end
 	Duel.PayLPCost(tp,3000)
@@ -221,53 +232,62 @@ function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,e:GetHandler())
 	end
 end
---(9) non-dark machine monsters function
-function s.atktarget(e,c)
-	return not (c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_DARK))
+--Special Summon Piledriver K41 function
+s.listed_names={210668001}
+function s.ssttg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
 end
---(12) Negate all S/T you control function
-function s.distg(e,c)
-	return c~=e:GetHandler() and c:IsTrap() or c:IsSpell()
-end
-function s.disop(e,tp,eg,ep,ev,re,r,rp)
-	local tl=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)
-	if (tl&LOCATION_SZONE)~=0 and re:IsActiveType(TYPE_SPELL) and re:IsActiveType(TYPE_TRAP) then
-		Duel.NegateEffect(ev)
+function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668001,0,TYPES_TOKEN,0,1000,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local token1=Duel.CreateToken(tp,210668001)
+		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
+	    --Cannot be destroyed (1)
+        local e2=Effect.CreateEffect(e:GetHandler())
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+		e2:SetValue(1)
+        token1:RegisterEffect(e2,true)
+	    --Place in Szone (1)
+        local e3=Effect.CreateEffect(e:GetHandler())
+		e3:SetDescription(aux.Stringid(id,3))
+	    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
+	    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
+	    e3:SetRange(LOCATION_MZONE)
+		e3:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+	    e3:SetTarget(s.spelltarget)
+	    e3:SetOperation(s.spellop)
+        token1:RegisterEffect(e3)
+		Duel.SpecialSummonComplete()
+	    --Place as Mzone (1)
+        local e4=Effect.CreateEffect(e:GetHandler())
+		e4:SetDescription(aux.Stringid(id,4))
+	    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
+	    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
+	    e4:SetRange(LOCATION_SZONE)
+		e4:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+	    e4:SetTarget(s.spelltarget2)
+	    e4:SetOperation(s.spellop2)
+        token1:RegisterEffect(e4)
+		Duel.SpecialSummonComplete()
 	end
 end
---(13) Destroy all S/T you control function
-function s.summonfilter(c)
-	return c:IsType(TYPE_SPELL+TYPE_TRAP+TYPE_MONSTER)
+function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
 end
-function s.smtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spellop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(s.summonfilter,tp,LOCATION_ONFIELD,0,1,c) end
-	local sg=Duel.GetMatchingGroup(s.summonfilter,tp,LOCATION_ONFIELD,0,c)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
+	Duel.MoveToField(c,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
 end
-function s.smop(e,tp,eg,ep,ev,re,r,rp)
-	local sg=Duel.GetMatchingGroup(s.summonfilter,tp,LOCATION_ONFIELD,0,e:GetHandler())
-	Duel.Destroy(sg,REASON_EFFECT)
+function s.spelltarget2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
 end
---(14) You take no effect damage function
-function s.dmgvalue2(e,re,val,r,rp,rc)
-    if (r&REASON_EFFECT)==0 then return val end
-    local c=e:GetHandler()
-    local def=c:GetDefense()
-    if def>val then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCode(EFFECT_UPDATE_DEFENSE)
-        e1:SetReset(RESET_EVENT|RESETS_STANDARD)
-        e1:SetValue(-val)
-        c:RegisterEffect(e1)
-        return 0
-    else
-        return val
-    end
-end
---(15) This card is uneffected by card effects except from itself.
-function s.efilter(e,te)
-    return te:GetOwner()~=e:GetOwner()
+function s.spellop2(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local c=e:GetHandler()
+	Duel.MoveToField(c,tp,tp,LOCATION_MZONE,POS_FACEUP,true)
 end

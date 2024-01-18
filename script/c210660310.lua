@@ -104,10 +104,13 @@ function s.sop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --(5)
+function s.racefilter(c)
+    return c:IsFaceup() and not c:IsCode(id)
+end
 function s.chtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
-    if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
-    local g=Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    if chk==0 then return Duel.IsExistingTarget(s.racefilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+    local g=Duel.SelectTarget(tp,s.racefilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
     local c=e:GetHandler()
     local rc=c:AnnounceAnotherRace(tp)
     local att=c:AnnounceAnotherAttribute(tp)

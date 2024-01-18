@@ -147,7 +147,7 @@ function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 and Duel.GetTurnPlayer()==e:GetHandlerPlayer() then return Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)>0 end
     local rt=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)*300
     Duel.SetTargetPlayer(tp)
-    Duel.SetOperationInfo(0,CATEGORY_BANISH,rt,0,tp,0)
+    Duel.SetOperationInfo(0,CATEGORY_RECOVER,rt,0,tp,0)
 end
 function s.roperation(e,tp,eg,ep,ev,re,r,rp)
     local rt=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)*300

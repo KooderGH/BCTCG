@@ -39,7 +39,7 @@ function s.initial_effect(c)
 	--Summon cannot be disabled (Hopefully)
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetCode(EFFECT_CANNOT_DISABLE_SUMMON)
+	e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
 	e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	c:RegisterEffect(e3)
 	--(1)Finish

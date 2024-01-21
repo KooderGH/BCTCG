@@ -297,7 +297,7 @@ function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SELECT)
 	local tc=Duel.SelectMatchingCard(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil):GetFirst()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOZONE)
-	Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_ONFIELD,0,0),2))
+	Duel.MoveToField(tc,tp,tp,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE|LOCATION_SZONE,0,0),2),POS_FACEUP,true)
 end
 function s.pilefilter(c)
     return c:IsFaceup() and c:IsCode(210668001)

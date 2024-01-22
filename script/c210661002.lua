@@ -1,5 +1,5 @@
 --Type-K41 Defence
---Scripted by Konstak.
+--Scripted by Konstak. Had help from Gideon and Raz
 --Effects:
 --1 "Mighty Kristul Muu" (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
@@ -135,7 +135,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e14)
 	--Remove 300 Def each end phase (9)
 	local e15=Effect.CreateEffect(c)
-	e15:SetDescription(aux.Stringid(id,0))
+	e15:SetDescription(aux.Stringid(id,4))
 	e15:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e15:SetRange(LOCATION_MZONE)
 	e15:SetCode(EVENT_PHASE+PHASE_END)
@@ -145,7 +145,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e15)
 	--If this card is in your GY: You can pay 3000 LP to send this card to your extra deck (10)
 	local e16=Effect.CreateEffect(c)
-	e16:SetDescription(aux.Stringid(id,1))
+	e16:SetDescription(aux.Stringid(id,5))
 	e16:SetCategory(CATEGORY_TODECK)
 	e16:SetType(EFFECT_TYPE_IGNITION)
 	e16:SetRange(LOCATION_GRAVE)
@@ -155,7 +155,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e16)
 	--lower this card's DEF by 500 to Special Summon 1 "Piledriver K41 Token" (11)
 	local e17=Effect.CreateEffect(c)
-	e17:SetDescription(aux.Stringid(id,2))
+	e17:SetDescription(aux.Stringid(id,6))
 	e17:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
 	e17:SetType(EFFECT_TYPE_IGNITION)
 	e17:SetRange(LOCATION_MZONE)
@@ -165,7 +165,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e17)
 	--1+ (12)
 	local e20=Effect.CreateEffect(c)
-	e20:SetDescription(aux.Stringid(id,3))
+	e20:SetDescription(aux.Stringid(id,7))
 	e20:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
 	e20:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
 	e20:SetRange(LOCATION_MZONE)
@@ -176,7 +176,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e20)
 	--2+ (12)
 	local e22=Effect.CreateEffect(c)
-	e22:SetDescription(aux.Stringid(id,4))
+	e22:SetDescription(aux.Stringid(id,8))
 	e22:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e22:SetRange(LOCATION_MZONE)
 	e22:SetCode(EVENT_PHASE+PHASE_STANDBY)
@@ -289,29 +289,49 @@ function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummonComplete()
 	end
 end
-function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil)
-	local tc=Duel.GetFirstTarget()
-	local op=Duel.SelectEffect(tp,
-		{tc,aux.Stringid(id,5)},
-		{tc,aux.Stringid(id,6)})
-	e:SetLabel(op)
-end
-function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if e:GetLabel()==1 then
-	--Move to M
-		Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0),2))
-	else
-	--Move to S/T
-		Duel.MoveToField(tc,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
-	end
-end
+--Move Pile function
 function s.pilefilter(c)
     return c:IsFaceup() and c:IsCode(210668001)
 end
+function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    local mz=Duel.GetLocationCount(tp,LOCATION_MZONE)
+    local sz=Duel.GetLocationCount(tp,LOCATION_SZONE)
+    if chkc then
+        if not (chkc:IsLocation(LOCATION_SZONE) and chkc:IsOriginalType(TYPE_MONSTER) and chkc:IsFaceup()) then return false end
+        local label=e:GetLabel()
+        if label==1 or label==3 then
+            return mz>0
+        elseif (label==2 or label==4) then
+            return sz>0
+        end
+    end
+    if chk==0 then return Duel.IsExistingTarget(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+    local tc=Duel.SelectTarget(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil):GetFirst()
+    local b1=tc:IsLocation(LOCATION_SZONE) and mz>0
+    local b2=tc:IsLocation(LOCATION_SZONE) and sz>0
+    local b3=tc:IsLocation(LOCATION_MZONE) and mz>0
+    local b4=tc:IsLocation(LOCATION_MZONE) and sz>0
+    local op=Duel.SelectEffect(tp,{b1,aux.Stringid(id,0)},{b2,aux.Stringid(id,1)},{b3,aux.Stringid(id,2)},{b4,aux.Stringid(id,3)})
+    e:SetLabel(op)
+end
+function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if not tc:IsRelateToEffect(e) then return false end
+    local op=e:GetLabel()
+    if op==1 then
+        Duel.MoveToField(tc,tp,tp,LOCATION_MZONE,POS_FACEUP,true)
+    elseif op==2 then
+        local zone=Duel.SelectDisableField(tp,1,LOCATION_SZONE,0,0)
+        local seq=math.log(zone>>8,2)
+        Duel.MoveSequence(tc,seq)
+    elseif op==3 then
+        Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0),2))
+    else
+        Duel.MoveToField(tc,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+    end
+end
+--End of move function
 function s.pilecountcondition(e)
     local tp=e:GetHandlerPlayer()
     return Duel.GetMatchingGroupCount(s.pilefilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()

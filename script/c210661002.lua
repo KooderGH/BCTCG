@@ -165,7 +165,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e17)
 	--1+ (12)
 	local e20=Effect.CreateEffect(c)
-	e20:SetDescription(aux.Stringid(id,5))
+	e20:SetDescription(aux.Stringid(id,3))
 	e20:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
 	e20:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
 	e20:SetRange(LOCATION_MZONE)
@@ -176,7 +176,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e20)
 	--2+ (12)
 	local e22=Effect.CreateEffect(c)
-	e22:SetDescription(aux.Stringid(id,1))
+	e22:SetDescription(aux.Stringid(id,4))
 	e22:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e22:SetRange(LOCATION_MZONE)
 	e22:SetCode(EVENT_PHASE+PHASE_STANDBY)
@@ -290,14 +290,23 @@ function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and
+    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_ONFIELD)>0 and
         Duel.IsExistingMatchingCard(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
+	Duel.SelectTarget(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil)
+	local op=Duel.SelectEffect(tp,
+		{b1,aux.Stringid(id,5)},
+		{b2,aux.Stringid(id,6)})
+	e:SetLabel(op)
+	local g=(op==1 and g1 or g2)
 end
 function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SELECT)
-	local tc=Duel.SelectMatchingCard(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil):GetFirst()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOZONE)
-	Duel.MoveToField(tc,tp,tp,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE|LOCATION_SZONE,0,0),2),POS_FACEUP,true)
+	if e:GetLabel()==1 then
+		Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0),2))
+	else
+	--Move to S/T
+	Duel.MoveToField(tc,tp,tp,math.log(Duel.SelectDisableField(tp,1,LOCATION_SZONE,0,0),2),POS_FACEUP,true)
+	end
 end
 function s.pilefilter(c)
     return c:IsFaceup() and c:IsCode(210668001)

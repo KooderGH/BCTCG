@@ -293,9 +293,10 @@ function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
 	Duel.SelectTarget(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil)
+	local tc=Duel.GetFirstTarget()
 	local op=Duel.SelectEffect(tp,
-		{b1,aux.Stringid(id,5)},
-		{b2,aux.Stringid(id,6)})
+		{tc,aux.Stringid(id,5)},
+		{tc,aux.Stringid(id,6)})
 	e:SetLabel(op)
 	local g=(op==1 and g1 or g2)
 end

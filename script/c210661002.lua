@@ -290,8 +290,7 @@ function s.sstpop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_ONFIELD)>0 and
-        Duel.IsExistingMatchingCard(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
+    if chk==0 then return Duel.IsExistingMatchingCard(s.pilefilter,tp,LOCATION_ONFIELD,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
 	Duel.SelectTarget(tp,s.pilefilter,tp,LOCATION_ONFIELD,0,1,1,nil)
 	local op=Duel.SelectEffect(tp,

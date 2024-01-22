@@ -302,10 +302,11 @@ end
 function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if e:GetLabel()==1 then
+	--Move to M
 		Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0),2))
 	else
 	--Move to S/T
-	Duel.MoveToField(tc,tp,tp,math.log(Duel.SelectDisableField(tp,1,LOCATION_SZONE,0,0),2),POS_FACEUP,true)
+		Duel.MoveToField(tc,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
 	end
 end
 function s.pilefilter(c)

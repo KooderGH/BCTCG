@@ -300,6 +300,7 @@ function s.cardzonetarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=(op==1 and g1 or g2)
 end
 function s.cardzoneop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
 	if e:GetLabel()==1 then
 		Duel.MoveSequence(tc,math.log(Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0),2))
 	else

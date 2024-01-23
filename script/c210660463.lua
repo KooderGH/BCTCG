@@ -213,6 +213,7 @@ function s.graverecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.graverecoverytg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
+	Duel.SetLP(tp,Duel.GetLP(1))
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
 function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)

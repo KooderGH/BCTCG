@@ -33,7 +33,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	local e4=e2:Clone()
 	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
-	c:RegisterEffect(e4)
+	c:RegisterEffect(e4)))))))))))))))))))))))
 	--Tribue Special Summon
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,1))

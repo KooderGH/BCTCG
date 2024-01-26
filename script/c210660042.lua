@@ -2,11 +2,10 @@
 --Scripted by Konstak
 --Effect
 -- (1) Cannot be Normal Summoned/Set. Can only be Special Summoned (from your hand) while you control no monsters.
--- (2) You cannot Normal Summon or Special Summon monsters. (But you can still set).
--- (3) During either player's turn (Quick): You can Target 1 card on the field; negate it until the end of this turn. You can only use this effect of "Ice Cat" once per turn.
--- (4) When this card is attacked; Double this card's attack until end of damage calulation.
--- (5) During your opponent's End Phase; Return this card to your hand, then draw 1 card.
--- (6) If this card is destroyed while on the field; Banish it, then end the current turn.
+-- (2) During either player's turn (Quick): You can Target 1 card on the field; negate it until the end of this turn. You can only use this effect of "Ice Cat" once per turn.
+-- (3) When this card is attacked; Double this card's attack until end of damage calulation.
+-- (4) During your opponent's End Phase; Return this card to your hand, then draw 1 card.
+-- (5) If this card is destroyed while on the field; Banish it, then end the current turn.
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableUnsummonable()
@@ -18,62 +17,45 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
-    --cannot summon,spsummon,flipsummon (2)
+    --either player's turn (Quick): Target 1 card on the field (2)
     local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetCode(EFFECT_CANNOT_SUMMON)
+    e2:SetDescription(aux.Stringid(id,0))
     e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e2:SetTargetRange(1,0)
+    e2:SetCategory(CATEGORY_DISABLE)
+    e2:SetType(EFFECT_TYPE_QUICK_O)
+    e2:SetCode(EVENT_FREE_CHAIN)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.negtg)
+    e2:SetOperation(s.negop)
     c:RegisterEffect(e2)
-    local e3=e2:Clone()
-    e3:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+    --if this card is attacked (3)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BE_BATTLE_TARGET)
+    e3:SetCondition(s.atkcon)
+    e3:SetOperation(s.atkop)
     c:RegisterEffect(e3)
-    local e4=e2:Clone()
-    e4:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
+    --3 or more cards you control. Destroy this card (4)
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetTargetRange(LOCATION_MZONE,0)
+    e4:SetCode(EFFECT_SELF_DESTROY)
+    e4:SetCondition(s.drcon)
     c:RegisterEffect(e4)
-    --either player's turn (Quick): Target 1 card on the field (3)
+    --If this card is destroyed while on the field (5)
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,0))
-    e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e5:SetCategory(CATEGORY_DISABLE)
-    e5:SetType(EFFECT_TYPE_QUICK_O)
-    e5:SetCode(EVENT_FREE_CHAIN)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1)
-    e5:SetTarget(s.negtg)
-    e5:SetOperation(s.negop)
+    e5:SetDescription(aux.Stringid(id,3))
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e5:SetRange(LOCATION_GRAVE)
+    e5:SetCode(EVENT_DESTROYED)
+    e5:SetOperation(s.bncon)
+    e5:SetOperation(s.bnop)
     c:RegisterEffect(e5)
-    --if this card is attacked (4)
-    local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,1))
-    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e6:SetCode(EVENT_BE_BATTLE_TARGET)
-    e6:SetCondition(s.atkcon)
-    e6:SetOperation(s.atkop)
-    c:RegisterEffect(e6)
-    --During your opponent's End Phase; Return this card to your hand, then draw 1 card. (5)
-    local e7=Effect.CreateEffect(c)
-    e7:SetDescription(aux.Stringid(id,2))
-    e7:SetCategory(CATEGORY_TOHAND+CATEGORY_DRAW)
-    e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-    e7:SetCode(EVENT_PHASE+PHASE_END)
-    e7:SetRange(LOCATION_MZONE)
-    e7:SetCountLimit(1)
-    e7:SetCondition(s.drcon)
-    e7:SetTarget(s.drtg)
-    e7:SetOperation(s.drop)
-    c:RegisterEffect(e7)
-    --If this card is destroyed while on the field (6)
-    local e8=Effect.CreateEffect(c)
-    e8:SetDescription(aux.Stringid(id,3))
-    e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e8:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e8:SetRange(LOCATION_GRAVE)
-    e8:SetCode(EVENT_DESTROYED)
-    e8:SetOperation(s.bncon)
-    e8:SetOperation(s.bnop)
-    c:RegisterEffect(e8)
 end
 --Special Summon Function
 function s.spcon(e,c)
@@ -81,7 +63,7 @@ function s.spcon(e,c)
     local tp=e:GetHandlerPlayer()
     return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
---(3)
+--(2)
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
     if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,nil) end
@@ -117,7 +99,7 @@ function s.negop(e,tp,eg,ep,ev,re,r,rp)
         end
     end
 end
---(4)
+--(3)
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler()==Duel.GetAttackTarget()
 end
@@ -132,23 +114,14 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         c:RegisterEffect(e1)
     end
 end
+--(4)
+function s.countfilter(c)
+	return c:IsFaceup() and c:IsMonster()
+end
+function s.drcon(e)
+	return Duel.IsExistingMatchingCard(s.countfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,3,nil)
+end
 --(5)
-function s.drcon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==1-tp and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)==1
-end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
-end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
-        Duel.ConfirmCards(tp,c)
-        Duel.Draw(tp,1,REASON_EFFECT)
-    end
-end
---(6)
 function s.bncon(e,c)
     return c:IsPreviousLocation(LOCATION_ONFIELD)
 end

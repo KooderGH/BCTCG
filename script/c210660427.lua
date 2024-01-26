@@ -5,6 +5,8 @@
 -- (2) If this card is returned to hand, select one card your opponent controls, it cannot attack or activate it's effects until the end phase.
 -- (3) If this card is attacked; Banish this card, Negate the attack, and end the battle phase. Then draw 1 card.
 -- (4) You can banish this card from your GY; Gain 2000 LP's.
+-- (5) If your opponent controls more cards then you do: You can Special Summon this card from your hand.
+-- (6) You take no battle damage involving this card. 
 local s,id=GetID()
 function s.initial_effect(c)
     --Once destroyed send to hand (1)

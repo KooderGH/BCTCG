@@ -1,5 +1,5 @@
 --Yuletide Nurse
---Scripted by Konstak
+--Scripted by Konstak (effect 7 fixed by Gideon)
 --Effect
 -- (1) Cannot be Special Summoned.
 -- (2) When this card is Summoned: If the LP difference between both players' LP is 4000 or more; Both player's LP become 9000, then banish this card.
@@ -90,7 +90,7 @@ function s.initial_effect(c)
     e10:SetCode(EVENT_CHAINING)
     e10:SetRange(LOCATION_HAND)
     e10:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-	e10:SetCondition(s.negcon)
+    e10:SetCondition(s.negcon)
     e10:SetTarget(s.distg)
     e10:SetOperation(s.disop)
     c:RegisterEffect(e10)

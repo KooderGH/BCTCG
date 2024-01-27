@@ -90,6 +90,7 @@ function s.initial_effect(c)
     e10:SetCode(EVENT_CHAINING)
     e10:SetRange(LOCATION_HAND)
     e10:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+	e10:SetCondition(s.negcon)
     e10:SetTarget(s.distg)
     e10:SetOperation(s.disop)
     c:RegisterEffect(e10)
@@ -169,11 +170,23 @@ function s.roperation(e,tp,eg,ep,ev,re,r,rp)
     Duel.Recover(p,rt,REASON_EFFECT)
 end
 --(7)
+function s.tgfilter(c,tp)
+	return c:IsFaceup() and c:IsLocation(LOCATION_MZONE) and c:IsControler(tp)
+end
+function s.negcon(e,tp,eg,ep,ev,re,r,rp)
+	if not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return false end
+	local tg=Duel.GetChainInfo(ev,CHAININFO_TARGET_CARDS)
+	return tg and tg:IsExists(s.tgfilter,1,nil,tp) and Duel.IsChainDisablable(ev)
+end
 function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_DISABLE,eg,1,0,0)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_DISABLE,eg,1,0,0)
+	if re:GetHandler():IsDestructable() and re:GetHandler():IsRelateToEffect(re) then
+		Duel.SetOperationInfo(0,CATEGORY_DESTROY,eg,1,0,0)
+	end
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
-    Duel.NegateEffect(ev)
-    Duel.Destroy(eg,REASON_EFFECT)
+	if Duel.NegateEffect(ev) and re:GetHandler():IsRelateToEffect(re) then
+		Duel.Destroy(eg,REASON_EFFECT)
+	end
 end

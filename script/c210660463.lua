@@ -208,12 +208,11 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(6)
 function s.graverecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLP(0)~=Duel.GetLP(1) end
-	Duel.SetLP(tp,Duel.GetLP(1))
+	if chk==0 then return Duel.GetLP(tp)~=Duel.GetLP(1-tp) end
+	Duel.SetLP(tp,Duel.GetLP(1-tp))
 end
 function s.graverecoverytg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
-	Duel.SetLP(tp,Duel.GetLP(1))
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
 function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)

@@ -7,6 +7,7 @@
 -- (4) During the End phase: Target 1 Card in your GY; Add it to your hand.
 -- (5) Once per turn (Ignition): You can target 1 monster you control and declare a monster type and attribute; Both this card and that monster become that type and attribute while face-up on the field.
 -- (6) During your turn, except the turn this card was sent to the GY: You can banish this card from your GY; Gain 300 LP for each card in your opponent's deck.
+-- (7) While this card is in your hand, If a monster is targeted by a effect: Reveal this card; Negate the effect that targeted that monster and destroy it. You can only use this effect of "Yuletide Nurse" once per Duel.
 local s,id=GetID()
 function s.initial_effect(c)
     --cannot special summon (1)
@@ -80,6 +81,18 @@ function s.initial_effect(c)
     e9:SetTarget(s.rtarget)
     e9:SetOperation(s.roperation)
     c:RegisterEffect(e9)
+    --While in card, reveal card, negate effect, destroy that monster
+    local e10=Effect.CreateEffect(c)
+    e10:SetDescription(aux.Stringid(id,4))
+    e10:SetCategory(CATEGORY_DISABLE+CATEGORY_DESTROY)
+    e10:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e10:SetType(EFFECT_TYPE_QUICK_O)
+    e10:SetCode(EVENT_CHAINING)
+    e10:SetRange(LOCATION_HAND)
+    e10:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e10:SetTarget(s.distg)
+    e10:SetOperation(s.disop)
+    c:RegisterEffect(e10)
 end
 --(2)
 function s.smcon(e,tp,eg,ep,ev,re,r,rp)
@@ -154,4 +167,13 @@ function s.roperation(e,tp,eg,ep,ev,re,r,rp)
     local rt=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)*300
     local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
     Duel.Recover(p,rt,REASON_EFFECT)
+end
+--(7)
+function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,eg,1,0,0)
+end
+function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
+    Duel.NegateEffect(ev)
+    Duel.Destroy(eg,REASON_EFFECT)
 end

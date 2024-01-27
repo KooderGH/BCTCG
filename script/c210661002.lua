@@ -170,6 +170,7 @@ function s.initial_effect(c)
 	e20:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_DELAY)
 	e20:SetRange(LOCATION_MZONE)
 	e20:SetLabel(1)
+	e20:SetCountLimit(1)
 	e20:SetCondition(s.pilecountcondition)
 	e20:SetTarget(s.cardzonetarget)
 	e20:SetOperation(s.cardzoneop)
@@ -185,6 +186,48 @@ function s.initial_effect(c)
 	e22:SetCondition(s.pilecountcondition)
 	e22:SetOperation(s.defop2)
 	c:RegisterEffect(e22)
+	--3+ (12)
+	local e23=Effect.CreateEffect(c)
+	e23:SetDescription(aux.Stringid(id,9))
+    e23:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e23:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_IGNITION)
+	e23:SetRange(LOCATION_MZONE)
+	e23:SetLabel(3)
+	e23:SetCondition(s.pilecountcondition)
+	e23:SetCost(s.trcost)
+	e23:SetTarget(s.trtg)
+	e23:SetOperation(s.trop)
+	c:RegisterEffect(e23)
+	--Cannot set
+	local e24=Effect.CreateEffect(c)
+	e24:SetType(EFFECT_TYPE_FIELD)
+	e24:SetCode(EFFECT_CANNOT_MSET)
+	e24:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e24:SetRange(LOCATION_MZONE)
+	e24:SetTargetRange(0,1)
+	e24:SetLabel(4)
+	e24:SetCondition(s.pilecountcondition)
+	c:RegisterEffect(e24)
+	local e25=e24:Clone()
+	e25:SetCode(EFFECT_CANNOT_SSET)
+	c:RegisterEffect(e25)
+	local e26=e24:Clone()
+	e26:SetCode(EFFECT_CANNOT_TURN_SET)
+	c:RegisterEffect(e26)
+	local e27=e24:Clone()
+	e27:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e27:SetTarget(s.sumlimit)
+	c:RegisterEffect(e27)
+	--lower this card's DEF by 500 to Special Summon 1 "Driller K41 Token" (11)
+	local e28=Effect.CreateEffect(c)
+	e28:SetDescription(aux.Stringid(id,10))
+	e28:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+	e28:SetType(EFFECT_TYPE_IGNITION)
+	e28:SetRange(LOCATION_MZONE)
+	e28:SetCountLimit(2,{id,1},EFFECT_COUNT_CODE_OATH)
+	e28:SetTarget(s.ssttg2)
+	e28:SetOperation(s.sstpop2)
+	c:RegisterEffect(e28)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -345,5 +388,61 @@ function s.defop2(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetValue(1000)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
 		c:RegisterEffect(e1)
+	end
+end
+--(*3 12)
+function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.pilefilter,1,false,nil,nil) end
+	local sg=Duel.SelectReleaseGroupCost(tp,s.pilefilter,1,1,false,nil,nil)
+	Duel.Release(sg,REASON_COST)
+end
+function s.searchfilter(c,e,tp)
+    return c:IsAbleToHand()
+end
+function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.searchfilter,tp,LOCATION_GRAVE,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.trop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.searchfilter,tp,LOCATION_GRAVE,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
+end
+--(*4 12)
+function s.sumlimit(e,c,sump,sumtype,sumpos,targetp)
+	return (sumpos&POS_FACEDOWN)>0
+end
+--Special Summon Driller K41 function
+s.listed_names={210668002}
+function s.ssttg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
+end
+function s.sstpop2(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668002,0,TYPES_TOKEN,1000,0,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local c=e:GetHandler()
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_DEFENSE)
+		e1:SetValue(-500)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+		c:RegisterEffect(e1)
+		local token2=Duel.CreateToken(tp,210668002)
+		Duel.SpecialSummonStep(token2,0,tp,tp,false,false,POS_FACEUP)
+	    --Cannot be targeted by card effects (1)
+        local e2=Effect.CreateEffect(e:GetHandler())
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+		e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+		e2:SetRange(LOCATION_MZONE)
+		e2:SetValue(1)
+        token2:RegisterEffect(e2,true)
+		Duel.SpecialSummonComplete()
 	end
 end

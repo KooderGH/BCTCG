@@ -45,7 +45,7 @@ end
 --e2
 function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	local t=e:GetHandler():GetBattleTarget()
-	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,0,LOCATION_MZONE,1,nil) end
+	if chk==0 then return t:IsAbleToHand() end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,t,1,0,0)
 end
 function s.roperation(e,tp,eg,ep,ev,re,r,rp)

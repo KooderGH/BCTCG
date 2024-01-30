@@ -12,7 +12,7 @@ function s.initial_effect(c)
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_SUMMON_PROC)
+    e1:SetCode(EFFECT_SET_PROC)
     c:RegisterEffect(e1)
     --Change this card to face-up Defense Position, and if you do, negate the activation and if you do, banish it (2)
     local e2=Effect.CreateEffect(c)
@@ -131,19 +131,19 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(5)
 function s.dfilter(c)
-	return c:IsCode(id) and c:IsAbleToHand()
+    return c:IsCode(id) and c:IsAbleToHand()
 end
 function s.drcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
+    return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+        and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
-	end
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
+    end
 end

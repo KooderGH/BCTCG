@@ -47,16 +47,23 @@ function s.initial_effect(c)
     e4:SetOperation(s.spop)
     c:RegisterEffect(e4)
     --When this card is destroyed; You can Special Summon this card in Defense Position during the End Phase. (5) 
-    local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,3))
-    e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
-    e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-    e5:SetCode(EVENT_PHASE+PHASE_END)
-    e5:SetRange(LOCATION_GRAVE)
-    e5:SetCondition(s.drcon)
-    e5:SetTarget(s.drtg)
-    e5:SetOperation(s.drop)
-    c:RegisterEffect(e5)
+	local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+    e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    e5:SetCode(EVENT_TO_GRAVE)
+	e5:SetOperation(s.spr)
+	c:RegisterEffect(e5)
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,3))
+	e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e6:SetRange(LOCATION_GRAVE)
+	e6:SetCode(EVENT_PHASE+PHASE_END)
+	e6:SetCondition(s.sscon)
+	e6:SetTarget(s.sstg)
+	e6:SetOperation(s.ssop)
+	e6:SetLabelObject(e5)
+	c:RegisterEffect(e6)
 end
 --(2)
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
@@ -83,8 +90,8 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --(3)
-function s.searchfilter(c,e,tp)
-    return c:IsAbleToHand()
+function s.searchfilter(c)
+    return c:IsMonster() and c:IsAbleToHand()
 end
 function s.scon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler()==Duel.GetAttackTarget()
@@ -129,18 +136,27 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --(5)
-function s.dfilter(c)
-    return c:IsCode(id) and c:IsAbleToHand()
+function s.spr(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if (r&(REASON_DESTROY|REASON_EFFECT))~=(REASON_DESTROY|REASON_EFFECT) then return end
+	if Duel.GetTurnPlayer()==tp and Duel.GetCurrentPhase()==PHASE_END then
+		e:SetLabel(Duel.GetTurnCount())
+		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
+	else
+		e:SetLabel(0)
+		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
+	end
 end
-function s.drcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
+function s.sscon(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    return e:GetLabelObject():GetLabel()~=Duel.GetTurnCount() and c:GetFlagEffect(id)>0
 end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
         and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
+function s.ssop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if c:IsRelateToEffect(e) then
         Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP_DEFENSE)

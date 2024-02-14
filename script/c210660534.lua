@@ -1,5 +1,5 @@
 --Hades The Punisher
---Scripted by Konstak
+--Scripted by Konstak, fixed by Gideon
 --Effect
 -- (1) Can Be Set without Tribute.
 -- (2) When a Card is activated that targets this face-down card (Quick Effect): Change this card to face-up Defense Position, and if you do, negate the activation and if you do, banish it.
@@ -137,6 +137,7 @@ end
 --(5)
 function s.regop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
+	--Flag reason as destroy to e handle
 	if c:IsReason(REASON_DESTROY) then
 		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,0)
 	end

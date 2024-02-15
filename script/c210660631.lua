@@ -4,6 +4,7 @@
 -- (2) During each end phase; Add 2 Fog Counter to each face-up monster that is Level 4 or higher.
 -- (3) If this card would be destroyed; You can remove 3 Fog Counter(s) on the field instead.
 -- (4) Fairy monster's you control cannot be returned to the hand.
+-- (5) Once per turn (Ignition), If you control 4 or more Fairy Type monsters: You can Tribute 1 Fairy monster to add 2 Fairy monsters with different attributes (of the tributed monster) from your Deck to your Hand.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Opp monster with counters cannot attack
@@ -42,6 +43,16 @@ function s.initial_effect(c)
 	e4:SetTargetRange(LOCATION_MZONE,0)
 	e4:SetTarget(s.fairyfilter)
 	c:RegisterEffect(e4)
+	--Tribute, Search
+	local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,2))
+    e5:SetType(EFFECT_TYPE_IGNITION)
+    e5:SetRange(LOCATION_MZONE)
+	e5:SetCondition(s.tributecondition)
+	e5:SetCost(s.trcost)
+	e5:SetTarget(s.trtg)
+	e5:SetOperation(s.trop)
+	c:RegisterEffect(e5)
 end
 --Fog counter
 s.counter_place_list={0x1019}
@@ -74,4 +85,32 @@ end
 --e4
 function s.fairyfilter(e,c)
 	return c:IsFaceup() and c:IsRace(RACE_FAIRY)
+end
+--e5
+function s.tributefilter(c)
+	return c:IsRace(RACE_FAIRY) and c:IsAbleToHand()
+end
+function s.fairyfilter2(c)
+	return c:IsFaceup() and c:IsRace(RACE_FAIRY)
+end
+function s.tributecondition(e)
+	return Duel.IsExistingMatchingCard(s.fairyfilter2,e:GetHandlerPlayer(),LOCATION_MZONE,0,4,nil)
+end
+function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,Card.IsRace,1,false,nil,nil,RACE_FAIRY) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+	local g=Duel.SelectReleaseGroupCost(tp,Card.IsRace,1,1,false,nil,nil,RACE_FAIRY)
+	Duel.Release(g,REASON_COST)
+end
+function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tributefilter,tp,LOCATION_DECK,0,2,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
+end
+function s.trop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.tributefilter,tp,LOCATION_DECK,0,2,2,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end

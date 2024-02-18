@@ -24,12 +24,23 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_HAND)
     e2:SetCondition(s.spcon)
     c:RegisterEffect(e2)
-    --Missing (3)
-
+    --Tribute 1 Wind machine monster, Send 1 card to GY (3)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_TOGRAVE)
+    e3:SetType(EFFECT_TYPE_QUICK_O)
+    e3:SetCode(EVENT_FREE_CHAIN)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e3:SetCountLimit(1,id)
+    e3:SetCost(s.gycost)
+    e3:SetTarget(s.gytg)
+    e3:SetOperation(s.gyop)
+    c:RegisterEffect(e3)
     --Once sent to GY while no Wind monsters control 1 card on the field (4)
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,1))
-	e4:SetCategory(CATEGORY_CONTROL)
+    e4:SetCategory(CATEGORY_CONTROL)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
     e4:SetCode(EVENT_TO_GRAVE)
@@ -55,20 +66,44 @@ function s.spcon(e,c)
 	local tp=e:GetHandlerPlayer()
 	return Duel.IsExistingMatchingCard(s.spfilter,c:GetControler(),LOCATION_MZONE,0,3,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
+--Send to Gy
+function s.gyfilter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE)
+end
+function s.gycost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.gyfilter,1,false,nil,nil) end
+    local g=Duel.SelectReleaseGroupCost(tp,s.gyfilter,1,1,false,nil,nil)
+    Duel.Release(g,REASON_COST)
+end
+function s.gytg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    local c=e:GetHandler()
+    if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) and chkc:IsAbleToGrave() end
+    if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToGrave,tp,0,LOCATION_MZONE,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+    local g=Duel.SelectTarget(tp,Card.IsAbleToGrave,tp,0,LOCATION_MZONE,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,#g,0,0)
+end
+function s.gyop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=Duel.GetFirstTarget()
+    if c:IsRelateToEffect(e) then
+			Duel.SendtoGrave(tc,REASON_EFFECT)
+	end
+end
 --if you control no wind monsters
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_WIND),tp,LOCATION_MZONE,0,nil)==0
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsControlerCanBeChanged() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsControlerCanBeChanged,tp,0,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONTROL)
-	local g=Duel.SelectTarget(tp,Card.IsControlerCanBeChanged,tp,0,LOCATION_MZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_CONTROL,g,1,0,0)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsControlerCanBeChanged() end
+    if chk==0 then return Duel.IsExistingTarget(Card.IsControlerCanBeChanged,tp,0,LOCATION_MZONE,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONTROL)
+    local g=Duel.SelectTarget(tp,Card.IsControlerCanBeChanged,tp,0,LOCATION_MZONE,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_CONTROL,g,1,0,0)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) then
+    local tc=Duel.GetFirstTarget()
+    if tc and tc:IsRelateToEffect(e) then
 		Duel.GetControl(tc,tp)
 	end
 end

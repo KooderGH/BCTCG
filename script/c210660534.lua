@@ -54,14 +54,14 @@ function s.initial_effect(c)
 	e5:SetOperation(s.regop)
 	c:RegisterEffect(e5)
 	local e6=Effect.CreateEffect(c)
-	e6:SetDescription(aux.Stringid(id,0))
+	e6:SetDescription(aux.Stringid(id,3))
 	e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e6:SetCode(EVENT_PHASE+PHASE_END)
 	e6:SetRange(LOCATION_GRAVE)
 	e6:SetCountLimit(1)
-	e6:SetTarget(s.sptg)
-	e6:SetOperation(s.spop)
+	e6:SetTarget(s.sstg)
+	e6:SetOperation(s.ssop)
 	c:RegisterEffect(e6)
 end
 --(2)
@@ -142,11 +142,11 @@ function s.regop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,0)
 	end
 end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
-function s.spop(e,tp,eg,ep,ev,re,r,rp)
+function s.ssop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 	Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP_DEFENSE)

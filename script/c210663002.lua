@@ -55,6 +55,26 @@ function s.initial_effect(c)
     e6:SetValue(POS_FACEUP_DEFENSE)
     e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     c:RegisterEffect(e6)
+	--Special summon 1 token to your field
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,0))
+	e7:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+	e7:SetType(EFFECT_TYPE_IGNITION)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetCountLimit(1)
+	e7:SetTarget(s.sptg)
+	e7:SetOperation(s.spop)
+	c:RegisterEffect(e7)
+	--Remove Zone
+	local e8=Effect.CreateEffect(c)
+	e8:SetDescription(aux.Stringid(id,1))
+	e8:SetType(EFFECT_TYPE_IGNITION)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetCountLimit(1)
+	e8:SetCost(s.zcost)
+	e8:SetTarget(s.ztg)
+	e8:SetOperation(s.zop)
+	c:RegisterEffect(e8)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -72,4 +92,56 @@ function s.cfilter(c,tp)
 end
 function s.contactop(g,tp,c)
 	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
+end
+--Special Summon Token Function
+s.listed_names={210668001}
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668001,0,TYPES_TOKEN,1000,2000,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local token1=Duel.CreateToken(tp,210668001)
+        local token2=Duel.CreateToken(tp,210668001)
+		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummonComplete()
+		Duel.SpecialSummonStep(token2,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummonComplete()
+	end
+end
+--Remove Zone Function
+function s.tokenFilter(c)
+    return c:IsCode(210668001)
+end
+  function s.zcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tokenFilter,1,false,nil,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+    local sg=Duel.SelectReleaseGroupCost(tp,s.tokenFilter,1,1,false,nil,nil)
+    Duel.Release(sg,REASON_COST)
+end
+function s.ztg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE,PLAYER_NONE,0)
+		+Duel.GetLocationCount(tp,LOCATION_SZONE,PLAYER_NONE,0)
+		+Duel.GetLocationCount(1-tp,LOCATION_MZONE,PLAYER_NONE,0)
+		+Duel.GetLocationCount(1-tp,LOCATION_SZONE,PLAYER_NONE,0)>0 end
+	local dis=Duel.SelectDisableField(tp,1,LOCATION_ONFIELD,LOCATION_ONFIELD,0)
+	Duel.Hint(HINT_ZONE,tp,dis)
+	Duel.SetTargetParam(dis)
+end
+function s.zop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	--Disable the chosen zone
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_DISABLE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetOperation(function(e) return e:GetLabel() end)
+	e1:SetReset(RESET_EVENT|RESETS_STANDARD)
+	e1:SetLabel(Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM))
+	c:RegisterEffect(e1)
 end

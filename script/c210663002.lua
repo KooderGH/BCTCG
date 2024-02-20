@@ -3,7 +3,7 @@
 --Effects:
 --2 "Mighty Aethur Ltd." (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
---(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending 2 "Mighty Aethur Ltd." from your field to the GY. This Card Summon cannot be negated.
+--(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending 2 "Mighty Aethur Ltd." from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
 --(3) Cannot be returned to hand or Tributed.
 --(4) This card's Position cannot be changed.
 --(5) Once per turn (Igntion): You can Special Summon 2 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 1500).

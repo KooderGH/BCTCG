@@ -3,7 +3,7 @@
 --Effects:
 --2+ Earth Machine Monster(s) (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
---(2) Must first be Special Summoned (from your Extra Deck) by sending the above cards from either field to the GY. The original ATK and DEF of this card becomes 750 x the number of materials used for its Special Summon.
+--(2) Must first be Special Summoned (from your Extra Deck) by sending the above cards from either field to the GY. (You do not use "Polymerization") The original ATK and DEF of this card becomes 750 x the number of materials used for its Special Summon.
 --(3) Cannot be Banished or Tributed.
 --(4) Once per turn (Igntion): You can Special Summon 1 "Type 10 Token" (Cyverse/EARTH/Level 4/ATK 2000/DEF 2000)
 --(5) While you control a Token, this card cannot be destroyed by battle and cannot be targeted by card effects.

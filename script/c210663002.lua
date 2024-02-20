@@ -14,7 +14,7 @@
 --* You can Tribute 1 "Driller K41 Token" monster; Gain 1 Guard Counter.
 --* You can Tribute 1 "Thermae K41 Token" monster; Gain 2 Guard Counter.
 --(8) Monsters you control gain 1000 DEF for each Guard Counter on this card.
---(9) While you control a Token, this card cannot be targeted for attacks and cannot be targeted by card effects.
+--(9) While you control a "Type-K41 Defence" Token, this card cannot be targeted for attacks and cannot be targeted by card effects.
 
 local s,id=GetID()
 function s.initial_effect(c)
@@ -128,7 +128,7 @@ function s.initial_effect(c)
     e13:SetCode(EFFECT_UPDATE_DEFENSE)
     e13:SetRange(LOCATION_MZONE)
     e13:SetTargetRange(LOCATION_MZONE,0)
-    e13:SetValue(s.atkval)
+    e13:SetValue(s.defval)
     c:RegisterEffect(e13)
     --Cannot be destroyed
     local e14=Effect.CreateEffect(c)
@@ -294,7 +294,7 @@ function s.addc2(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Counter
-function s.atkval(e,c)
+function s.defval(e,c)
 	return Duel.GetCounter(0,1,1,0x1021)*1000
 end
 --Cannot be Attacked/Targeted by effects condition

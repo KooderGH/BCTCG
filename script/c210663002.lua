@@ -18,8 +18,8 @@
 --(10) You can only control one "Type-K41 Defence".
 local s,id=GetID()
 function s.initial_effect(c)
-	--Can only control one
-	c:SetUniqueOnField(1,0,id)
+    --Can only control one
+    c:SetUniqueOnField(1,0,id)
     --fusion material
     c:EnableReviveLimit()
     Fusion.AddProcMixRep(c,true,true,s.fil,2,2)

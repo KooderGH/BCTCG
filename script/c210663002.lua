@@ -55,26 +55,48 @@ function s.initial_effect(c)
     e6:SetValue(POS_FACEUP_DEFENSE)
     e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     c:RegisterEffect(e6)
-	--Special summon 1 token to your field
-	local e7=Effect.CreateEffect(c)
-	e7:SetDescription(aux.Stringid(id,0))
-	e7:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
-	e7:SetType(EFFECT_TYPE_IGNITION)
-	e7:SetRange(LOCATION_MZONE)
-	e7:SetCountLimit(1)
-	e7:SetTarget(s.sptg)
-	e7:SetOperation(s.spop)
-	c:RegisterEffect(e7)
-	--Remove Zone
-	local e8=Effect.CreateEffect(c)
-	e8:SetDescription(aux.Stringid(id,1))
-	e8:SetType(EFFECT_TYPE_IGNITION)
+    --Special summon 1 token to your field
+    local e7=Effect.CreateEffect(c)
+    e7:SetDescription(aux.Stringid(id,0))
+    e7:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+    e7:SetType(EFFECT_TYPE_IGNITION)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetCountLimit(1)
+    e7:SetTarget(s.sptg)
+    e7:SetOperation(s.spop)
+    c:RegisterEffect(e7)
+    --Make Zone unusable after tributing piledriver
+    local e8=Effect.CreateEffect(c)
+    e8:SetDescription(aux.Stringid(id,1))
+    e8:SetType(EFFECT_TYPE_IGNITION)
     e8:SetRange(LOCATION_MZONE)
     e8:SetCountLimit(1)
-	e8:SetCost(s.zcost)
-	e8:SetTarget(s.ztg)
-	e8:SetOperation(s.zop)
-	c:RegisterEffect(e8)
+    e8:SetCost(s.zcost)
+    e8:SetTarget(s.ztg)
+    e8:SetOperation(s.zop)
+    c:RegisterEffect(e8)
+    --Special summon 1 token to your field
+    local e9=Effect.CreateEffect(c)
+    e9:SetDescription(aux.Stringid(id,2))
+    e9:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+    e9:SetType(EFFECT_TYPE_IGNITION)
+    e9:SetRange(LOCATION_MZONE)
+    e9:SetCountLimit(1)
+    e9:SetCost(s.zcost)
+    e9:SetTarget(s.sptg2)
+    e9:SetOperation(s.spop2)
+    c:RegisterEffect(e9)
+    --Special summon 1 token to your field
+    local e10=Effect.CreateEffect(c)
+    e10:SetDescription(aux.Stringid(id,3))
+    e10:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+    e10:SetType(EFFECT_TYPE_IGNITION)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetCountLimit(1)
+    e10:SetCost(s.zcost2)
+    e10:SetTarget(s.sptg3)
+    e10:SetOperation(s.spop3)
+    c:RegisterEffect(e10)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -144,4 +166,45 @@ function s.zop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetReset(RESET_EVENT|RESETS_STANDARD)
 	e1:SetLabel(Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM))
 	c:RegisterEffect(e1)
+end
+--Special Summon Token 2 Function
+s.listed_names={210668002}
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668002,0,TYPES_TOKEN,1500,1500,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local token1=Duel.CreateToken(tp,210668002)
+		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummonComplete()
+	end
+end
+--Special Summon Token 3 Function
+s.listed_names={210668003}
+function s.drillerFilter(c)
+    return c:IsCode(210668002)
+end
+  function s.zcost2(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.drillerFilter,1,false,nil,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+    local sg=Duel.SelectReleaseGroupCost(tp,s.drillerFilter,1,1,false,nil,nil)
+    Duel.Release(sg,REASON_COST)
+end
+function s.sptg3(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
+end
+function s.spop3(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210668003,0,TYPES_TOKEN,2500,3000,2,RACE_MACHINE,ATTRIBUTE_DARK) then
+		local token1=Duel.CreateToken(tp,210668003)
+		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummonComplete()
+	end
 end

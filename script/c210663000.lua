@@ -10,8 +10,11 @@
 --(6) You can Tribute 1 "Type 10 Token" monster's; Gain 1 Guard Counter.
 --(7) Monsters you control gain 750 ATK for each Guard Counter on this card.
 --(8) You can Tribute 2 "Type 10 Token" monster's; Decrease your opponent's LP by a quarter of their LP.
+--(9) You can only control one "Type-80T support".
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     --fusion material
     c:EnableReviveLimit()
     Fusion.AddProcMixRep(c,true,true,s.fil,2,99)

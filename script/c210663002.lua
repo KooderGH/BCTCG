@@ -15,9 +15,11 @@
 --* You can Tribute 1 "Thermae K41 Token" monster; Gain 2 Guard Counter.
 --(8) Monsters you control gain 1000 DEF for each Guard Counter on this card.
 --(9) While you control a "Type-K41 Defence" Token, this card cannot be targeted for attacks and cannot be targeted by card effects.
-
+--(10) You can only control one "Type-K41 Defence".
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     --fusion material
     c:EnableReviveLimit()
     Fusion.AddProcMixRep(c,true,true,s.fil,2,2)

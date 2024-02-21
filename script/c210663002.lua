@@ -103,6 +103,7 @@ function s.initial_effect(c)
     e10:SetOperation(s.spop3)
     c:RegisterEffect(e10)
     --Place one counter when tribute Driller
+    c:EnableCounterPermit(0x6000)
     local e11=Effect.CreateEffect(c)
     e11:SetDescription(aux.Stringid(id,4))
     e11:SetCategory(CATEGORY_COUNTER)
@@ -145,7 +146,6 @@ function s.initial_effect(c)
     e15:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
     c:RegisterEffect(e15)
 end
-s.counter_list={0x6000}
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
@@ -267,6 +267,7 @@ function s.spop3(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Driller Guard Counter 
+s.counter_list={0x6000}
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x6000)

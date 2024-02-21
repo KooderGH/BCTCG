@@ -64,6 +64,7 @@ function s.initial_effect(c)
     e7:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
     c:RegisterEffect(e7)
     --Place one counter when tribute Type 10
+    c:EnableCounterPermit(0x6000)
     local e8=Effect.CreateEffect(c)
     e8:SetDescription(aux.Stringid(id,2))
     e8:SetCategory(CATEGORY_COUNTER)
@@ -90,7 +91,6 @@ function s.initial_effect(c)
     e10:SetOperation(s.lpop)
     c:RegisterEffect(e10)
 end
-s.counter_list={0x6000}
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
@@ -135,6 +135,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --addcounter
+s.counter_list={0x6000}
 function s.indcon(e)
     return Duel.IsExistingMatchingCard(Card.IsType,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil,TYPE_TOKEN)
 end

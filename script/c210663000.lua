@@ -159,7 +159,7 @@ function s.addc(e,tp,eg,ep,ev,re,r,rp)
 end
 --Counter
 function s.atkval(e,c)
-    return Duel.GetCounter(0,1,0,0x1d)*750
+    return Duel.GetCounter(0,1,1,0x1d)*750
 end
 --decrease a quarter of your Opponent's LP function
 function s.tokenFilter(c)

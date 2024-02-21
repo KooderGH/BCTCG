@@ -298,7 +298,7 @@ function s.addc2(e,tp,eg,ep,ev,re,r,rp)
 end
 --Counter
 function s.defval(e,c)
-    return Duel.GetCounter(0,1,0,0x1d)*1000
+    return Duel.GetCounter(0,1,1,0x1d)*1000
 end
 --Cannot be Attacked/Targeted by effects condition
 function s.TokenFilter(c)

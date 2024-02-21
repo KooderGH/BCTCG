@@ -103,7 +103,7 @@ function s.initial_effect(c)
     e10:SetOperation(s.spop3)
     c:RegisterEffect(e10)
     --Place one counter when tribute Driller
-    c:EnableCounterPermit(0x6000)
+    c:EnableCounterPermit(0x4001)
     local e11=Effect.CreateEffect(c)
     e11:SetDescription(aux.Stringid(id,4))
     e11:SetCategory(CATEGORY_COUNTER)
@@ -267,14 +267,14 @@ function s.spop3(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Driller Guard Counter 
-s.counter_list={0x6000}
+s.counter_list={0x4001}
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x6000)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x4001)
 end
 function s.addc(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        e:GetHandler():AddCounter(0x6000,1)
+        e:GetHandler():AddCounter(0x4001,1)
 	end
 end
 --Thermae Guard Counter
@@ -289,16 +289,16 @@ end
 end
 function s.addct2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,2,0,0x6000)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,2,0,0x4001)
 end
 function s.addc2(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        e:GetHandler():AddCounter(0x6000,2)
+        e:GetHandler():AddCounter(0x4001,2)
 	end
 end
 --Counter
 function s.defval(e,c)
-    return Duel.GetCounter(0,1,1,0x6000)*1000
+    return Duel.GetCounter(0,1,1,0x4001)*1000
 end
 --Cannot be Attacked/Targeted by effects condition
 function s.TokenFilter(c)

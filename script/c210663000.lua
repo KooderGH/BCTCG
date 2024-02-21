@@ -64,7 +64,7 @@ function s.initial_effect(c)
     e7:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
     c:RegisterEffect(e7)
     --Place one counter when tribute Type 10
-    c:EnableCounterPermit(0x6000)
+    c:EnableCounterPermit(0x4001)
     local e8=Effect.CreateEffect(c)
     e8:SetDescription(aux.Stringid(id,2))
     e8:SetCategory(CATEGORY_COUNTER)
@@ -135,7 +135,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --addcounter
-s.counter_list={0x6000}
+s.counter_list={0x4001}
 function s.indcon(e)
     return Duel.IsExistingMatchingCard(Card.IsType,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil,TYPE_TOKEN)
 end
@@ -150,16 +150,16 @@ end
 end
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x6000)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x4001)
 end
 function s.addc(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        e:GetHandler():AddCounter(0x6000,1)
+        e:GetHandler():AddCounter(0x4001,1)
 	end
 end
 --Counter
 function s.atkval(e,c)
-    return Duel.GetCounter(0,1,1,0x6000)*750
+    return Duel.GetCounter(0,1,1,0x4001)*750
 end
 --decrease a quarter of your Opponent's LP function
 function s.tokenFilter(c)

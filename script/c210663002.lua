@@ -6,7 +6,7 @@
 --(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending 2 "Mighty Aethur Ltd." from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
 --(3) Cannot be returned to hand or Tributed.
 --(4) This card's Position cannot be changed.
---(5) Once per turn (Igntion): You can Special Summon 2 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 1500).
+--(5) Once per turn (Igntion): You can Special Summon up to 2 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 1500).
 --(6) Once per turn; You can Tribute 1 "Piledriver K41 Token" monster; You can choose 1 unused Main Monster Zone or Spell & Trap Zone; it cannot be used while this monster is face-up on the field.
 --(7) You can only activate two of the following effects of "Type-K41 Defence" once per turn (Ignition):
 --* You can Tribute 2 "Piledriver K41 Token" monster; Special Summon 1 "Driller K41 Token" (Machine/DARK/Level 2/ATK 1500/DEF 2000). These token's can attack your opponent directly.
@@ -162,7 +162,7 @@ end
 function s.contactop(g,tp,c)
 	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
 end
---Special Summon Token Function
+--Special Summon Piledriver Function
 s.listed_names={210668001}
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -213,10 +213,10 @@ function s.zop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetLabel(Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM))
 	c:RegisterEffect(e1)
 end
---Special Summon Token 2 Function
+--Special Summon Driller Function
 s.listed_names={210668002}
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tokenFilter,tp,LOCATION_MZONE,0,1,nil)
 	end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
@@ -234,7 +234,7 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummonComplete()
 	end
 end
---Special Summon Token 3 Function
+--Special Summon thermae Function
 s.listed_names={210668003}
 function s.drillerFilter(c)
     return c:IsCode(210668002)
@@ -246,7 +246,7 @@ end
     Duel.Release(sg,REASON_COST)
 end
 function s.sptg3(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.IsExistingMatchingCard(s.drillerFilter,tp,LOCATION_MZONE,0,1,nil)
 	end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)

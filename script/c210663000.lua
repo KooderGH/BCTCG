@@ -13,7 +13,7 @@
 --(9) You can only control one "Type-80T support".
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableCounterPermit(0x1d)
+    c:EnableCounterPermit(0x1d)
     --Can only control one
     c:SetUniqueOnField(1,0,id)
     --fusion material
@@ -159,7 +159,7 @@ function s.addc(e,tp,eg,ep,ev,re,r,rp)
 end
 --Counter
 function s.atkval(e,c)
-	return Duel.GetCounter(0,1,0,0x1d)*750
+    return Duel.GetCounter(0,1,0,0x1d)*750
 end
 --decrease a quarter of your Opponent's LP function
 function s.tokenFilter(c)

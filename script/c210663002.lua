@@ -18,7 +18,7 @@
 --(10) You can only control one "Type-K41 Defence".
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableCounterPermit(0x1d)
+    c:EnableCounterPermit(0x1d)
     --Can only control one
     c:SetUniqueOnField(1,0,id)
     --fusion material
@@ -298,7 +298,7 @@ function s.addc2(e,tp,eg,ep,ev,re,r,rp)
 end
 --Counter
 function s.defval(e,c)
-	return Duel.GetCounter(0,1,0,0x1d)*1000
+    return Duel.GetCounter(0,1,0,0x1d)*1000
 end
 --Cannot be Attacked/Targeted by effects condition
 function s.TokenFilter(c)

@@ -11,13 +11,14 @@
 --(7) You can only activate two of the following effects of "Type-K41 Defence" once per turn (Ignition):
 --* You can Tribute 2 "Piledriver K41 Token" monster; Special Summon 1 "Driller K41 Token" (Machine/DARK/Level 2/ATK 1500/DEF 2000). These token's can attack your opponent directly.
 --* You can Tribute 1 "Driller K41 Token" monster; Special Summon 1 "Thermae K41 Token" (Machine/DARK/Level 2/ATK 2000/DEF 2500). These token's can attack your opponents monsters once each.
---* You can Tribute 1 "Driller K41 Token" monster; Gain 1 Guard Counter.
---* You can Tribute 1 "Thermae K41 Token" monster; Gain 2 Guard Counter.
---(8) Monsters you control gain 1000 DEF for each Guard Counter on this card.
+--* You can Tribute 1 "Driller K41 Token" monster; Gain 1 Junk Counter.
+--* You can Tribute 1 "Thermae K41 Token" monster; Gain 2 Junk Counter.
+--(8) Monsters you control gain 1000 DEF for each Junk Counter on the field.
 --(9) While you control a "Type-K41 Defence" Token, this card cannot be targeted for attacks and cannot be targeted by card effects.
 --(10) You can only control one "Type-K41 Defence".
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableCounterPermit(0x1d)
     --Can only control one
     c:SetUniqueOnField(1,0,id)
     --fusion material
@@ -145,6 +146,7 @@ function s.initial_effect(c)
     e15:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
     c:RegisterEffect(e15)
 end
+s.counter_list={0x1d}
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
@@ -266,14 +268,13 @@ function s.spop3(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Driller Guard Counter 
-s.counter_place_list={0x1021}
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x1021)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x1d)
 end
 function s.addc(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-		e:GetHandler():AddCounter(0x1021+COUNTER_NEED_ENABLE,1)
+        e:GetHandler():AddCounter(0x1d,1)
 	end
 end
 --Thermae Guard Counter
@@ -288,16 +289,16 @@ end
 end
 function s.addct2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,2,0,0x1021)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,2,0,0x1d)
 end
 function s.addc2(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-		e:GetHandler():AddCounter(0x1021+COUNTER_NEED_ENABLE,2)
+        e:GetHandler():AddCounter(0x1d,2)
 	end
 end
 --Counter
 function s.defval(e,c)
-	return Duel.GetCounter(0,1,1,0x1021)*1000
+	return Duel.GetCounter(0,1,0,0x1d)*1000
 end
 --Cannot be Attacked/Targeted by effects condition
 function s.TokenFilter(c)

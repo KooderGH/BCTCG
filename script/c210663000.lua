@@ -7,12 +7,13 @@
 --(3) Cannot be Banished or Tributed.
 --(4) Once per turn (Igntion): You can Special Summon 1 "Type 10 Token" (Cyverse/EARTH/Level 4/ATK 2000/DEF 2000)
 --(5) While you control a Token, this card cannot be destroyed by battle and cannot be targeted by card effects.
---(6) You can Tribute 1 "Type 10 Token" monster's; Gain 1 Guard Counter.
---(7) Monsters you control gain 750 ATK for each Guard Counter on this card.
+--(6) You can Tribute 1 "Type 10 Token" monster's; Gain 1 Junk Counter.
+--(7) Monsters you control gain 750 ATK for each Junk Counter on the field.
 --(8) You can Tribute 2 "Type 10 Token" monster's; Decrease your opponent's LP by a quarter of their LP.
 --(9) You can only control one "Type-80T support".
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableCounterPermit(0x1d)
     --Can only control one
     c:SetUniqueOnField(1,0,id)
     --fusion material
@@ -90,6 +91,7 @@ function s.initial_effect(c)
     e10:SetOperation(s.lpop)
     c:RegisterEffect(e10)
 end
+s.counter_list={0x1d}
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
@@ -146,19 +148,18 @@ end
     local sg=Duel.SelectReleaseGroupCost(tp,s.type10Filter,1,1,false,nil,nil)
     Duel.Release(sg,REASON_COST)
 end
-s.counter_place_list={0x1021}
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x1021)
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x1d)
 end
 function s.addc(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-		e:GetHandler():AddCounter(0x1021+COUNTER_NEED_ENABLE,1)
+        e:GetHandler():AddCounter(0x1d,1)
 	end
 end
 --Counter
 function s.atkval(e,c)
-	return Duel.GetCounter(0,1,1,0x1021)*750
+	return Duel.GetCounter(0,1,0,0x1d)*750
 end
 --decrease a quarter of your Opponent's LP function
 function s.tokenFilter(c)

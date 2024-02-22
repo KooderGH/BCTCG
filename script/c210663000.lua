@@ -94,7 +94,7 @@ end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
-	return c:IsRace(RACE_MACHINE,fc,sumtype,tp) and c:IsFaceup() and c:IsRace(RACE_MACHINE,fc,sumtype,tp) and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))
+	return c:IsRace(RACE_MACHINE,fc,sumtype,tp) and c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH,fc,sumtype,tp) and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))
 end
 function s.splimit(e,se,sp,st)
 	return e:GetHandler():GetLocation()~=LOCATION_EXTRA

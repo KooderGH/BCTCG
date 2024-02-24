@@ -42,6 +42,17 @@ function s.initial_effect(c)
     e4:SetTarget(s.srtg)
     e4:SetOperation(s.srop)
     c:RegisterEffect(e4)
+    --once sent to the graveyard add S/T from GY based on the number of 2 WIND monsters you control
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+    e5:SetCode(EVENT_TO_GRAVE)
+    e5:SetCountLimit(1,id)
+    e5:SetTarget(s.addtg)
+    e5:SetOperation(s.addop)
+    c:RegisterEffect(e5)
 end
 s.counter_place_list={COUNTER_SPELL}
 --Self Destroy Function
@@ -76,4 +87,26 @@ function s.srop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--add Spell from GY function
+function s.addfilter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+end
+function s.spellfilter(c)
+	return c:IsSpell()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() end
+    local gt=Duel.GetMatchingGroupCount(s.addfilter,tp,LOCATION_MZONE,0,nil)
+    if chk==0 then return gt>1 and Duel.IsExistingMatchingCard(s.spellfilter,tp,LOCATION_GRAVE,0,1,nil) end
+    local g=Duel.SelectTarget(tp,s.spellfilter,tp,LOCATION_GRAVE,0,math.floor(gt/2),math.floor(gt/2),nil)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local tg=Duel.GetTargetCards(e)
+    if #tg>0 then
+        Duel.SendtoHand(tg,nil,REASON_EFFECT)
+        Duel.ConfirmCards(tp,tg)
+    end
 end

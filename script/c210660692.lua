@@ -33,7 +33,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     --battle damage
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetDescription(aux.Stringid(id,0))
     e4:SetCategory(CATEGORY_DRAW)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetCode(EVENT_BATTLE_DAMAGE)
@@ -57,7 +57,7 @@ function s.btcon(e)
 end
 --Battle damage function
 function s.bdcon(e,tp,eg,ep,ev,re,r,rp)
-	return ep~=tp
+    return ep~=tp
 end
 function s.bdop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)

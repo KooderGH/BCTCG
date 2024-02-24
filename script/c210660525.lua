@@ -1,5 +1,5 @@
 --Kintaro
---Scripted by Konstak
+--Scripted by Konstak.
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control no monster(s), you can Special Summon this card from your hand.

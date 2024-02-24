@@ -22,6 +22,15 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetCode(EFFECT_DIRECT_ATTACK)
     c:RegisterEffect(e2)
+    --Cannot be battle target
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e3:SetCondition(s.btcon)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -29,4 +38,11 @@ function s.sdfilter(c)
 end
 function s.sdcon(e)
     return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+--Cannot be battle target
+function s.btfilter(c)
+    return c:IsMonster() and c:IsAttribute(ATTRIBUTE_WIND)
+end
+function s.btcon(e)
+    return Duel.IsExistingMatchingCard(s.btfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,3,nil)
 end

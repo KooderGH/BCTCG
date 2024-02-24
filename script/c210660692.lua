@@ -40,6 +40,7 @@ function s.initial_effect(c)
     e4:SetCondition(s.bdcon)
     e4:SetOperation(s.bdop)
     c:RegisterEffect(e4)
+    --Missing e5
 end
 --Self Destroy Function
 function s.sdfilter(c)

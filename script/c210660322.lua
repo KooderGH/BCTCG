@@ -28,6 +28,7 @@ function s.initial_effect(c)
     e2:SetTarget(s.sptg)
     e2:SetOperation(s.spop)
     c:RegisterEffect(e2)
+    --missing the rest of the effects
 end
 --Self Destroy Function
 function s.sdfilter(c)

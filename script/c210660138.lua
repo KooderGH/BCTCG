@@ -16,8 +16,14 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_SELF_DESTROY)
     e1:SetCondition(s.sdcon)
     c:RegisterEffect(e1)
-
-
+    --Special Summon this card (2)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_FIELD)
+    e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e2:SetCode(EFFECT_SPSUMMON_PROC)
+    e2:SetRange(LOCATION_HAND)
+    e2:SetCondition(s.spcon)
+    c:RegisterEffect(e2)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -25,4 +31,13 @@ function s.sdfilter(c)
 end
 function s.sdcon(e)
     return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+--Special summon this card function
+function s.spfilter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+end
+function s.spcon(e,c)
+	if c==nil then return true end
+	local tp=e:GetHandlerPlayer()
+	return Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)>=2 and Duel.IsExistingMatchingCard(s.spfilter,c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end

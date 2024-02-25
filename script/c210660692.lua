@@ -1,5 +1,5 @@
 --Issun Boshi
---Scripted by Konstak
+--Scripted by Konstak, fix by Gideon
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) This card can attack directly.
@@ -37,6 +37,7 @@ function s.initial_effect(c)
     e4:SetCategory(CATEGORY_DRAW)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetCode(EVENT_BATTLE_DAMAGE)
+	e4:SetCountLimit(1,id)
     e4:SetCondition(s.bdcon)
     e4:SetOperation(s.bdop)
     c:RegisterEffect(e4)
@@ -79,18 +80,18 @@ function s.ndrfilter(c)
     return c:IsMonster() and c:IsAttributeExcept(ATTRIBUTE_WIND)
 end
 function s.drcon(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.IsExistingMatchingCard(s.ndrfilter,tp,LOCATION_MZONE,0,1,nil)
 	local t=Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)
-	local s=Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
-	then return t>s
+	local ot=Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
+    if not Duel.IsExistingMatchingCard(s.ndrfilter,tp,LOCATION_MZONE,0,1,nil) then return t>ot end
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) end
 	local t=Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)
-	local s=Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
-	if chk==0 then return Duel.IsPlayerCanDraw(tp,t-s) end
+	local ot=Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,t-ot) end
 	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(t-s)
-	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,t-s)
+	Duel.SetTargetParam(t-ot)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,t-ot)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)

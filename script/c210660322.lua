@@ -27,6 +27,19 @@ function s.initial_effect(c)
     e2:SetTarget(s.sptg)
     e2:SetOperation(s.spop)
     c:RegisterEffect(e2)
+    --during damage calculation
+    --
+	--SS from hand or GY
+    local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_FIELD)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e4:SetCode(EFFECT_SPSUMMON_PROC)
+	e4:SetRange(LOCATION_GRAVE)
+	e4:SetCondition(s.sscon)
+	e4:SetTarget(s.sstg)
+	e4:SetOperation(s.ssop)
+	c:RegisterEffect(e4)
+    --if this card is sent to the GY
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -54,4 +67,43 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	if not g then return end
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
+end
+--Special summon card from GY
+function s.costfilter(c)
+	return c:IsAbleToRemoveAsCost() and c:IsMonster() and c:IsAttribute(ATTRIBUTE_WIND) and aux.SpElimFilter(c,true,true)
+end
+function s.sscon(e,c)
+	if c==nil then return true end
+	local tp=c:GetControler()
+	local c=e:GetHandler()
+	local rg=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
+	return aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),0)
+end
+function s.sstg(e,tp,eg,ep,ev,re,r,rp,c)
+	local c=e:GetHandler()
+	local rg=Duel.GetMatchingGroup(s.costfilter,tp,LOCATION_GRAVE,0,c)
+	local g=aux.SelectUnselectGroup(rg,e,tp,1,1,aux.ChkfMMZ(1),1,tp,HINTMSG_REMOVE,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
+end
+function s.ssop(e,tp,eg,ep,ev,re,r,rp,c)
+	local g=e:GetLabelObject()
+	if not g then return end
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
+	g:DeleteGroup()
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
+		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+		e1:SetReset(RESET_EVENT+RESETS_REDIRECT)
+		e1:SetValue(LOCATION_REMOVED)
+		c:RegisterEffect(e1,true)
+	end
 end

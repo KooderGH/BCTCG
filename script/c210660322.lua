@@ -49,6 +49,17 @@ function s.initial_effect(c)
     e4:SetOperation(s.ssop)
     c:RegisterEffect(e4)
     --if this card is sent to the GY
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+    e5:SetCode(EVENT_TO_GRAVE)
+    e5:SetCountLimit(1,id)
+    e5:SetCost(s.sp2cost)
+    e5:SetTarget(s.sp2tg)
+    e5:SetOperation(s.sp2op)
+    c:RegisterEffect(e5)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -116,19 +127,44 @@ function s.sstg(e,tp,eg,ep,ev,re,r,rp,c)
 	return false
 end
 function s.ssop(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=e:GetLabelObject()
-	if not g then return end
-	Duel.Remove(g,POS_FACEUP,REASON_COST)
-	g:DeleteGroup()
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-		e1:SetReset(RESET_EVENT+RESETS_REDIRECT)
-		e1:SetValue(LOCATION_REMOVED)
-		c:RegisterEffect(e1,true)
-	end
+    local g=e:GetLabelObject()
+    if not g then return end
+    Duel.Remove(g,POS_FACEUP,REASON_COST)
+    g:DeleteGroup()
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetReset(RESET_EVENT+RESETS_REDIRECT)
+        e1:SetValue(LOCATION_REMOVED)
+        c:RegisterEffect(e1,true)
+    end
+end
+--Special summon from GY but cannot attack
+function s.gyfilter(c)
+    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+end
+function s.sp2cost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.gyfilter,1,false,nil,nil) end
+    local g=Duel.SelectReleaseGroupCost(tp,s.gyfilter,1,1,false,nil,nil)
+    Duel.Release(g,REASON_COST)
+end
+function s.sp2tg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.sp2op(e,tp,eg,ep,ev,re,r,rp,c)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_OATH)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD-RESET_TOFIELD+RESET_PHASE+PHASE_END)
+        c:RegisterEffect(e1)
+    end
 end

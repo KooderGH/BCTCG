@@ -43,14 +43,14 @@ function s.initial_effect(c)
     --once sent to the graveyard
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,1))
-	e5:SetCategory(CATEGORY_DRAW)
+    e5:SetCategory(CATEGORY_DRAW)
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
     e5:SetCode(EVENT_TO_GRAVE)
     e5:SetCountLimit(1,id)
-	e5:SetCondition(s.drcon)
-	e5:SetTarget(s.drtg)
-	e5:SetOperation(s.drop)
+    e5:SetCondition(s.drcon)
+    e5:SetTarget(s.drtg)
+    e5:SetOperation(s.drop)
     c:RegisterEffect(e5)
 end
 --Self Destroy Function

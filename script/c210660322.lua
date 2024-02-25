@@ -27,18 +27,27 @@ function s.initial_effect(c)
     e2:SetTarget(s.sptg)
     e2:SetOperation(s.spop)
     c:RegisterEffect(e2)
-    --during damage calculation
-    --
-	--SS from hand or GY
+    --during damage calculation gain 2900 atk (3)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_REMOVE)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BATTLE_START)
+    e3:SetTarget(s.atktg)
+    e3:SetOperation(s.atkop)
+    c:RegisterEffect(e3)
+    --SS from hand or GY (4)
     local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e4:SetCode(EFFECT_SPSUMMON_PROC)
-	e4:SetRange(LOCATION_GRAVE)
-	e4:SetCondition(s.sscon)
-	e4:SetTarget(s.sstg)
-	e4:SetOperation(s.ssop)
-	c:RegisterEffect(e4)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetType(EFFECT_TYPE_FIELD)
+    e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e4:SetCode(EFFECT_SPSUMMON_PROC)
+    e4:SetRange(LOCATION_GRAVE)
+    e4:SetCountLimit(1,id)
+    e4:SetCondition(s.sscon)
+    e4:SetTarget(s.sstg)
+    e4:SetOperation(s.ssop)
+    c:RegisterEffect(e4)
     --if this card is sent to the GY
 end
 --Self Destroy Function
@@ -67,6 +76,22 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	if not g then return end
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
+end
+--during damage calculation function
+function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() and (bc:IsRace(RACE_FAIRY) or bc:IsRace(RACE_ZOMBIE))  end
+end
+function s.atkop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToBattle() then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(2900)
+        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
+        c:RegisterEffect(e1)
+    end
 end
 --Special summon card from GY
 function s.costfilter(c)

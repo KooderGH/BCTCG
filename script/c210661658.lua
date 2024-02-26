@@ -41,5 +41,5 @@ local c=e:GetHandler()
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetValue(atk)
-    e1:SetReset(RESET_EVENT+RESE
+    e1:SetReset(RESET_EVENT+RESET)
 end

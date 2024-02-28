@@ -1,5 +1,5 @@
 --Princess Kaguya
---Scripted by Konstak
+--Scripted by Konstak and Gideon
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If your opponent controls 2 or more monsters while you control a WIND Attribute monster, you can Special Summon this card from your hand.

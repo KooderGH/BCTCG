@@ -9,110 +9,110 @@
 -- (7) If this card is in your GY: You can banish 3 cards from top of your deck facedown; Add this card to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
-	--(1)Start
-	--Makes it unsummonable via normal
-	c:EnableUnsummonable()
-	--Cannot be SS by other ways other then it's own effect via above and this function
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e0:SetValue(aux.FALSE)
-	c:RegisterEffect(e0)
-	--SS from Hand / GY
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCondition(s.ssummoncon)
-	e1:SetTarget(s.sptg)
-	e1:SetOperation(s.spop)
-	c:RegisterEffect(e1)
-	--Move to EMZ
-	local e2=Effect.CreateEffect(c)
+    --(1)Start
+    --Makes it unsummonable via normal
+    c:EnableUnsummonable()
+    --Cannot be SS by other ways other then it's own effect via above and this function
+    local e0=Effect.CreateEffect(c)
+    e0:SetType(EFFECT_TYPE_SINGLE)
+    e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+    e0:SetValue(aux.FALSE)
+    c:RegisterEffect(e0)
+    --SS from Hand / GY
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
+    e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCondition(s.ssummoncon)
+    e1:SetTarget(s.sptg)
+    e1:SetOperation(s.spop)
+    c:RegisterEffect(e1)
+    --Move to EMZ
+    local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetOperation(s.mvop)
     c:RegisterEffect(e2)
-	--Summon cannot be disabled (Hopefully)
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
-	e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	c:RegisterEffect(e3)
-	--(1)Finish
-	--(2)Start
-	--Cannot be Tributed
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-	e4:SetCode(EFFECT_UNRELEASABLE_SUM)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetValue(1)
-	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-	c:RegisterEffect(e5)
-	--Cannot be returned to hand
-	local e6=e4:Clone()
-	e6:SetCode(EFFECT_CANNOT_TO_HAND)
-	c:RegisterEffect(e6)
-	--Cannot banish
-	local e7=e4:Clone()
-	e7:SetCode(EFFECT_CANNOT_REMOVE)
-	c:RegisterEffect(e7)
-	--(2)Finish
-	--(3)Start
-	--Cannot be targeted (self)
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE)
-	e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-	e8:SetRange(LOCATION_MZONE)
-	e8:SetValue(1)
-	c:RegisterEffect(e8)
-	--(3)Finish
-	--(4)Start
-	local e9=Effect.CreateEffect(c)
-	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e9:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e9:SetTarget(s.handtg)
-	e9:SetOperation(s.handop)
-	c:RegisterEffect(e9)
-	--(4)Finish
-	--(5)Start
-	--Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
-	local e10=Effect.CreateEffect(c)
-	e10:SetCode(EFFECT_DESTROY_REPLACE)
-	e10:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-	e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
-	e10:SetRange(LOCATION_MZONE)
-	e10:SetCountLimit(1)
-	e10:SetTarget(s.desreptg)
-	c:RegisterEffect(e10)
-	--(5)Finish
-	--(6)Start
-	--This card can attack your opponents monsters once each.
-	local e11=Effect.CreateEffect(c)
-	e11:SetType(EFFECT_TYPE_SINGLE)
-	e11:SetCode(EFFECT_ATTACK_ALL)
-	e11:SetValue(1)
-	c:RegisterEffect(e11)
-	--(6)Finish
-	--(7)Start
-	--Add this card from the GY to your hand
-	local e12=Effect.CreateEffect(c)
-	e12:SetDescription(aux.Stringid(id,0))
-	e12:SetCategory(CATEGORY_TOHAND)
-	e12:SetType(EFFECT_TYPE_IGNITION)
+    --Summon cannot be disabled (Hopefully)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
+    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    c:RegisterEffect(e3)
+    --(1)Finish
+    --(2)Start
+    --Cannot be Tributed
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    c:RegisterEffect(e5)
+    --Cannot be returned to hand
+    local e6=e4:Clone()
+    e6:SetCode(EFFECT_CANNOT_TO_HAND)
+    c:RegisterEffect(e6)
+    --Cannot banish
+    local e7=e4:Clone()
+    e7:SetCode(EFFECT_CANNOT_REMOVE)
+    c:RegisterEffect(e7)
+    --(2)Finish
+    --(3)Start
+    --Cannot be targeted (self)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetValue(1)
+    c:RegisterEffect(e8)
+    --(3)Finish
+    --(4)Start
+    local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e9:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e9:SetTarget(s.handtg)
+    e9:SetOperation(s.handop)
+    c:RegisterEffect(e9)
+    --(4)Finish
+    --(5)Start
+    --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
+    local e10=Effect.CreateEffect(c)
+    e10:SetCode(EFFECT_DESTROY_REPLACE)
+    e10:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetCountLimit(1)
+    e10:SetTarget(s.desreptg)
+    c:RegisterEffect(e10)
+    --(5)Finish
+    --(6)Start
+    --This card can attack your opponents monsters once each.
+    local e11=Effect.CreateEffect(c)
+    e11:SetType(EFFECT_TYPE_SINGLE)
+    e11:SetCode(EFFECT_ATTACK_ALL)
+    e11:SetValue(1)
+    c:RegisterEffect(e11)
+    --(6)Finish
+    --(7)Start
+    --Add this card from the GY to your hand
+    local e12=Effect.CreateEffect(c)
+    e12:SetDescription(aux.Stringid(id,0))
+    e12:SetCategory(CATEGORY_TOHAND)
+    e12:SetType(EFFECT_TYPE_IGNITION)
     e12:SetRange(LOCATION_GRAVE)
     e12:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
     e12:SetCost(s.thcost)
     e12:SetTarget(s.thtg)
-	e12:SetOperation(s.thop)
-	c:RegisterEffect(e12)
+    e12:SetOperation(s.thop)
+    c:RegisterEffect(e12)
 end
 --(1)
 function s.ssummoncon(e,c)

@@ -1,5 +1,5 @@
 --Cat Clan Heroes
---Scripted by Konstak
+--Scripted by Konstak, fixed by Gideon
 --Effect
 -- (1) If this card would be destroyed, it is returned to hand instead.
 -- (2) If this card is returned to hand, select one card your opponent controls, it cannot attack or activate it's effects until the end phase.
@@ -140,7 +140,9 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(4)
 function s.gravetarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
     Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(2000)
     Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
 end
 function s.graveoperation(e,tp,eg,ep,ev,re,r,rp)

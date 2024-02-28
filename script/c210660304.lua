@@ -3,7 +3,7 @@
 --Effect
 -- (1) Cannot be Normal Summon/Set. You can Special Summon this card from your hand by paying 500 LP.
 -- (2) Cannot be tributed.
--- (3) Machine monster's you control gain 200 ATK for each machine monster on the field.
+-- (3) Machine monster's you control gain 100 ATK for each machine monster on the field.
 -- (4) When this card is destroyed; You can add one Level 4 or lower Machine monster from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	local e3=e2:Clone()
 	e3:SetCode(EFFECT_UNRELEASABLE_NONSUM)
 	c:RegisterEffect(e3)
-	--Machine monsters player controls gain 200 ATK
+	--Machine monsters player controls gain 100 ATK
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_FIELD)
 	e4:SetCode(EFFECT_UPDATE_ATTACK)
@@ -59,7 +59,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --Atk update function
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE),c:GetControler(),LOCATION_MZONE,0,nil)*200
+	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE),c:GetControler(),LOCATION_MZONE,0,nil)*100
 end
 --Destroy and draw function
 function s.dfilter(c)

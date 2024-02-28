@@ -5,7 +5,7 @@
 -- (2) When this card is Summoned; you can Special Summon one LV4 or lower Earth Machine monster from your deck. You can only active this effect of "Mighty Aethur Ltd." once per turn.
 -- (3) Once per turn, if this card would be destroyed: Gain 500 ATK instead.
 -- (4) If this card battles a Zombie type monster; Banish it at the start of the damage step.
--- (5) If you control 3 or more EARTH Machine type monsters: All monsters you control gain 800 ATK.
+-- (5) If you control 3 or more EARTH Machine type monsters: All monsters you control gain 400 ATK.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Special Summon this card
@@ -51,14 +51,14 @@ function s.initial_effect(c)
     e6:SetTarget(s.bntg)
     e6:SetOperation(s.bnop)
     c:RegisterEffect(e6)
-    --All monsters gain 800 ATK
+    --All monsters gain 400 ATK
 	local e7=Effect.CreateEffect(c)
 	e7:SetType(EFFECT_TYPE_FIELD)
 	e7:SetCode(EFFECT_UPDATE_ATTACK)
 	e7:SetRange(LOCATION_MZONE)
 	e7:SetTargetRange(LOCATION_MZONE,0)
 	e7:SetCondition(s.atkcon)
-	e7:SetValue(800)
+	e7:SetValue(400)
 	c:RegisterEffect(e7)
 end
 --Special Summon Function
@@ -108,7 +108,7 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
 end
---all monsters you control gain 800 for 3 Earth machines function
+--all monsters you control gain 400 for 3 Earth machines function
 function s.countfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE)
 end

@@ -65,7 +65,7 @@ function s.spcon(e,c)
 		Duel.CheckLPCost(c:GetControler(),500)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	Duel.PayLPCost(tp,300)
+	Duel.PayLPCost(tp,500)
 end
 --Destroy monster that destroyed it function (2)
 function s.descon(e,tp,eg,ep,ev,re,r,rp)

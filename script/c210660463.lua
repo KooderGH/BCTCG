@@ -10,176 +10,176 @@
 -- * 1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
 -- * 2+: This card becomes uneffected by card effects except from itself.
 -- * 3+: All monsters you control gain 500 ATK/DEF for each Machine type monster you control.
--- * 4+: Machine type monsters you control can attack your opponents LP directly.
--- * 5+: Once per turn (Ignition): You can draw 2 cards.
+-- * 4+: Once per turn (Ignition): You can draw 2 cards.
+-- * 5+: Machine type monsters you control can attack your opponents LP directly.
 local s,id=GetID()
 function s.initial_effect(c)
-	--(1)Start
-	--Makes it unsummonable via normal
-	c:EnableUnsummonable()
-	--Cannot be SS by other ways other then it's own effect via above and this function
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e0:SetValue(aux.FALSE)
-	c:RegisterEffect(e0)
-	--SS from Hand
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCondition(s.ssummoncon)
-	c:RegisterEffect(e1)
-	--Move to EMZ
-	local e2=Effect.CreateEffect(c)
+    --(1)Start
+    --Makes it unsummonable via normal
+    c:EnableUnsummonable()
+    --Cannot be SS by other ways other then it's own effect via above and this function
+    local e0=Effect.CreateEffect(c)
+    e0:SetType(EFFECT_TYPE_SINGLE)
+    e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+    e0:SetValue(aux.FALSE)
+    c:RegisterEffect(e0)
+    --SS from Hand
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
+    e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCondition(s.ssummoncon)
+    c:RegisterEffect(e1)
+    --Move to EMZ
+    local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetOperation(s.mvop)
     c:RegisterEffect(e2)
-	--Summon cannot be disabled (Hopefully)
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
-	e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	c:RegisterEffect(e3)
-	--(1)Finish
-	--(2)Start
-	--Cannot be Tributed
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetCode(EFFECT_UNRELEASABLE_SUM)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetValue(1)
-	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-	c:RegisterEffect(e5)
-	--Cannot be returned to hand
-	local e6=e4:Clone()
-	e6:SetCode(EFFECT_CANNOT_TO_HAND)
-	c:RegisterEffect(e6)
-	--Cannot banish
-	local e7=e4:Clone()
-	e7:SetCode(EFFECT_CANNOT_REMOVE)
-	c:RegisterEffect(e7)
-	--(2)Finish
-	--(3)Start
-	--Cannot be targeted (self)
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE)
-	e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e8:SetRange(LOCATION_MZONE)
-	e8:SetValue(1)
-	c:RegisterEffect(e8)
-	--(3)Finish
-	--(4)Start
-	--This card's Position cannot be changed.
-	local e9=Effect.CreateEffect(c)
-	e9:SetType(EFFECT_TYPE_SINGLE)
-	e9:SetCode(EFFECT_SET_POSITION)
-	e9:SetRange(LOCATION_MZONE)
-	e9:SetValue(POS_FACEUP_DEFENSE)
-	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	c:RegisterEffect(e9)
-	--(4)Finish
-	--(5)Start
-	--Card's you control cannot be returned to hand or banished.
-	local e10=Effect.CreateEffect(c)
-	e10:SetType(EFFECT_TYPE_FIELD)
-	e10:SetCode(EFFECT_CANNOT_TO_HAND)
-	e10:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_SET_AVAILABLE)
-	e10:SetRange(LOCATION_MZONE)
-	e10:SetTargetRange(LOCATION_ONFIELD,0)
-	c:RegisterEffect(e10)
-	local e11=e10:Clone()
-	e11:SetCode(EFFECT_CANNOT_REMOVE)
-	c:RegisterEffect(e11)
-	--(5)Finish
-	--(6)Start
-	--If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand.
-	local e12=Effect.CreateEffect(c)
-	e12:SetDescription(aux.Stringid(id,0))
-	e12:SetCategory(CATEGORY_TOHAND)
-	e12:SetType(EFFECT_TYPE_IGNITION)
-	e12:SetRange(LOCATION_GRAVE)
-	e12:SetCost(s.graverecoverycost)
-	e12:SetTarget(s.graverecoverytg)
-	e12:SetOperation(s.graverecoveryop)
-	c:RegisterEffect(e12)
-	--(6)Finish
-	--(7)Start
-	--1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
-	local e13=Effect.CreateEffect(c)
-	e13:SetType(EFFECT_TYPE_FIELD)
-	e13:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
-	e13:SetRange(LOCATION_MZONE)
-	e13:SetTargetRange(0,LOCATION_MZONE)
-	e13:SetValue(s.atlimit)
-	e13:SetLabel(1)
-	e13:SetCondition(s.emachcountcondition)
-	c:RegisterEffect(e13)
-	--Add 1000 DEF each turn +1 effect
-	local e14=Effect.CreateEffect(c)
-	e14:SetDescription(aux.Stringid(id,1))
-	e14:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-	e14:SetRange(LOCATION_MZONE)
-	e14:SetCode(EVENT_PHASE+PHASE_END)
-	e14:SetLabel(1)
-	e14:SetCountLimit(1)
-	e14:SetCondition(s.defcon)
-	e14:SetOperation(s.defop)
-	c:RegisterEffect(e14)
-	--2+: This card becomes uneffected by card effects except from itself.
-	local e15=Effect.CreateEffect(c)
-	e15:SetType(EFFECT_TYPE_SINGLE)
-	e15:SetCode(EFFECT_IMMUNE_EFFECT)
-	e15:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e15:SetRange(LOCATION_MZONE)
-	e15:SetLabel(2)
-	e15:SetCondition(s.emachcountcondition)
-	e15:SetValue(s.imcon)
-	c:RegisterEffect(e15)
-	--3+: All monsters you control gain 500 ATK/DEF for each Machine type monster on the field
-	local e16=Effect.CreateEffect(c)
-	e16:SetType(EFFECT_TYPE_FIELD)
-	e16:SetCode(EFFECT_UPDATE_ATTACK)
-	e16:SetRange(LOCATION_MZONE)
-	e16:SetTargetRange(LOCATION_MZONE,0)
-	e16:SetLabel(3)
-	e16:SetCondition(s.emachcountcondition)
-	e16:SetValue(s.adval)
-	c:RegisterEffect(e16)
-	local e17=e16:Clone()
-	e17:SetCode(EFFECT_UPDATE_DEFENSE)
-	c:RegisterEffect(e17)
-	--4+: Machine type monsters you control can attack your opponents LP directly.
-	local e18=Effect.CreateEffect(c)
-	e18:SetType(EFFECT_TYPE_FIELD)
-	e18:SetCode(EFFECT_DIRECT_ATTACK)
-	e18:SetRange(LOCATION_MZONE)
-	e18:SetTargetRange(LOCATION_MZONE,0)
-	e18:SetLabel(4)
-	e18:SetCondition(s.emachcountcondition)
-	e18:SetTarget(s.dirtg)
-	c:RegisterEffect(e18)
-	--5+: Once per turn (Ignition): You can draw 2 cards.
-	local e19=Effect.CreateEffect(c)
-	e19:SetDescription(aux.Stringid(id,2))
-	e19:SetCategory(CATEGORY_DRAW)
-	e19:SetType(EFFECT_TYPE_IGNITION)
-	e19:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e19:SetCode(EVENT_FREE_CHAIN)
-	e19:SetCondition(s.emachcountcondition)
-	e19:SetLabel(5)
-	e19:SetCountLimit(1)
-	e19:SetTarget(s.drawtarget)
-	e19:SetOperation(s.drawop)
-	c:RegisterEffect(e19)
+    --Summon cannot be disabled (Hopefully)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
+    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    c:RegisterEffect(e3)
+    --(1)Finish
+    --(2)Start
+    --Cannot be Tributed
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    c:RegisterEffect(e5)
+    --Cannot be returned to hand
+    local e6=e4:Clone()
+    e6:SetCode(EFFECT_CANNOT_TO_HAND)
+    c:RegisterEffect(e6)
+    --Cannot banish
+    local e7=e4:Clone()
+    e7:SetCode(EFFECT_CANNOT_REMOVE)
+    c:RegisterEffect(e7)
+    --(2)Finish
+    --(3)Start
+    --Cannot be targeted (self)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetValue(1)
+    c:RegisterEffect(e8)
+    --(3)Finish
+    --(4)Start
+    --This card's Position cannot be changed.
+    local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE)
+    e9:SetCode(EFFECT_SET_POSITION)
+    e9:SetRange(LOCATION_MZONE)
+    e9:SetValue(POS_FACEUP_DEFENSE)
+    e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    c:RegisterEffect(e9)
+    --(4)Finish
+    --(5)Start
+    --Card's you control cannot be returned to hand or banished.
+    local e10=Effect.CreateEffect(c)
+    e10:SetType(EFFECT_TYPE_FIELD)
+    e10:SetCode(EFFECT_CANNOT_TO_HAND)
+    e10:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_SET_AVAILABLE)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetTargetRange(LOCATION_ONFIELD,0)
+    c:RegisterEffect(e10)
+    local e11=e10:Clone()
+    e11:SetCode(EFFECT_CANNOT_REMOVE)
+    c:RegisterEffect(e11)
+    --(5)Finish
+    --(6)Start
+    --If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand.
+    local e12=Effect.CreateEffect(c)
+    e12:SetDescription(aux.Stringid(id,0))
+    e12:SetCategory(CATEGORY_TOHAND)
+    e12:SetType(EFFECT_TYPE_IGNITION)
+    e12:SetRange(LOCATION_GRAVE)
+    e12:SetCost(s.graverecoverycost)
+    e12:SetTarget(s.graverecoverytg)
+    e12:SetOperation(s.graverecoveryop)
+    c:RegisterEffect(e12)
+    --(6)Finish
+    --(7)Start
+    --1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
+    local e13=Effect.CreateEffect(c)
+    e13:SetType(EFFECT_TYPE_FIELD)
+    e13:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
+    e13:SetRange(LOCATION_MZONE)
+    e13:SetTargetRange(0,LOCATION_MZONE)
+    e13:SetValue(s.atlimit)
+    e13:SetLabel(1)
+    e13:SetCondition(s.emachcountcondition)
+    c:RegisterEffect(e13)
+    --Add 1000 DEF each turn +1 effect
+    local e14=Effect.CreateEffect(c)
+    e14:SetDescription(aux.Stringid(id,1))
+    e14:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e14:SetRange(LOCATION_MZONE)
+    e14:SetCode(EVENT_PHASE+PHASE_END)
+    e14:SetLabel(1)
+    e14:SetCountLimit(1)
+    e14:SetCondition(s.defcon)
+    e14:SetOperation(s.defop)
+    c:RegisterEffect(e14)
+    --2+: This card becomes uneffected by card effects except from itself.
+    local e15=Effect.CreateEffect(c)
+    e15:SetType(EFFECT_TYPE_SINGLE)
+    e15:SetCode(EFFECT_IMMUNE_EFFECT)
+    e15:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e15:SetRange(LOCATION_MZONE)
+    e15:SetLabel(2)
+    e15:SetCondition(s.emachcountcondition)
+    e15:SetValue(s.imcon)
+    c:RegisterEffect(e15)
+    --3+: All monsters you control gain 500 ATK/DEF for each Machine type monster on the field
+    local e16=Effect.CreateEffect(c)
+    e16:SetType(EFFECT_TYPE_FIELD)
+    e16:SetCode(EFFECT_UPDATE_ATTACK)
+    e16:SetRange(LOCATION_MZONE)
+    e16:SetTargetRange(LOCATION_MZONE,0)
+    e16:SetLabel(3)
+    e16:SetCondition(s.emachcountcondition)
+    e16:SetValue(s.adval)
+    c:RegisterEffect(e16)
+    local e17=e16:Clone()
+    e17:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e17)
+    --4+: Once per turn (Ignition): You can draw 2 cards.
+    local e18=Effect.CreateEffect(c)
+    e18:SetDescription(aux.Stringid(id,2))
+    e18:SetCategory(CATEGORY_DRAW)
+    e18:SetType(EFFECT_TYPE_IGNITION)
+    e18:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e18:SetCode(EVENT_FREE_CHAIN)
+    e18:SetCondition(s.emachcountcondition)
+    e18:SetLabel(4)
+    e18:SetCountLimit(1)
+    e18:SetTarget(s.drawtarget)
+    e18:SetOperation(s.drawop)
+    c:RegisterEffect(e18)
+    --5+: Machine type monsters you control can attack your opponents LP directly.
+    local e19=Effect.CreateEffect(c)
+    e19:SetType(EFFECT_TYPE_FIELD)
+    e19:SetCode(EFFECT_DIRECT_ATTACK)
+    e19:SetRange(LOCATION_MZONE)
+    e19:SetTargetRange(LOCATION_MZONE,0)
+    e19:SetLabel(5)
+    e19:SetCondition(s.emachcountcondition)
+    e19:SetTarget(s.dirtg)
+    c:RegisterEffect(e19)
 end
 --1
 function s.emachfilter(c)

@@ -4,8 +4,7 @@
 -- (1) You can pay 300 LP to Special Summon this card from your hand.
 -- (2) Cannot be tributed.
 -- (3) When this card is Summoned: You can target one EARTH Machine monster from your GY; Special Summon it.
--- (4) When this card is destroyed; You can Special Summon one EARTH Machine monster from your hand.
--- (5) You can only activate each effect of "Mighty Drednot" once per turn.
+-- (4) You can only activate each effect of "Mighty Drednot" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
 	--spsummon
@@ -46,17 +45,6 @@ function s.initial_effect(c)
 	local e6=e4:Clone()
 	e6:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e6)
-    --Once destroyed Special Summon 1 EARTH Machine Monster
-	local e7=Effect.CreateEffect(c)
-	e7:SetDescription(aux.Stringid(id,1))
-	e7:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e7:SetCode(EVENT_DESTROYED)
-	e7:SetTarget(s.target)
-	e7:SetOperation(s.soperation)
-	e7:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
-	c:RegisterEffect(e7)
 end
 --Special summon function
 function s.spcon(e,c)
@@ -80,20 +68,6 @@ function s.op(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
-    if #g>0 then
-        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-    end
-end
---Once destroyed function
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-        and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND,0,1,nil,e,tp) end
-    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
-end
-function s.soperation(e,tp,eg,ep,ev,re,r,rp)
-    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end

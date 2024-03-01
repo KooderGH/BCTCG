@@ -1,6 +1,6 @@
 --Mighty Kristual Muu
 --Scripted by Gideon
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If your LP are 2000 or lower than your opponent's and you control a EARTH Machine monster, You can Special Summon this card from your hand in Defense Position, then move this card to your Extra Monster Zone. 
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If your LP are 3000 or lower than your opponent's and you control a EARTH Machine monster, You can Special Summon this card from your hand in Defense Position, then move this card to your Extra Monster Zone. 
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
 -- (4) This card's Position cannot be changed.
@@ -188,7 +188,7 @@ end
 function s.ssummoncon(e,c)
     if c==nil then return true end
     local tp=c:GetControler()
-    return (Duel.GetLP(1-tp)-Duel.GetLP(tp))>=2000
+    return (Duel.GetLP(1-tp)-Duel.GetLP(tp))>=3000
         and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(c:GetControler(),LOCATION_EMZONE,0) or Duel.CheckLocation(c:GetControler(),LOCATION_EMZONE,1))

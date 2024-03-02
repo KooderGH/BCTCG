@@ -4,7 +4,8 @@
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) When a Spell card is activated; Add 1 Spell Counter(s) to this card.
 -- (3) Cannot be destroyed by battle.
--- (4) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
+-- (4) When summoned, place in defense. 
+-- (5) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
 -- * You can remove 2 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
 -- * If this card is sent to the GY; For every 2 WIND monsters you control, add 1 Spell card from your GY to your hand.
 local s,id=GetID()
@@ -18,7 +19,7 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_SELF_DESTROY)
     e1:SetCondition(s.sdcon)
     c:RegisterEffect(e1)
-    --Add counter
+    --Add counter (2)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
@@ -32,34 +33,49 @@ function s.initial_effect(c)
     e3:SetRange(LOCATION_MZONE)
     e3:SetOperation(s.acop)
     c:RegisterEffect(e3)
-	--Cannot be destroyed by battle
+	--Cannot be destroyed by battle (3)
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e4:SetValue(1)
 	c:RegisterEffect(e4)
-    --add one wind monster from your deck or GY to hand
+    --to defense (4)
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,0))
-    e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e5:SetType(EFFECT_TYPE_IGNITION)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1,id)
-    e5:SetCost(s.srcost)
-    e5:SetTarget(s.srtg)
-    e5:SetOperation(s.srop)
+    e5:SetCategory(CATEGORY_POSITION)
+    e5:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
+    e5:SetCode(EVENT_SUMMON_SUCCESS)
+    e5:SetTarget(s.deftg)
+    e5:SetOperation(s.defop)
     c:RegisterEffect(e5)
-    --once sent to the graveyard add S/T from GY based on the number of 2 WIND monsters you control
-    local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,1))
-    e6:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e6:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
-    e6:SetCode(EVENT_TO_GRAVE)
-    e6:SetCountLimit(1,id)
-    e6:SetTarget(s.addtg)
-    e6:SetOperation(s.addop)
+    local e6=e5:Clone()
+    e6:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e6)
+    local e7=e5:Clone()
+    e7:SetCode(EVENT_SPSUMMON_SUCCESS)
+    c:RegisterEffect(e7)
+    --add one wind monster from your deck or GY to hand
+    local e8=Effect.CreateEffect(c)
+    e8:SetDescription(aux.Stringid(id,1))
+    e8:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e8:SetType(EFFECT_TYPE_IGNITION)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetCountLimit(1,id)
+    e8:SetCost(s.srcost)
+    e8:SetTarget(s.srtg)
+    e8:SetOperation(s.srop)
+    c:RegisterEffect(e8)
+    --once sent to the graveyard add S/T from GY based on the number of 2 WIND monsters you control
+    local e9=Effect.CreateEffect(c)
+    e9:SetDescription(aux.Stringid(id,2))
+    e9:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e9:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+    e9:SetCode(EVENT_TO_GRAVE)
+    e9:SetCountLimit(1,id)
+    e9:SetTarget(s.addtg)
+    e9:SetOperation(s.addop)
+    c:RegisterEffect(e9)
 end
 s.counter_place_list={COUNTER_SPELL}
 --Self Destroy Function
@@ -73,6 +89,17 @@ end
 function s.acop(e,tp,eg,ep,ev,re,r,rp)
 	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:IsActiveType(TYPE_SPELL) and e:GetHandler():GetFlagEffect(1)>0 then
 		e:GetHandler():AddCounter(COUNTER_SPELL,1)
+	end
+end
+--To defense
+function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chk==0 then return e:GetHandler():IsAttackPos() end
+	Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler(),1,0,0)
+end
+function s.defop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) then
+		Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
 	end
 end
 --Special Summon Search function

@@ -3,7 +3,8 @@
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control 3 or more WIND monsters, you can Special Summon this card from your hand.
--- (3) You can only use 1 of these effects of "Usashima Taro" per turn, and only once that turn.
+-- (3) When summoned, place in defense. 
+-- (4) You can only use 1 of these effects of "Usashima Taro" per turn, and only once that turn.
 -- * You can Tribute 1 WIND Machine monster you control and target 1 monster your opponet controls; Send that target to the GY.
 -- * If this card is sent to the GY while you control no WIND monsters: Target 1 monster your opponent controls; Take control of that target.
 local s,id=GetID()
@@ -24,31 +25,46 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_HAND)
     e2:SetCondition(s.spcon)
     c:RegisterEffect(e2)
-    --Tribute 1 Wind machine monster, Send 1 card to GY (3)
-    local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,0))
-    e3:SetCategory(CATEGORY_TOGRAVE)
-    e3:SetType(EFFECT_TYPE_QUICK_O)
-    e3:SetCode(EVENT_FREE_CHAIN)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e3:SetCountLimit(1,id)
-    e3:SetCost(s.gycost)
-    e3:SetTarget(s.gytg)
-    e3:SetOperation(s.gyop)
+    --to defense (3)
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,0))
+    e2:SetCategory(CATEGORY_POSITION)
+    e2:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
+    e2:SetCode(EVENT_SUMMON_SUCCESS)
+    e2:SetTarget(s.deftg)
+    e2:SetOperation(s.defop)
+    c:RegisterEffect(e2)
+    local e3=e2:Clone()
+    e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e3)
-    --Once sent to GY while no Wind monsters control 1 card on the field (4)
-    local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetCategory(CATEGORY_CONTROL)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
-    e4:SetCode(EVENT_TO_GRAVE)
-    e4:SetCountLimit(1,id)
-    e4:SetCondition(s.descon)
-    e4:SetTarget(s.destg)
-    e4:SetOperation(s.desop)
+    local e4=e2:Clone()
+    e4:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e4)
+    --Tribute 1 Wind machine monster, Send 1 card to GY (4)
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetCategory(CATEGORY_TOGRAVE)
+    e5:SetType(EFFECT_TYPE_QUICK_O)
+    e5:SetCode(EVENT_FREE_CHAIN)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e5:SetCountLimit(1,id)
+    e5:SetCost(s.gycost)
+    e5:SetTarget(s.gytg)
+    e5:SetOperation(s.gyop)
+    c:RegisterEffect(e5)
+    --Once sent to GY while no Wind monsters control 1 card on the field (5)
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,2))
+    e6:SetCategory(CATEGORY_CONTROL)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e6:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+    e6:SetCode(EVENT_TO_GRAVE)
+    e6:SetCountLimit(1,id)
+    e6:SetCondition(s.descon)
+    e6:SetTarget(s.destg)
+    e6:SetOperation(s.desop)
+    c:RegisterEffect(e6)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -65,6 +81,17 @@ function s.spcon(e,c)
 	if c==nil then return true end
 	local tp=e:GetHandlerPlayer()
 	return Duel.IsExistingMatchingCard(s.spfilter,c:GetControler(),LOCATION_MZONE,0,3,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+end
+--To defense
+function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chk==0 then return e:GetHandler():IsAttackPos() end
+	Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler(),1,0,0)
+end
+function s.defop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) then
+		Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
+	end
 end
 --Send to Gy
 function s.gyfilter(c)

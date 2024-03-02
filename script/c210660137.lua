@@ -6,7 +6,7 @@
 -- (3) If this card battles a Fairy Monster; Banish that monster before the damage step.
 -- (4) You can only use 1 of these effects of "Kasa Jizo" per turn, and only once that turn.
 -- * You can Target 1 card on the field (Ignition); Destroy that target. 
--- * If this card is sent to the GY: Target 1 card on the field; Destroy that target.
+-- * If this card is sent to the GY: You can target 1 card on the field; Destroy that target.
 local s,id=GetID()
 function s.initial_effect(c)
     --self destroy (1)
@@ -48,7 +48,7 @@ function s.initial_effect(c)
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,1))
     e5:SetCategory(CATEGORY_DESTROY)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
     e5:SetCode(EVENT_TO_GRAVE)
     e5:SetCountLimit(1,id)

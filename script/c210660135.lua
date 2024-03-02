@@ -16,7 +16,7 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_SELF_DESTROY)
     e1:SetCondition(s.sdcon)
     c:RegisterEffect(e1)
-    --No Battle damage
+    --No Battle damage (2)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)

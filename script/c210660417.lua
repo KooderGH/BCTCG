@@ -7,7 +7,7 @@
 -- (4) If this card deals direct battle damage; You can add one Trap card from your Deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
-    --Special Summon this card
+    --Special Summon this card.
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -84,8 +84,7 @@ function s.specialfilter(c)
 	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-        and Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,1,nil,e,tp) end
+    if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,1,nil,e,tp) end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 function s.ssop(e,tp,eg,ep,ev,re,r,rp)

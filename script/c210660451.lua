@@ -97,6 +97,16 @@ function s.initial_effect(c)
     c:RegisterEffect(e10)
     --(5)Finish
     --(6)Start
+    --When card(s) on destroyed by card effect(s) Place Castle Counter
+    c:EnableCounterPermit(0x4002)
+    local e11=Effect.CreateEffect(c)
+    e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e11:SetProperty(EFFECT_FLAG_DELAY)
+    e11:SetRange(LOCATION_MZONE)
+    e11:SetCode(EVENT_TO_GRAVE)
+    e11:SetCondition(s.ctcon)
+    e11:SetOperation(s.ctop)
+    c:RegisterEffect(e11)
 end
 --(1) functions
 function s.Windfilter(c)
@@ -143,4 +153,15 @@ end
 --ATK gain (5)
 function s.atkval(e,c)
 	return Duel.GetMatchingGroupCount(Card.IsAttribute,c:GetControler(),LOCATION_GRAVE,0,nil,ATTRIBUTE_WIND)*200
+end
+-- Quaking Hammer (6)
+s.counter_list={0x4002}
+function s.ctfilter(c,tp)
+	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousControler(tp)
+end
+function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.ctfilter,1,nil,tp)
+end
+function s.ctop(e,tp,eg,ep,ev,re,r,rp)
+	e:GetHandler():AddCounter(0x4002,1)
 end

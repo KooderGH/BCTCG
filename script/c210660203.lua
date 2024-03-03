@@ -4,8 +4,8 @@
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If a WIND monster is sent to your GY; You can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Kachi-Kachi" per turn, and only once that turn.
--- * When this card is Special Summoned: Add 1 WIND Machine monster from your GY to your Hand.
--- * When this card is sent to the GY: Add 1 WIND Machine monster from your Deck to your Hand.
+-- * When this card is Special Summoned: Add 1 Lv8 or lower WIND Machine monster from your GY to your Hand.
+-- * When this card is sent to the GY: Add 1 Lv8 or lower WIND Machine monster from your Deck to your Hand.
 local s,id=GetID()
 function s.initial_effect(c)
     --self destroy
@@ -62,7 +62,7 @@ function s.spfilter(c,tp)
 	return c:IsAttribute(ATTRIBUTE_WIND) and c:IsPreviousPosition(POS_FACEUP) and c:IsPreviousLocation(LOCATION_MZONE) and c:IsControler(tp)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg and eg:IsExists(s.spfilter,1,nil,tp)
+	return eg:IsExists(s.spfilter,1,nil,tp)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -78,7 +78,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Add when SS Search function
 function s.specialfilter(c)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsLevelBelow(8) and c:IsAbleToHand()
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_GRAVE,0,1,nil) end
@@ -94,12 +94,12 @@ function s.ssop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Add when sent to GY function
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_DECK,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_DECK,0,2,2,nil)
 	if #g>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 	    Duel.ConfirmCards(1-tp,g)

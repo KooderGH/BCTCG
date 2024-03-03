@@ -48,6 +48,9 @@ function s.initial_effect(c)
     c:RegisterEffect(e6)
 end
 --Summon and destroy
+function s.filter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE)
+end
 function s.smtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end
     local gt=Duel.GetMatchingGroupCount(s.filter,tp,LOCATION_MZONE,0,nil)

@@ -4,7 +4,7 @@
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control no monster(s), you can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Kintaro" per turn, and only once that turn.
--- * If this card is Special Summoned; Add 2 WIND Machine monsters from your deck to your hand, then, place 1 card from your hand on top of your deck.
+-- * If this card is Normal Summoned; Add 2 WIND Machine monsters from your deck to your hand, then, place 1 card from your hand on top of your deck.
 -- * If this card is sent to the GY: Discard 1 card from your hand and target 1 card on the field; Destroy it.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -29,7 +29,7 @@ function s.initial_effect(c)
     e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e3:SetCode(EVENT_SUMMON_SUCCESS)
     e3:SetCountLimit(1,id)
     e3:SetTarget(s.sstg)
     e3:SetOperation(s.ssop)

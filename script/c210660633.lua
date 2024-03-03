@@ -2,7 +2,7 @@
 --Scripted by Konstak
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
--- (2) When a Monster Effect is activated; Add 1 Spell Counter(s) to this card.
+-- (2) When your opponent activates a monster effect; Add 1 Spell Counter(s) to this card (Max. 3).
 -- (3) Cannot be destroyed by battle.
 -- (4) When summoned, place in defense. 
 -- (5) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
@@ -11,6 +11,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableCounterPermit(COUNTER_SPELL)
+    c:SetCounterLimit(COUNTER_SPELL,3)
     --self destroy (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -31,14 +32,15 @@ function s.initial_effect(c)
     e3:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
     e3:SetCode(EVENT_CHAIN_SOLVED)
     e3:SetRange(LOCATION_MZONE)
+    e3:SetCondition(s.acon)
     e3:SetOperation(s.acop)
     c:RegisterEffect(e3)
-	--Cannot be destroyed by battle (3)
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e4:SetValue(1)
-	c:RegisterEffect(e4)
+    --Cannot be destroyed by battle (3)
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
     --to defense (4)
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,0))
@@ -86,6 +88,10 @@ function s.sdcon(e)
     return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end
 --add counter
+function s.acon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return ep==1-tp and re:IsActiveType(TYPE_MONSTER)
+end
 function s.acop(e,tp,eg,ep,ev,re,r,rp)
 	if re:IsActiveType(TYPE_MONSTER) and e:GetHandler():GetFlagEffect(1)>0 then
 		e:GetHandler():AddCounter(COUNTER_SPELL,1)

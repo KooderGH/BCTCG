@@ -4,7 +4,7 @@
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control no monster(s), you can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Momotaro" per turn, and only once that turn.
--- * If this card is Special Summoned; Add 1 WIND Machine monster from your Deck to your hand.
+-- * If this card is Special Summoned; Add 1 Lv8 or lower WIND Machine monster from your Deck to your hand.
 -- * If this card is sent to the GY: For each WIND monster you control, Target 1 Spell/Trap your opponent controls; Destroy those targets.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -61,7 +61,7 @@ function s.spcon(e,c)
 end
 --Special Summon Search function
 function s.spfilter(c)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsLevelBelow(8) and c:IsAbleToHand()
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil) end

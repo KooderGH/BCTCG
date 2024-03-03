@@ -74,7 +74,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e8)
     --(3)Finish
     --(4)Start
-    --Negate effects
+    --Special Summon from GY
     local e9=Effect.CreateEffect(c)
     e9:SetDescription(aux.Stringid(id,0))
     e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -87,7 +87,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e9)
     --(4)Finish
     --(5)Start
-    --atk
+    --ATK based on Wind machines on your GY
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_SINGLE)
     e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -97,7 +97,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e10)
     --(5)Finish
     --(6)Start
-    --When card(s) on destroyed by card effect(s) Place Castle Counter
+    --When card(s) on destroyed by card effect(s) Place Quaking Hammer Counter
     c:EnableCounterPermit(0x4002)
     local e11=Effect.CreateEffect(c)
     e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -107,6 +107,19 @@ function s.initial_effect(c)
     e11:SetCondition(s.ctcon)
     e11:SetOperation(s.ctop)
     c:RegisterEffect(e11)
+    --(6)Finish
+    --(7)Start
+    --add one wind monster from your deck or GY to hand
+    local e12=Effect.CreateEffect(c)
+    e12:SetDescription(aux.Stringid(id,1))
+    e12:SetCategory(CATEGORY_REMOVE)
+    e12:SetType(EFFECT_TYPE_IGNITION)
+    e12:SetRange(LOCATION_MZONE)
+    e12:SetCountLimit(1,id)
+    e12:SetCost(s.rmcost)
+    e12:SetTarget(s.rmtg)
+    e12:SetOperation(s.rmop)
+    c:RegisterEffect(e12)
 end
 --(1) functions
 function s.Windfilter(c)
@@ -127,7 +140,7 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     if (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1)) then
         local lftezm=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,5) and 0x20 or 0
         local rgtemz=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,6) and 0x40 or 0
-		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
+        Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
         local selected=Duel.SelectFieldZone(tp,1,LOCATION_MZONE,0,~ZONES_EMZ|(lftezm|rgtemz))
         selected=selected==0x20 and 5 or 6
         Duel.MoveSequence(c,selected)
@@ -164,4 +177,37 @@ function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():AddCounter(0x4002,1)
+end
+--Banish all monsters your opponent controls (7)
+function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4002,10,REASON_COST) end
+    e:GetHandler():RemoveCounter(tp,0x4002,10,REASON_COST)
+end
+function s.rmfilter(c)
+	return c:IsAbleToRemove()
+end
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_MZONE,e:GetHandler())
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+    Duel.SetChainLimit(aux.FALSE)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_MZONE,e:GetHandler())
+    Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+    local e1=Effect.CreateEffect(e:GetHandler())
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_CANNOT_SUMMON)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetTargetRange(0,1)
+    e1:SetReset(RESET_PHASE+PHASE_END,2)
+    e1:SetCondition(s.efcon)
+    e1:SetLabel(Duel.GetTurnCount())
+    Duel.RegisterEffect(e1,tp)
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_CANNOT_MSET)
+    Duel.RegisterEffect(e2,tp)
+end
+function s.efcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end

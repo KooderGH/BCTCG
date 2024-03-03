@@ -4,7 +4,7 @@
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control no monster(s), you can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Kintaro" per turn, and only once that turn.
--- * If this card is Normal Summoned; Add lv8 or lower 2 WIND Machine monsters from your deck to your hand, then, place 1 card from your hand on top of your deck.
+-- * If this card is Normal Summoned; Add 2 WIND Machine monsters from your deck to your hand, then, place 1 card from your hand on top of your deck.
 -- * If this card is sent to the GY: Discard 1 card from your hand and target 1 card on the field; Destroy it.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -62,7 +62,7 @@ function s.spcon(e,c)
 end
 --Special Summon Search function
 function s.spfilter(c)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsLevelBelow(8) and c:IsAbleToHand()
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,2,nil) and Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,nil) end

@@ -2,11 +2,11 @@
 --Scripted by Konstak
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
--- (2) When a Spell card is activated; Add 1 Spell Counter(s) to this card.
+-- (2) When a Monster Effect is activated; Add 1 Spell Counter(s) to this card.
 -- (3) Cannot be destroyed by battle.
 -- (4) When summoned, place in defense. 
 -- (5) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
--- * You can remove 2 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
+-- * You can remove 3 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
 -- * If this card is sent to the GY; For every 2 WIND monsters you control, add 1 Spell card from your GY to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -87,7 +87,7 @@ function s.sdcon(e)
 end
 --add counter
 function s.acop(e,tp,eg,ep,ev,re,r,rp)
-	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:IsActiveType(TYPE_SPELL) and e:GetHandler():GetFlagEffect(1)>0 then
+	if re:IsActiveType(TYPE_MONSTER) and e:GetHandler():GetFlagEffect(1)>0 then
 		e:GetHandler():AddCounter(COUNTER_SPELL,1)
 	end
 end
@@ -104,8 +104,8 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Special Summon Search function
 function s.srcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,COUNTER_SPELL,2,REASON_COST) end
-	e:GetHandler():RemoveCounter(tp,COUNTER_SPELL,2,REASON_COST)
+	if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,COUNTER_SPELL,3,REASON_COST) end
+	e:GetHandler():RemoveCounter(tp,COUNTER_SPELL,3,REASON_COST)
 end
 function s.srfilter(c)
     return c:IsAttribute(ATTRIBUTE_WIND) and c:IsAbleToHand()

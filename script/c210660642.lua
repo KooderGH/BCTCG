@@ -13,8 +13,8 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetRange(LOCATION_HAND)
+	e1:SetCost(s.spcost)
     e1:SetCondition(s.spcon)
-    e1:SetOperation(s.spoperation)
     c:RegisterEffect(e1)
     --Cannot be returned
     local e2=Effect.CreateEffect(c)
@@ -45,12 +45,8 @@ function s.initial_effect(c)
     e4:SetOperation(s.rmop)
     c:RegisterEffect(e4)
 end
-function s.spcon(e,c)
-	if c==nil then return true end
-	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0)==0
-		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
-end
-function s.spoperation(e,tp,eg,ep,ev,re,r,rp)
+function s.spcost(e,tp,eg,ep,ev,re,r,rp)
+    if chk==0 then return Duel.GetActivityCount(tp,ACTIVITY_NORMALSUMMON)==0
     local c=e:GetHandler()
     --Cannot Normal Summon
     local e1=Effect.CreateEffect(c)
@@ -64,6 +60,11 @@ function s.spoperation(e,tp,eg,ep,ev,re,r,rp)
     local e2=e1:Clone()
     e2:SetCode(EFFECT_CANNOT_MSET)
     Duel.RegisterEffect(e2,tp)
+end
+function s.spcon(e,c)
+	if c==nil then return true end
+	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0)==0
+		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
 end
 function s.filter(c,e,tp)
 	return c:IsCanBeSpecialSummoned(e,0,tp,false,false)

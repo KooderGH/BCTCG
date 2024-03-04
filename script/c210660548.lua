@@ -1,22 +1,22 @@
 --The 4th Angel
 --Created by Konstak, Help from Gideon.
 --Effect:
---(1) During either players turn: You can target 2 cards on the field, destroy them. You can only active this effect of "The 4th Angel" once while on the field.
+--(1) During either players turn: You can target 2 cards on the field, destroy them. You can only active this effect of "The 4th Angel" once while on the field and only once per turn.
 --(2) This card has Piercing damage.
 local s,id=GetID()
 function s.initial_effect(c)
-	--Target 2 cards on the field
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_DESTROY)
-	e1:SetProperty(EFFECT_FLAG_NO_TURN_RESET+EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetType(EFFECT_TYPE_QUICK_O)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCountLimit(1)
-	e1:SetTarget(s.destg)
-	e1:SetOperation(s.desop)
-	c:RegisterEffect(e1)
+    --Target 2 cards on the field
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_DESTROY)
+    e1:SetProperty(EFFECT_FLAG_NO_TURN_RESET+EFFECT_FLAG_DAMAGE_STEP)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetType(EFFECT_TYPE_QUICK_O)
+    e1:SetCode(EVENT_FREE_CHAIN)
+    e1:SetCountLimit(1,id)
+    e1:SetTarget(s.destg)
+    e1:SetOperation(s.desop)
+    c:RegisterEffect(e1)
 	--pierce
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)

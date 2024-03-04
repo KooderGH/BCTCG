@@ -83,7 +83,7 @@ function s.addfilter(c,e,tp)
 end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chkc then return chkc:IsOnField() end
-    local gt=Duel.GetMatchingGroupCount(s.rmfilter,tp,LOCATION_MZONE,0,nil)
+    local gt=Duel.GetMatchingGroupCount(s.rmfilter,tp,LOCATION_ONFIELD,0,nil)
     if chk==0 then return gt>0 and Duel.IsExistingTarget(nil,tp,LOCATION_GRAVE,0,gt,nil) end
     local g=Duel.SelectTarget(tp,s.addfilter,tp,LOCATION_GRAVE,0,gt,gt,nil)
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)

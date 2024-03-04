@@ -138,7 +138,7 @@ function s.spellfilter(c)
 end
 function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end
-    local gt=Duel.GetMatchingGroupCount(s.addfilter,tp,LOCATION_MZONE,0,nil)
+    local gt=Duel.GetMatchingGroupCount(s.addfilter,tp,LOCATION_ONFIELD,0,nil)
     if chk==0 then return gt>1 and Duel.IsExistingMatchingCard(s.spellfilter,tp,LOCATION_GRAVE,0,1,nil) end
     local g=Duel.SelectTarget(tp,s.spellfilter,tp,LOCATION_GRAVE,0,math.floor(gt/2),math.floor(gt/2),nil)
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)

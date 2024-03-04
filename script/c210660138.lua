@@ -80,7 +80,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_WIND),c:GetControler(),LOCATION_MZONE,0,nil)*400
+	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_WIND),c:GetControler(),LOCATION_ONFIELD,0,nil)*400
 end
 --Once destroyed function
 function s.specialfilter(c,e,tp)

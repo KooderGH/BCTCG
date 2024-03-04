@@ -1,46 +1,35 @@
 --The 10th Angel
 --Scripted by Gideon.
--- (1) You can pay 1000 LP; Special Summon this card from your hand.
--- (2) During either players turn: You can Discard the top card in your deck and target one card on the field; Destroy that target. You can only activiate this effect of "The 10th Angel" once per turn.
--- (3) Your opponent must discard the top card in their deck to Normal Summon or Special Summon a monster.
+-- (1) During either players turn: You can Discard the top card in your deck and target one card on the field; Destroy that target. You can only activiate this effect of "The 10th Angel" once per turn.
+-- (2) Your opponent must discard the top card in their deck to Normal Summon or Special Summon a monster.
 --special summon
 local s,id=GetID()
 function s.initial_effect(c)
-	--Pay 1000 lp ss card from hand
+	--send to deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCost(s.spcost)
-	e1:SetTarget(s.sptg)
-	e1:SetOperation(s.spop)
+	e1:SetCategory(CATEGORY_DESTROY)
+	e1:SetType(EFFECT_TYPE_QUICK_O)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+	e1:SetCost(s.tdcost)
+	e1:SetTarget(s.tdtg)
+	e1:SetOperation(s.tdop)
 	c:RegisterEffect(e1)
-	--send to deck
-	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DESTROY)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
-	e2:SetCost(s.tdcost)
-	e2:SetTarget(s.tdtg)
-	e2:SetOperation(s.tdop)
-	c:RegisterEffect(e2)
 	--Discard to normal or Special
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD)
-	e3:SetCode(EFFECT_SUMMON_COST)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetTargetRange(0,LOCATION_ALL)
-	e3:SetCost(s.costchk)
-	e3:SetOperation(s.costop)
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_SUMMON_COST)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTargetRange(0,LOCATION_ALL)
+	e2:SetCost(s.costchk)
+	e2:SetOperation(s.costop)
+	c:RegisterEffect(e2)
+	local e3=e2:Clone()
+	e3:SetCode(EFFECT_SPSUMMON_COST)
 	c:RegisterEffect(e3)
-	local e4=e3:Clone()
-	e4:SetCode(EFFECT_SPSUMMON_COST)
-	c:RegisterEffect(e4)
 end
 --e1
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)

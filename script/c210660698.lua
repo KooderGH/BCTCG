@@ -4,7 +4,6 @@
 -- You can Special summon this card from your hand if you control 2 or more DARK warrior monsters.
 -- If this card destroys a monster by battle and sends it to the GY: Inflict damage to your opponent equal to the ATK of the destroyed monster in the GY.
 -- Each time your opponent takes damage from a card effect, except "Thunder Jack", deal 300 damage to your opponent.
-
 local s,id=GetID()
 function s.initial_effect(c)
 	--special summon
@@ -28,7 +27,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--300 damage
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_DAMAGE)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)

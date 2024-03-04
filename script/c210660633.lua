@@ -2,11 +2,11 @@
 --Scripted by Konstak
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
--- (2) When your opponent activates a monster effect; Add 1 Spell Counter(s) to this card (Max. 3).
+-- (2) When your opponent activates a monster effect; Add 1 Spell Counter(s) to this card
 -- (3) Cannot be destroyed by battle.
 -- (4) When summoned, place in defense. 
 -- (5) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
--- * You can remove 3 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
+-- * (Quick) You can remove 3 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
 -- * If this card is sent to the GY; For every 2 WIND monsters you control, add 1 Spell card from your GY to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -55,7 +55,7 @@ function s.initial_effect(c)
     local e7=e5:Clone()
     e7:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e7)
-    --add one wind monster from your deck or GY to hand
+    --add one wind monster from your deck or GY to hand (5)
     local e8=Effect.CreateEffect(c)
     e8:SetDescription(aux.Stringid(id,1))
     e8:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -68,7 +68,7 @@ function s.initial_effect(c)
     e8:SetTarget(s.srtg)
     e8:SetOperation(s.srop)
     c:RegisterEffect(e8)
-    --once sent to the graveyard add S/T from GY based on the number of 2 WIND monsters you control
+    --once sent to the graveyard add S/T from GY based on the number of 2 WIND monsters you control (5)
     local e9=Effect.CreateEffect(c)
     e9:SetDescription(aux.Stringid(id,2))
     e9:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)

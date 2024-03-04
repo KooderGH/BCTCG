@@ -2,7 +2,7 @@
 --Scripted by Konstak
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
--- (2) If your opponent controls 2 or more monsters while you control a WIND Attribute monster, you can Special Summon this card from your hand.
+-- (2) If you control a WIND Attribute monster, you can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Princess Kaguya" per turn, and only once that turn.
 -- * Once per turn: You can have all wind monsters gain 400 ATK for each wind monster you control until your opponent's end phase.
 -- * If this card is send to the GY; You can Special Summon one WIND Machine monster from your hand.
@@ -59,7 +59,7 @@ end
 function s.spcon(e,c)
 	if c==nil then return true end
 	local tp=e:GetHandlerPlayer()
-	return Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)>=2 and Duel.IsExistingMatchingCard(s.spfilter,c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 --ATK Gain function
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -83,8 +83,8 @@ function s.adval(e,c)
 	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_WIND),c:GetControler(),LOCATION_MZONE,0,nil)*400
 end
 --Once destroyed function
-function s.specialfilter(c)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+function s.specialfilter(c,e,tp)
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

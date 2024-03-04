@@ -1,33 +1,42 @@
 --Wolfchild Deale
 --Scripted by Gideon
--- (1) During either turn, except the End Phase: You can discard this card from your hand; apply this effect this turn. You can only use this effect of "Wolfchild Deale" once per turn.
+-- (1) Cannot be attacked.
+-- (2) During either turn, except the End Phase: You can discard this card from your hand; apply this effect this turn. You can only use this effect of "Wolfchild Deale" once per turn.
 -- * Each time your opponent Special Summons an Effect Monster(s) during the Main Phase or Battle Phase, you gain LP equal to that monster's ATK. If you did not gain LP by this effect, your LP are halved during the End Phase.
--- (2) You can Tribute this face-up card on the field; Each player draws 1 card, and neither player takes damage until the end of the opponent's next turn.
+-- (3) You can Tribute this face-up card on the field; Each player draws 1 card, and neither player takes damage until the end of the opponent's next turn.
 local s,id=GetID()
 function s.initial_effect(c)
-	--recover
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_RECOVER)
-	e1:SetType(EFFECT_TYPE_QUICK_O)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCountLimit(1,id)
-	e1:SetCondition(s.condition)
-	e1:SetCost(s.cost)
-	e1:SetOperation(s.operation)
-	c:RegisterEffect(e1)
-	--Tribute, one day
-	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DRAW)
-	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCost(s.tcost)
-	e2:SetTarget(s.ttarget)
-	e2:SetOperation(s.toperation)
-	c:RegisterEffect(e2)
+    --Cannot be attacked (1)
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e1:SetValue(1)
+    c:RegisterEffect(e1)
+    --recover (2)
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,0))
+    e2:SetCategory(CATEGORY_RECOVER)
+    e2:SetType(EFFECT_TYPE_QUICK_O)
+    e2:SetCode(EVENT_FREE_CHAIN)
+    e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
+    e2:SetRange(LOCATION_HAND)
+    e2:SetCountLimit(1,id)
+    e2:SetCondition(s.condition)
+    e2:SetCost(s.cost)
+    e2:SetOperation(s.operation)
+    c:RegisterEffect(e2)
+    --Tribute, one day (3)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_DRAW)
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCost(s.tcost)
+    e3:SetTarget(s.ttarget)
+    e3:SetOperation(s.toperation)
+    c:RegisterEffect(e3)
 end
 --(1) Effect
 function s.condition(e,tp,eg,ep,ev,re,r,rp)

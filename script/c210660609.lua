@@ -3,7 +3,7 @@
 --Effect
 -- (1) When you take damage from a card in your opponent's possession: You can Special Summon this card from your hand.
 -- (2) When this card is Special Summoned by its effect: Activate the appropriate effect based on the type of damage:
--- * Battle damage: Destroy all monster's your opponent controls. You cannot attack the turn you use this effect.
+-- * Battle damage: Destroy all monster's your opponent controls. You cannot attack the turn you use this effect. You can only use this effect of "Dark Aegis Garu" once per Duel.
 -- * Effect damage: Inflict damage to your opponent equal to double the damage you took. This card gains ATK equal to the damage you inflicted to your opponent this way.
 -- (3) Other monsters you control cannot attack.
 -- (4) During each end phase: This card gains 1000 ATK.
@@ -28,6 +28,7 @@ function s.initial_effect(c)
     e2:SetCategory(CATEGORY_DESTROY)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e2:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
     e2:SetCondition(s.sumcon2)
     e2:SetTarget(s.sumtg2)
     e2:SetOperation(s.sumop2)

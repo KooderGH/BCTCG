@@ -147,8 +147,8 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --SS from GY (4)
-function s.specialfilter(c)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE)
+function s.specialfilter(c,e,tp)
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

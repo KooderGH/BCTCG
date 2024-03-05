@@ -35,6 +35,7 @@ local e1=Effect.CreateEffect(c)
     e3:SetCategory(CATEGORY_EQUIP)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e3:SetCode(EVENT_BATTLE_CONFIRM)
+    e3:SetCondition(s.eqcon)
     e3:SetOperation(s.eqop)
     c:RegisterEffect(e3)
     --Add itself to the hand
@@ -97,9 +98,12 @@ function s.reop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --e3
+function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetAttackTarget()==e:GetHandler()
+end
 function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=e:GetHandler():GetBattleTarget()
+	local tc=Duel.GetAttacker()
 	if not tc:IsRelateToBattle() or not c:IsRelateToBattle() then return end
 	if Duel.GetLocationCount(tp,LOCATION_SZONE)<=0 or tc:IsFacedown() then
 		Duel.Destroy(c,REASON_EFFECT)

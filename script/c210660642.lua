@@ -1,10 +1,11 @@
 --Lucifer the fallen
---Scripted by Konstak.
+--Scripted by Konstak. Fixed by Gideon
 --Effect
--- If you control no monster(s), you can Special Summon this card from your hand.
--- Cannot be returned.
--- Once per turn: You can target 1 Monster in your GY; send 1 card from your hand to the GY, and if you do, Special Summon that target.
--- When this card is banished; You can draw 1 card.
+-- (1) If you control no monster(s), you can Special Summon this card from your hand. 
+-- (2) Cannot be returned.
+-- (3) Once per turn: You can target 1 Monster in your GY; send 1 card from your hand to the GY, and if you do, Special Summon that target.
+-- (4) When this card is banished; You can draw 1 card.
+-- (5) You cannot Normal Summon the turn you Special Summon this card.
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon
@@ -13,7 +14,6 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetRange(LOCATION_HAND)
-    e1:SetCost(s.spcost)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
     --Cannot be returned
@@ -44,26 +44,22 @@ function s.initial_effect(c)
     e4:SetTarget(s.rmtg)
     e4:SetOperation(s.rmop)
     c:RegisterEffect(e4)
+	--Check/apply Normal Summon/Set restriction
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e5:SetCode(EFFECT_SPSUMMON_COST)
+	e5:SetCost(function(_,_,tp) return Duel.GetActivityCount(tp,ACTIVITY_NORMALSUMMON)==0 end)
+	e5:SetOperation(s.spcostop)
+	c:RegisterEffect(e5)
 end
-function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetActivityCount(tp,ACTIVITY_NORMALSUMMON)==0 end
-    --Cannot Normal Summon
-    local e1=Effect.CreateEffect(e:GetHandler())
-    e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
-    e1:SetCode(EFFECT_CANNOT_SUMMON)
-    e1:SetReset(RESET_PHASE+PHASE_END)
-    e1:SetTargetRange(1,0)
-    Duel.RegisterEffect(e1,tp)
-    local e2=e1:Clone()
-    e2:SetCode(EFFECT_CANNOT_MSET)
-    Duel.RegisterEffect(e2,tp)
-end
+--e1
 function s.spcon(e,c)
 	if c==nil then return true end
 	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0)==0
 		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
 end
+--e3
 function s.filter(c,e,tp)
 	return c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
@@ -87,10 +83,26 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+--e4
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,5,PLAYER_ALL,LOCATION_DECK)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
+end
+--e5
+function s.spcostop(e,tp,eg,ep,ev,re,r,rp)
+	--Cannot Normal Summon/Set
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetDescription(aux.Stringid(id,2))
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH+EFFECT_FLAG_CLIENT_HINT)
+	e1:SetCode(EFFECT_CANNOT_SUMMON)
+	e1:SetTargetRange(1,0)
+	e1:SetReset(RESET_PHASE|PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+	local e2=e1:Clone()
+	e2:SetCode(EFFECT_CANNOT_MSET)
+	Duel.RegisterEffect(e2,tp)
 end

@@ -53,19 +53,19 @@ function s.initial_effect(c)
     e5:SetCode(EFFECT_DOUBLE_TRIBUTE)
     e5:SetValue(function (e,c) return c:IsRace(RACE_DRAGON) end)
     c:RegisterEffect(e5)
-    
-    ecial Summon function (1)
-    tion s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+end
+--Special Summon function (1)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_ONFIELD,0,1,e:GetHandler()) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,tp,LOCATION_ONFIELD)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-    	and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_ONFIELD,0,1,e:GetHandler()) end
-    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,tp,LOCATION_ONFIELD)
-    
-    tion s.spop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local g=Duel.SelectTarget(tp,s.spfilter,tp,LOCATION_ONFIELD,0,1,1,nil)
+	local g=Duel.SelectTarget(tp,s.spfilter,tp,LOCATION_ONFIELD,0,1,1,nil)
     if c:IsRelateToEffect(e) then
-    	Duel.Destroy(g,REASON_EFFECT)
+		Duel.Destroy(g,REASON_EFFECT)
         Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD)
@@ -76,12 +76,12 @@ function s.initial_effect(c)
         Duel.RegisterEffect(e1,tp)
         Duel.SkipPhase(tp,PHASE_BATTLE,RESET_PHASE|PHASE_END,1,1)
     end
-    
-    ibute summon function (2)
-    tion s.trcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
-    
-    tion s.trop(e,tp,eg,ep,ev,re,r,rp)
+end
+--Tribute summon function (2)
+function s.trcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
+end
+function s.trop(e,tp,eg,ep,ev,re,r,rp)
     local e1=Effect.CreateEffect(e:GetHandler())
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_CANNOT_SUMMON)

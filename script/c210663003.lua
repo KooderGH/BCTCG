@@ -5,7 +5,7 @@
 --(1) Cannot be used as Fusion Material.
 --(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending 2 "Mighty Katapult" from your field to the GY. (You do not use "Polymerization")
 --(3) Cannot be returned to hand.
---(4) When a card or effect is activated (Quick Effect): You can Tribute this card; negate the activation, and if you do, destroy it. During the End Phase, if this effect was activated this turn (and was not negated): Special Summon this card from your GY and it gains 2 Warfare Counters.
+--(4) When a card or effect is activated (Quick Effect): You can Tribute this card; negate the activation, and if you do, destroy it. During the End Phase, if this effect was activated this turn (and was not negated): Special Summon this card from your GY and gain 2 Warfare Counter.
 --(5) You can tribute 1 Monster you control; Gain 1 Warfare counter.
 --(6) If this card battles a Zombie type monster; Banish it at the start of the damage step.
 --(7) If this card battles a Fairy type monster; negate the attack and negate its effects while this card is face-up on the field at the start of the damage step.

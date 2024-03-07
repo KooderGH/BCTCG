@@ -103,7 +103,7 @@ function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=Duel.GetAttacker()
+	local tc=e:GetHandler():GetBattleTarget()
 	if not tc:IsRelateToBattle() or not c:IsRelateToBattle() then return end
 	if Duel.GetLocationCount(tp,LOCATION_SZONE)<=0 or tc:IsFacedown() then
 		Duel.Destroy(c,REASON_EFFECT)

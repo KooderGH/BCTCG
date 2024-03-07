@@ -10,7 +10,7 @@
 -- (7) Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.
 local s,id=GetID()
 function s.initial_effect(c)
-    --Can Be Set without Tribute. (1) 
+    --Can Be Normal Summoned without Tribute. (1) 
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)

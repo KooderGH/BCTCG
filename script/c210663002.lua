@@ -14,7 +14,7 @@
 --* You can Tribute 1 "Driller K41 Token" monster; Gain 1 Warfare Counter.
 --* You can Tribute 1 "Thermae K41 Token" monster; Gain 2 Warfare Counter.
 --(8) Monsters you control gain 1000 DEF for each Warfare Counter on the field.
---(9) While you control a "Type-K41 Defence" Token, this card cannot be targeted for attacks and cannot be targeted by card effects.
+--(9) While you control a "Type-K41 Defence" Token, this card cannot be destroyed by card effects and cannot be targeted by card effects.
 --(10) You can only control one "Type-K41 Defence".
 local s,id=GetID()
 function s.initial_effect(c)
@@ -143,7 +143,7 @@ function s.initial_effect(c)
     e14:SetValue(1)
     c:RegisterEffect(e14)
     local e15=e14:Clone()
-    e15:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+	e15:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
     c:RegisterEffect(e15)
 end
 --Special Summon Functions

@@ -73,8 +73,10 @@ function s.initial_effect(c)
 end
 --Tribute summon function (2)
 function s.trcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsSummonTyp    if chkc then return chkc:IsOnField() end
-    if chk==0 then return Duel    if chkc then return chkc:IsOnField() and s.filter(chkc) end
+    return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
+end
+function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() and s.filter(chkc) end
     if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
     local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,3,nil)

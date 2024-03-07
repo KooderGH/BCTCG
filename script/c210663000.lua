@@ -9,8 +9,9 @@
 --(5) While you control a Token, this card cannot be destroyed by battle and cannot be targeted by card effects.
 --(6) You can Tribute 1 "Type 10 Token" monster's; Gain 1 Warfare Counter.
 --(7) Monsters you control gain 750 ATK for each Warfare Counter on the field.
---(8) You can Tribute 2 "Type 10 Token" monster's; Decrease your opponent's LP by a quarter of their LP.
---(9) You can only control one "Type-80T support".
+--(8) You can Tribute 2 "Type 10 Token" monster's; Add 1 Level 4 or lower Machine monster from your deck to your hand.
+--(9) If this card is destroyed; You can add up to 2 "Mighty Kat-A-Pult" from your deck to your hand.
+--(10) You can only control one "Type-80T support".
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one
@@ -85,11 +86,23 @@ function s.initial_effect(c)
     --Decrease Opp LP by a quarter
     local e10=Effect.CreateEffect(c)
     e10:SetDescription(aux.Stringid(id,1))
+    e10:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e10:SetType(EFFECT_TYPE_IGNITION)
     e10:SetRange(LOCATION_MZONE)
-    e10:SetCost(s.lpcost)
-    e10:SetOperation(s.lpop)
+    e10:SetCost(s.searchcost)
+    e10:SetTarget(s.searchtg)
+    e10:SetOperation(s.searchop)
     c:RegisterEffect(e10)
+    --Once Destroyed add as many "Kat-a-pults"
+    local e11=Effect.CreateEffect(c)
+    e11:SetDescription(aux.Stringid(id,3))
+    e11:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e11:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e11:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e11:SetCode(EVENT_DESTROYED)
+    e11:SetTarget(s.addtg)
+    e11:SetOperation(s.addop)
+    c:RegisterEffect(e11)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -161,16 +174,44 @@ end
 function s.atkval(e,c)
     return Duel.GetCounter(0,1,1,0x4001)*750
 end
---decrease a quarter of your Opponent's LP function
+--Tribute and Add
 function s.tokenFilter(c)
     return c:IsCode(210668000)
 end
-  function s.lpcost(e,tp,eg,ep,ev,re,r,rp,chk)
+  function s.searchcost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tokenFilter,2,false,nil,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
     local sg=Duel.SelectReleaseGroupCost(tp,s.tokenFilter,2,2,false,nil,nil)
     Duel.Release(sg,REASON_COST)
 end
-function s.lpop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.SetLP(1-tp,Duel.GetLP(1-tp)/1.25)
+function s.searchfilter(c)
+	return c:IsLevelBelow(4) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+end
+function s.searchtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.searchfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.searchop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.searchfilter,tp,LOCATION_DECK,0,1,1,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
+end
+--Destroy and add function
+function s.addfilter(c)
+	return c:IsCode(210660304) and c:IsAbleToHand()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,2,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end

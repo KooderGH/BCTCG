@@ -143,7 +143,7 @@ function s.initial_effect(c)
     e14:SetValue(1)
     c:RegisterEffect(e14)
     local e15=e14:Clone()
-	e15:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e15:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
     c:RegisterEffect(e15)
 end
 --Special Summon Functions

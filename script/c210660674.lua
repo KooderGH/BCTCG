@@ -99,7 +99,9 @@ function s.reop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e3
 function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetAttacker()==e:GetHandler() or Duel.GetAttackTarget()==e:GetHandler()
+	local tc=e:GetHandler():GetBattleTarget()
+	e:SetLabelObject(tc)
+	return tc and tc:IsRelateToBattle()
 end
 function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

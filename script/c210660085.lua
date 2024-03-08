@@ -34,6 +34,16 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e3:SetTargetRange(1,1)
 	c:RegisterEffect(e3)
+    --self banish (4)
+    local e4=Effect.CreateEffect(c)
+    e4:SetCategory(CATEGORY_REMOVE)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCode(EFFECT_SELF_DESTROY)
+    e4:SetCost(aux.selfbanishcost)
+    e4:SetCondition(s.bncon)
+    c:RegisterEffect(e4)
     --Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.(6)
     local e6=Effect.CreateEffect(c)
     e6:SetType(EFFECT_TYPE_SINGLE)
@@ -59,4 +69,11 @@ function s.reop(e,tp,eg,ep,ev,re,r,rp)
 	if tc and tc:IsRelateToEffect(e) then
 		Duel.SendtoHand(tc,nil,REASON_EFFECT)
 	end
+end
+--Self Destroy Function
+function s.sdfilter(c)
+    return c:IsMonster() and not c:IsRace(RACE_DRAGON)
+end
+function s.bncon(e)
+    return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

@@ -5,9 +5,10 @@
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
 -- (4) Once during either players turn (Quick): You can target 1 WIND monster in your GY; Special Summon it.
--- (5) This card gains 200 ATK for each WIND monster in your GY.
--- (6) Each time a WIND monster is sent to the GY; Add 1 Quaking Hammer Counter(s) to this card.
--- (7) You can remove 10 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
+-- (5) You can Target 1 card on your field (Ignition); Destroy that target. You can only activate this effect once per turn.
+-- (6) This card gains 300 ATK for each WIND monster in your GY.
+-- (7) Each time a WIND monster is sent to the GY; Add 1 Quaking Hammer Counter(s) to this card.
+-- (8) You can remove 10 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -88,39 +89,51 @@ function s.initial_effect(c)
     c:RegisterEffect(e9)
     --(4)Finish
     --(5)Start
-    --ATK based on Wind machines on your GY
     local e10=Effect.CreateEffect(c)
-    e10:SetType(EFFECT_TYPE_SINGLE)
-    e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e10:SetRange(LOCATION_EMZONE)
-    e10:SetCode(EFFECT_UPDATE_ATTACK)
-    e10:SetValue(s.atkval)
+    e10:SetDescription(aux.Stringid(id,1))
+    e10:SetCategory(CATEGORY_DESTROY)
+    e10:SetType(EFFECT_TYPE_IGNITION)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetCountLimit(1)
+    e10:SetTarget(s.destg)
+    e10:SetOperation(s.desop)
     c:RegisterEffect(e10)
     --(5)Finish
     --(6)Start
-    --When card(s) on destroyed by card effect(s) Place Quaking Hammer Counter
-    c:EnableCounterPermit(0x4002)
+    --ATK based on Wind machines on your GY
     local e11=Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-    e11:SetProperty(EFFECT_FLAG_DELAY)
-    e11:SetRange(LOCATION_MZONE)
-    e11:SetCode(EVENT_TO_GRAVE)
-    e11:SetCondition(s.ctcon)
-    e11:SetOperation(s.ctop)
+    e11:SetType(EFFECT_TYPE_SINGLE)
+    e11:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e11:SetRange(LOCATION_EMZONE)
+    e11:SetCode(EFFECT_UPDATE_ATTACK)
+    e11:SetValue(s.atkval)
     c:RegisterEffect(e11)
     --(6)Finish
     --(7)Start
-    --add one wind monster from your deck or GY to hand
+    --When card(s) on destroyed by card effect(s) Place Quaking Hammer Counter
+    c:EnableCounterPermit(0x4002)
     local e12=Effect.CreateEffect(c)
-    e12:SetDescription(aux.Stringid(id,1))
-    e12:SetCategory(CATEGORY_REMOVE)
-    e12:SetType(EFFECT_TYPE_IGNITION)
+    e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e12:SetProperty(EFFECT_FLAG_DELAY)
     e12:SetRange(LOCATION_MZONE)
-    e12:SetCountLimit(1,id)
-    e12:SetCost(s.rmcost)
-    e12:SetTarget(s.rmtg)
-    e12:SetOperation(s.rmop)
+    e12:SetCode(EVENT_TO_GRAVE)
+    e12:SetCondition(s.ctcon)
+    e12:SetOperation(s.ctop)
     c:RegisterEffect(e12)
+    --(7)Finish
+    --(8)Start
+    --add one wind monster from your deck or GY to hand
+    local e13=Effect.CreateEffect(c)
+    e13:SetDescription(aux.Stringid(id,2))
+    e13:SetCategory(CATEGORY_REMOVE)
+    e13:SetType(EFFECT_TYPE_IGNITION)
+    e13:SetRange(LOCATION_MZONE)
+    e13:SetCountLimit(1,id)
+    e13:SetCost(s.rmcost)
+    e13:SetTarget(s.rmtg)
+    e13:SetOperation(s.rmop)
+    c:RegisterEffect(e13)
+    --(8)Finish
 end
 --(1) functions
 function s.Windfilter(c)
@@ -164,11 +177,25 @@ function s.ssop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
---ATK gain (5)
-function s.atkval(e,c)
-	return Duel.GetMatchingGroupCount(Card.IsAttribute,c:GetControler(),LOCATION_GRAVE,0,nil,ATTRIBUTE_WIND)*200
+--Destroy 1 Monster you control (5)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() end
+    if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,0,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
--- Quaking Hammer (6)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.Destroy(tc,REASON_EFFECT)
+	end
+end
+--ATK gain (6)
+function s.atkval(e,c)
+	return Duel.GetMatchingGroupCount(Card.IsAttribute,c:GetControler(),LOCATION_GRAVE,0,nil,ATTRIBUTE_WIND)*300
+end
+-- Quaking Hammer (7)
 s.counter_list={0x4002}
 function s.ctfilter(c,tp)
 	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsPreviousControler(tp)
@@ -179,10 +206,10 @@ end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():AddCounter(0x4002,1)
 end
---Banish all monsters your opponent controls (7)
+--Banish all monsters your opponent controls (8)
 function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4002,10,REASON_COST) end
-    e:GetHandler():RemoveCounter(tp,0x4002,10,REASON_COST)
+    if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4002,7,REASON_COST) end
+    e:GetHandler():RemoveCounter(tp,0x4002,7,REASON_COST)
 end
 function s.rmfilter(c)
 	return c:IsAbleToRemove()

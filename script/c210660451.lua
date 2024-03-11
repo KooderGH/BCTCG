@@ -110,7 +110,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e11)
     --(6)Finish
     --(7)Start
-    --When card(s) on destroyed by card effect(s) Place Quaking Hammer Counter
+    --When card(s) on destroyed Place Quaking Hammer Counter
     c:EnableCounterPermit(0x4002)
     local e12=Effect.CreateEffect(c)
     e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)

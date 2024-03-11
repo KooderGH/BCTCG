@@ -1,5 +1,7 @@
 --High Lord Babel
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. 
+--Scripted by Gideon
+--Effect
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
 -- (2) Cannot be returned to hand, banished, or tributed. This effect cannot be negated.
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
@@ -10,146 +12,147 @@
 -- (9) While you have no cards in your hand: You cannot lose the duel by any means.
 local s,id=GetID()
 function s.initial_effect(c)
---(1)Start
-	--Makes it unsummonable via normal
-	c:EnableUnsummonable()
-	--Cannot be SS by other ways other then it's own effect via above and this function
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e0:SetValue(aux.FALSE)
-	c:RegisterEffect(e0)
-	--SS on destroyed effect
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetCode(EVENT_DESTROYED)
-	e1:SetRange(LOCATION_HAND|LOCATION_GRAVE)
-	e1:SetCondition(s.spcon)
-	e1:SetCost(s.spcost)
-	e1:SetTarget(s.sptg)
-	e1:SetOperation(s.spop)
-	c:RegisterEffect(e1)
-	--Move to EMZ
-	local e2=Effect.CreateEffect(c)
+    --(1)Start
+    --Makes it unsummonable via normal
+    c:EnableUnsummonable()
+    --Cannot be SS by other ways other then it's own effect via above and this function
+    local e0=Effect.CreateEffect(c)
+    e0:SetType(EFFECT_TYPE_SINGLE)
+    e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+    e0:SetValue(aux.FALSE)
+    c:RegisterEffect(e0)
+    --SS on destroyed effect
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+    e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e1:SetCode(EVENT_DESTROYED)
+    e1:SetRange(LOCATION_HAND|LOCATION_GRAVE)
+    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e1:SetCondition(s.spcon)
+    e1:SetCost(s.spcost)
+    e1:SetTarget(s.sptg)
+    e1:SetOperation(s.spop)
+    c:RegisterEffect(e1)
+    --Move to EMZ
+    local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
     e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e2:SetCode(EVENT_SPSUMMON_SUCCESS)
     e2:SetOperation(s.mvop)
     c:RegisterEffect(e2)
-	--Summon cannot be disabled (Hopefully)
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
-	e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	c:RegisterEffect(e3)
-	--(1)Finish
-	--(2)Start
-	--Cannot be Tributed
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-	e4:SetCode(EFFECT_UNRELEASABLE_SUM)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetValue(1)
-	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-	c:RegisterEffect(e5)
-	--Cannot be returned to hand
-	local e6=e4:Clone()
-	e6:SetCode(EFFECT_CANNOT_TO_HAND)
-	c:RegisterEffect(e6)
-	--Cannot banish
-	local e7=e4:Clone()
-	e7:SetCode(EFFECT_CANNOT_REMOVE)
-	c:RegisterEffect(e7)
-	--(2)Finish
-	--(3)Start
-	--Cannot be targeted (self)
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE)
-	e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-	e8:SetRange(LOCATION_MZONE)
-	e8:SetValue(1)
-	c:RegisterEffect(e8)
-	--(3)Finish
-	--(4)Start
-	local e9=Effect.CreateEffect(c)
-	e9:SetType(EFFECT_TYPE_SINGLE)
-	e9:SetCode(EFFECT_SET_POSITION)
-	e9:SetRange(LOCATION_MZONE)
-	e9:SetValue(POS_FACEUP_DEFENSE)
-	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	c:RegisterEffect(e9)
-	--(4)Finish
-	--(5)Start
-	--Unaffected by effects other than its own.
-	local e10=Effect.CreateEffect(c)
-	e10:SetType(EFFECT_TYPE_SINGLE)
-	e10:SetCode(EFFECT_IMMUNE_EFFECT)
-	e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e10:SetRange(LOCATION_MZONE)
-	e10:SetValue(s.efilter)
-	c:RegisterEffect(e10)
-	--(5)Finish
-	--(6)Start
-	--When card(s) on destroyed by card effect(s) Place Castle Counter
-	c:EnableCounterPermit(0x4000)
-	local e11=Effect.CreateEffect(c)
-	e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e11:SetProperty(EFFECT_FLAG_DELAY)
-	e11:SetRange(LOCATION_MZONE)
-	e11:SetCode(EVENT_DESTROYED)
-	e11:SetCondition(s.ctcon)
-	e11:SetOperation(s.ctop)
-	c:RegisterEffect(e11)
-	--(6)Finish
-	--(7)Start
-	--Win con
-	local e12=Effect.CreateEffect(c)
-	e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e12:SetProperty(EFFECT_FLAG_DELAY)
-	e12:SetCode(EVENT_ADJUST)
-	e12:SetRange(LOCATION_MZONE)
-	e12:SetCondition(s.wincon)
-	e12:SetOperation(s.winop)
-	c:RegisterEffect(e12)
-	--(7)Finish
-	--(8)Start
-	--Heal 1000 for each dragon controlled
-	local e13=Effect.CreateEffect(c)
-	e13:SetDescription(aux.Stringid(id,1))
-	e13:SetCategory(CATEGORY_RECOVER)
-	e13:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-	e13:SetCode(EVENT_PHASE+PHASE_END)
-	e13:SetRange(LOCATION_MZONE)
-	e13:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e13:SetCountLimit(1)
-	e13:SetTarget(s.rectg)
-	e13:SetOperation(s.recop)
-	c:RegisterEffect(e13)
-	--(8)Finish
-	--(9)Start
-	--Cannot lose if 0 cards in hand
-	local e14=Effect.CreateEffect(c)
-	e14:SetType(EFFECT_TYPE_FIELD)
-	e14:SetCode(EFFECT_CANNOT_LOSE_DECK)
-	e14:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e14:SetRange(LOCATION_MZONE)
-	e14:SetTargetRange(1,0)
-	e14:SetCondition(s.losecon)
-	c:RegisterEffect(e14)
-	local e15=e14:Clone()
-	e15:SetCode(EFFECT_CANNOT_LOSE_LP)
-	c:RegisterEffect(e15)
-	local e16=e14:Clone()
-	e16:SetCode(EFFECT_CANNOT_LOSE_EFFECT)
-	c:RegisterEffect(e16)
+    --Summon cannot be disabled (Hopefully)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
+    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    c:RegisterEffect(e3)
+    --(1)Finish
+    --(2)Start
+    --Cannot be Tributed
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    c:RegisterEffect(e5)
+    --Cannot be returned to hand
+    local e6=e4:Clone()
+    e6:SetCode(EFFECT_CANNOT_TO_HAND)
+    c:RegisterEffect(e6)
+    --Cannot banish
+    local e7=e4:Clone()
+    e7:SetCode(EFFECT_CANNOT_REMOVE)
+    c:RegisterEffect(e7)
+    --(2)Finish
+    --(3)Start
+    --Cannot be targeted (self)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetValue(1)
+    c:RegisterEffect(e8)
+    --(3)Finish
+    --(4)Start
+    local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE)
+    e9:SetCode(EFFECT_SET_POSITION)
+    e9:SetRange(LOCATION_MZONE)
+    e9:SetValue(POS_FACEUP_DEFENSE)
+    e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    c:RegisterEffect(e9)
+    --(4)Finish
+    --(5)Start
+    --Unaffected by effects other than its own.
+    local e10=Effect.CreateEffect(c)
+    e10:SetType(EFFECT_TYPE_SINGLE)
+    e10:SetCode(EFFECT_IMMUNE_EFFECT)
+    e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetValue(s.efilter)
+    c:RegisterEffect(e10)
+    --(5)Finish
+    --(6)Start
+    --When card(s) on destroyed by card effect(s) Place Castle Counter
+    c:EnableCounterPermit(0x4000)
+    local e11=Effect.CreateEffect(c)
+    e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e11:SetProperty(EFFECT_FLAG_DELAY)
+    e11:SetRange(LOCATION_MZONE)
+    e11:SetCode(EVENT_DESTROYED)
+    e11:SetCondition(s.ctcon)
+    e11:SetOperation(s.ctop)
+    c:RegisterEffect(e11)
+    --(6)Finish
+    --(7)Start
+    --Win con
+    local e12=Effect.CreateEffect(c)
+    e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e12:SetProperty(EFFECT_FLAG_DELAY)
+    e12:SetCode(EVENT_ADJUST)
+    e12:SetRange(LOCATION_MZONE)
+    e12:SetCondition(s.wincon)
+    e12:SetOperation(s.winop)
+    c:RegisterEffect(e12)
+    --(7)Finish
+    --(8)Start
+    --Heal 1000 for each dragon controlled
+    local e13=Effect.CreateEffect(c)
+    e13:SetDescription(aux.Stringid(id,1))
+    e13:SetCategory(CATEGORY_RECOVER)
+    e13:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e13:SetCode(EVENT_PHASE+PHASE_END)
+    e13:SetRange(LOCATION_MZONE)
+    e13:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e13:SetCountLimit(1)
+    e13:SetTarget(s.rectg)
+    e13:SetOperation(s.recop)
+    c:RegisterEffect(e13)
+    --(8)Finish
+    --(9)Start
+    --Cannot lose if 0 cards in hand
+    local e14=Effect.CreateEffect(c)
+    e14:SetType(EFFECT_TYPE_FIELD)
+    e14:SetCode(EFFECT_CANNOT_LOSE_DECK)
+    e14:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e14:SetRange(LOCATION_MZONE)
+    e14:SetTargetRange(1,0)
+    e14:SetCondition(s.losecon)
+    c:RegisterEffect(e14)
+    local e15=e14:Clone()
+    e15:SetCode(EFFECT_CANNOT_LOSE_LP)
+    c:RegisterEffect(e15)
+    local e16=e14:Clone()
+    e16:SetCode(EFFECT_CANNOT_LOSE_EFFECT)
+    c:RegisterEffect(e16)
 end
 --(1)
 function s.cfilter(c,tp)

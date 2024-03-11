@@ -198,7 +198,7 @@ end
 -- Quaking Hammer (7)
 s.counter_list={0x4002}
 function s.ctfilter(c,tp)
-	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsPreviousControler(tp)
+	return c:IsPreviousLocation(LOCATION_ONFIELD|LOCATION_DECK) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsPreviousControler(tp)
 end
 function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.ctfilter,1,nil,tp)

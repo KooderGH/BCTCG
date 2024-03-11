@@ -1,6 +1,6 @@
 --Kyosaka Nanaho
 --Scripted by Gideon
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand by discarding 2 card's from your hand while controlling no monsters. Then move this card to your Extra Monster Zone. 
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand by discarding 3 card's from your hand while controlling no monsters. Then move this card to your Extra Monster Zone. 
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
 -- (4) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
@@ -121,14 +121,14 @@ function s.ssummoncon(e,c)
 	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
     return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0,nil)==0
 		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
-        and aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0,c)
+        and aux.SelectUnselectGroup(rg,e,tp,3,3,aux.ChkfMMZ(1),0,c)
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1))
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
 	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
-	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_DISCARD,nil,nil,true)
+	local g=aux.SelectUnselectGroup(rg,e,tp,3,3,aux.ChkfMMZ(1),1,tp,HINTMSG_DISCARD,nil,nil,true)
 	if #g>0 then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -180,7 +180,7 @@ function s.handop(e,tp,eg,ep,ev,re,r,rp)
 	end
 	if #rg>0 then
 		Duel.BreakEffect()
-		Duel.Remove(rg,POS_FACEUP,REASON_EFFECT)
+		Duel.Remove(rg,POS_FACEDOWN,REASON_EFFECT)
 	end
 	Duel.ShuffleHand(1-tp)
 end

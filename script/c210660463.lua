@@ -5,7 +5,7 @@
 -- (3) Cannot be targeted by card effects.
 -- (4) This card's Position cannot be changed.
 -- (5) Card's you control cannot be returned to hand or banished.
--- (6) If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand.
+-- (6) If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand. You can only activate this effect once per duel.
 -- (7) This card gains the following effect(s), based on the number of Earth Machine Monster(s) you control except "Mighty Kristul Muu":
 -- * 1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
 -- * 2+: This card becomes uneffected by card effects except from itself.
@@ -107,6 +107,7 @@ function s.initial_effect(c)
     e12:SetCategory(CATEGORY_TOHAND)
     e12:SetType(EFFECT_TYPE_IGNITION)
     e12:SetRange(LOCATION_GRAVE)
+    e12:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
     e12:SetCost(s.graverecoverycost)
     e12:SetTarget(s.graverecoverytg)
     e12:SetOperation(s.graverecoveryop)

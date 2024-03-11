@@ -71,7 +71,7 @@ function s.retop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e2
 function s.scost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetActivityCount(tp,ACTIVITY_SPSUMMON)==0 and not s[tp] end
+	if chk==0 then return not s[tp] end
 	--Cannot Normal Summon
 	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetDescription(aux.Stringid(id,1))

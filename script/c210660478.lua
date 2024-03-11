@@ -1,6 +1,6 @@
 --Lumina
 --Scripted by Gideon
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand or GY by controling 3 or more Fariy type monsters on the field with different attributes. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand by controling 3 or more Fariy type monsters on the field with different attributes. Then move this card to your Extra Monster Zone.
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
 -- (4) Once during either players turn (Quick): You can add 1 Fog Counter(s) to all face-up card's on the field.
@@ -28,8 +28,7 @@ function s.initial_effect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-    e1:SetRange(LOCATION_HAND+LOCATION_GRAVE)
-    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.ssummoncon)
     c:RegisterEffect(e1)
     --Move to EMZ

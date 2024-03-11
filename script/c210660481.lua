@@ -6,7 +6,7 @@
 -- (3) Cannot be targeted by card effects.
 -- (4) You can only control 1 "Doktor Heaven".
 -- (5) Each player must pay 500 LP for each monster they Normal Summon, Special Summon, Set and for each card they activate from their hand.
--- (6) If this card is in your GY: you can pay 1000 LP; add this card to your hand. You cannot Special Summon monster's the turn you activate this effect. You can only activate this effect once per duel.
+-- (6) If this card is in your GY: you can pay 1000 LP; add this card to your hand. You cannot Special Summon monster's the turn you activate this effect.
 -- (7) This card gains the following effect(s), based on the number of DARK Warrior Monster(s) you control:
 -- ● 1+: When a monster declares an attack (Quick Effect); You can negate the attack. You can only use this effect of "Doktor Heaven" once per turn.
 -- ● 2+: Once per turn: You can target one DARK Warrior monster in your GY; add it to your hand.
@@ -126,7 +126,6 @@ function s.initial_effect(c)
     e15:SetCategory(CATEGORY_TOHAND)
     e15:SetType(EFFECT_TYPE_IGNITION)
     e15:SetRange(LOCATION_GRAVE)
-    e15:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
     e15:SetCost(s.graverecoverycost)
     e15:SetTarget(s.graverecoverytg)
     e15:SetOperation(s.graverecoveryop)

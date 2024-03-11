@@ -8,7 +8,7 @@
 -- (5) You can Target 1 card on your field (Ignition); Destroy that target. You can only activate this effect once per turn.
 -- (6) This card gains 300 ATK for each WIND monster in your GY.
 -- (7) Each time a WIND monster is sent to the GY; Add 1 Quaking Hammer Counter(s) to this card.
--- (8) You can remove 10 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
+-- (8) You can remove 7 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start

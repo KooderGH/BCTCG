@@ -1,7 +1,7 @@
 --Doktor Heaven
 --Scripted by Gideon with a LOT of Naim's help. Credit to Larry for the Summon condition. Special thanks to Naim for EMZ move ooperation.
 --Effect
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect. If your LP are 2000 or higher than your opponent's and you control a DARK Warrior monster, you can Special Summon this card (from your hand), then move this card to your Extra Monster Zone. This card Summon cannot be negated.
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect. If your LP are 1000 or higher than your opponent's and you control a DARK Warrior monster, you can Special Summon this card (from your hand), then move this card to your Extra Monster Zone. This card Summon cannot be negated.
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
 -- (4) You can only control 1 "Doktor Heaven".
@@ -197,7 +197,7 @@ end
 function s.ssummoncon(e,c)
     if c==nil then return true end
     local tp=c:GetControler()
-    return (Duel.GetLP(tp)-Duel.GetLP(1-tp))>=2000
+    return (Duel.GetLP(tp)-Duel.GetLP(1-tp))>=1000
         and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(c:GetControler(),LOCATION_EMZONE,0) or Duel.CheckLocation(c:GetControler(),LOCATION_EMZONE,1))

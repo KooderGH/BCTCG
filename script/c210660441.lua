@@ -2,12 +2,11 @@
 --Scripted by Gideon
 --(1) If you control a LIGHT Level 2 monster, you can Special Summon this card from your hand.
 --(2) When this card would be destroyed, gain 500 attack instead.
---(3) If this card has 4000 ATK or more, you can Tribute this card; Add 1 DARK monster from your deck to your hand. You cannot Special Summon DARK monsters the turn you use this effect.
---(4) Once per turn, if you control 3 or more DARK monsters, you can Tribute 1 monster on your side of the field (Ignition); This card gains ATK equal to that monsters ATK. 
---(5) If this card is sent to GY; Send one DARK monster from deck to GY. You can only use this effect of "D'arktanyan" once per turn.
+--(3) Once per turn, if you control 2 or more DARK monsters, you can Tribute 1 monster on your side of the field (Ignition); This card gains ATK equal to that monsters ATK. 
+--(4) If this card is sent to GY; Send one DARK monster from deck to GY. You can only use this effect of "D'arktanyan" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
-	--special summon
+	--special summon (1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
@@ -16,7 +15,7 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e1:SetCondition(s.spcon)
 	c:RegisterEffect(e1)
-	--Destroy replace
+	--Destroy replace (2)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
 	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -24,40 +23,28 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTarget(s.desreptg)
 	c:RegisterEffect(e2)
-	--Tribute Search Card
+	--Tribute other monster gain atk (3)
 	local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,0))
-    e3:SetCategory(CATEGORY_SEARCH)
-    e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e3:SetType(EFFECT_TYPE_IGNITION)
-    e3:SetRange(LOCATION_MZONE)
-	e3:SetCondition(s.trcon)
-	e3:SetCost(s.trcost)
-    e3:SetTarget(s.trtg)
-    e3:SetOperation(s.trop)
-    c:RegisterEffect(e3)
-	--Tribute other monster gain atk
+	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_ATKCHANGE)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1)
+	e3:SetCondition(s.atcon)
+	e3:SetCost(s.atcost)
+	e3:SetOperation(s.atop)
+	c:RegisterEffect(e3)
+	--tograve (4)
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,1))
-	e4:SetCategory(CATEGORY_ATKCHANGE)
-	e4:SetType(EFFECT_TYPE_IGNITION)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1)
-	e4:SetCondition(s.atcon)
-	e4:SetCost(s.atcost)
-	e4:SetOperation(s.atop)
+	e4:SetCategory(CATEGORY_TOGRAVE)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetProperty(EFFECT_FLAG_DELAY)
+	e4:SetCode(EVENT_TO_GRAVE)
+	e4:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+	e4:SetTarget(s.tgtg)
+	e4:SetOperation(s.tgop)
 	c:RegisterEffect(e4)
-	--tograve
-	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(id,2))
-	e5:SetCategory(CATEGORY_TOGRAVE)
-	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e5:SetProperty(EFFECT_FLAG_DELAY)
-	e5:SetCode(EVENT_TO_GRAVE)
-	e5:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
-	e5:SetTarget(s.tgtg)
-	e5:SetOperation(s.tgop)
-	c:RegisterEffect(e5)
 end
 --e1
 function s.spfilter(c)
@@ -80,52 +67,12 @@ function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 		e2:SetValue(500)
 		c:RegisterEffect(e2)
 end
---e3
-function s.trcon(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 and e:GetHandler():GetAttack()>=5000 end
-	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
-	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-	e1:SetReset(RESET_PHASE+PHASE_END)
-	e1:SetTargetRange(1,0)
-	e1:SetTarget(s.splimit)
-	Duel.RegisterEffect(e1,tp)
-	local e2=Effect.CreateEffect(e:GetHandler())
-	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetReset(RESET_PHASE+PHASE_END)
-	e2:SetTargetRange(1,0)
-	Duel.RegisterEffect(e2,tp)
-end
-function s.splimit(e,c)
-	return c:IsAttribute(ATTRIBUTE_DARK)
-end
-function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return e:GetHandler():IsReleasable() end
-    Duel.Release(e:GetHandler(),REASON_COST)
-end
-function s.filter(c)
-	return c:IsMonster() and c:IsAttribute(ATTRIBUTE_DARK) and c:IsAbleToHand()
-end
-function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
-end
-function s.trop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil)
-	if #g>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
-	end
-end
---e4
+--e2
 function s.cfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_DARK)
 end
 function s.atcon(e)
-	return Duel.IsExistingMatchingCard(s.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,3,nil)
+	return Duel.IsExistingMatchingCard(s.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,2,nil)
 end
 function s.atkfilter(c)
 	return c:GetAttack()>0
@@ -151,7 +98,7 @@ function s.atop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterEffect(e1)
 	end
 end
---e5
+--e3
 function s.tgfilter(c)
 	return c:IsMonster() and c:IsAttribute(ATTRIBUTE_DARK) and c:IsAbleToGrave()
 end

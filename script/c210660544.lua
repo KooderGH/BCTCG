@@ -1,7 +1,7 @@
 --Kyosaka Nanaho
 --Scripted by Gideon
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand by discarding 3 card's from your hand while controlling no monsters. Then move this card to your Extra Monster Zone. 
--- (2) Cannot be returned to hand, banished, or tributed.
+-- (2) Cannot be returned to hand or banished.
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
 -- (4) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
 -- (5) Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
@@ -44,75 +44,68 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     --(1)Finish
     --(2)Start
-    --Cannot be Tributed
+    --Cannot be returned to hand
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
     e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-    e4:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e4:SetCode(EFFECT_CANNOT_TO_HAND)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(1)
     c:RegisterEffect(e4)
-    local e5=e4:Clone()
-    e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-    c:RegisterEffect(e5)
-    --Cannot be returned to hand
-    local e6=e4:Clone()
-    e6:SetCode(EFFECT_CANNOT_TO_HAND)
-    c:RegisterEffect(e6)
     --Cannot banish
-    local e7=e4:Clone()
-    e7:SetCode(EFFECT_CANNOT_REMOVE)
-    c:RegisterEffect(e7)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_CANNOT_REMOVE)
+    c:RegisterEffect(e5)
     --(2)Finish
     --(3)Start
     --Cannot be targeted (self)
-    local e8=Effect.CreateEffect(c)
-    e8:SetType(EFFECT_TYPE_SINGLE)
-    e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-    e8:SetRange(LOCATION_MZONE)
-    e8:SetValue(1)
-    c:RegisterEffect(e8)
+    local e6=Effect.CreateEffect(c)
+    e6:SetType(EFFECT_TYPE_SINGLE)
+    e6:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetValue(1)
+    c:RegisterEffect(e6)
     --(3)Finish
     --(4)Start
-    local e9=Effect.CreateEffect(c)
-    e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e9:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e9:SetTarget(s.handtg)
-    e9:SetOperation(s.handop)
-    c:RegisterEffect(e9)
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e7:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e7:SetTarget(s.handtg)
+    e7:SetOperation(s.handop)
+    c:RegisterEffect(e7)
     --(4)Finish
     --(5)Start
     --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
-    local e10=Effect.CreateEffect(c)
-    e10:SetCode(EFFECT_DESTROY_REPLACE)
-    e10:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
-    e10:SetRange(LOCATION_MZONE)
-    e10:SetCountLimit(1)
-    e10:SetTarget(s.desreptg)
-    c:RegisterEffect(e10)
+    local e8=Effect.CreateEffect(c)
+    e8:SetCode(EFFECT_DESTROY_REPLACE)
+    e8:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetCountLimit(1)
+    e8:SetTarget(s.desreptg)
+    c:RegisterEffect(e8)
     --(5)Finish
     --(6)Start
     --This card can attack your opponents monsters once each.
-    local e11=Effect.CreateEffect(c)
-    e11:SetType(EFFECT_TYPE_SINGLE)
-    e11:SetCode(EFFECT_ATTACK_ALL)
-    e11:SetValue(1)
-    c:RegisterEffect(e11)
+    local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE)
+    e9:SetCode(EFFECT_ATTACK_ALL)
+    e9:SetValue(1)
+    c:RegisterEffect(e9)
     --(6)Finish
     --(7)Start
     --Add this card from the GY to your hand
-    local e12=Effect.CreateEffect(c)
-    e12:SetDescription(aux.Stringid(id,0))
-    e12:SetCategory(CATEGORY_TOHAND)
-    e12:SetType(EFFECT_TYPE_IGNITION)
-    e12:SetRange(LOCATION_GRAVE)
-    e12:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-    e12:SetCost(s.thcost)
-    e12:SetTarget(s.thtg)
-    e12:SetOperation(s.thop)
-    c:RegisterEffect(e12)
+    local e10=Effect.CreateEffect(c)
+    e10:SetDescription(aux.Stringid(id,0))
+    e10:SetCategory(CATEGORY_TOHAND)
+    e10:SetType(EFFECT_TYPE_IGNITION)
+    e10:SetRange(LOCATION_GRAVE)
+    e10:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e10:SetCost(s.thcost)
+    e10:SetTarget(s.thtg)
+    e10:SetOperation(s.thop)
+    c:RegisterEffect(e10)
 end
 --(1)
 function s.ssummoncon(e,c)

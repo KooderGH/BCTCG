@@ -2,7 +2,7 @@
 --Scripted by Gideon
 -- (1) If you control no monsters or If you control a Fairy monster; You can Special Summon this card from your Hand.
 -- (2) When this card is summoned; You can add one Fairy monster with 1200 ATK/DEF from your deck to your hand except "Volta".
--- (3) (Quick) You can remove 3 Fog Counter(s) from the field to Special summon One Fairy monster from your Hand. You can only activate this effect of "Volta" once per turn.
+-- (3) (Quick) You can remove 3 Fog Counter(s) from the field to Special summon One Fairy monster from your Hand. (HOPT)
 -- (4) If this card is removed from the field while having a Fog Counter on it; You can add one Fairy monster from your deck or GY to your hand. You can only activate this effect of "Volta" once per turn.
 -- (5) When monster(s) are Special Summoned: Target 1 of those monsters; Place 2 Fog Counter(s) on it.
 local s,id=GetID()
@@ -38,7 +38,7 @@ function s.initial_effect(c)
     e5:SetCode(EVENT_FREE_CHAIN)
     e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+    e5:SetCountLimit(1)
     e5:SetCost(s.spcost)
     e5:SetTarget(s.sphandtg)
     e5:SetOperation(s.sphandpop)

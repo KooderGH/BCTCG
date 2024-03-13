@@ -1,6 +1,6 @@
 --Volta
 --Scripted by Gideon
--- (1) If you control no monsters; You can Special Summon this card from your Hand.
+-- (1) If you control no monsters or If you control a Fairy monster; You can Special Summon this card from your Hand.
 -- (2) When this card is summoned; You can add one Fairy monster with 1200 ATK/DEF from your deck to your hand except "Volta".
 -- (3) (Quick) You can remove 3 Fog Counter(s) from the field to Special summon One Fairy monster from your Hand. You can only activate this effect of "Volta" once per turn.
 -- (4) If this card is removed from the field while having a Fog Counter on it; You can add one Fairy monster from your deck or GY to your hand. You can only activate this effect of "Volta" once per turn.
@@ -10,8 +10,8 @@ function s.initial_effect(c)
     --Special Summon (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
@@ -79,10 +79,13 @@ end
 --Fog counter
 s.counter_place_list={0x1019}
 --e1
+function s.specialfilter(c)
+	return c:IsFaceup() and c:IsRace(RACE_FAIRY)
+end
 function s.spcon(e,c)
-	if c==nil then return true end
-	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0,nil)==0
-		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+    if c==nil then return true end
+    local tp=e:GetHandlerPlayer()
+    return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_MZONE,0,1,nil) or Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0,nil)==0 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
 end
 --e2/e3/e4
 function s.filter(c)

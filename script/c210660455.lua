@@ -1,7 +1,7 @@
 --Wonder MOMOCO
 --Scripted by Gideon. Got help from naim and pyrQ.
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your Hand, GY, or Banish Zone when there is 5 or more Monster's banished in your Banish Zone with different monster types. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
--- (2) Cannot be returned to hand or tributed.
+-- (2) Cannot be returned to hand.
 -- (3) Cannot be targeted by card effects.
 -- (4) Once per your turn (Quick): You can negate all face-up card effects on your opponent side of the field until the End Phase.
 -- (5) During either player turn: You can Target 1 card on the field for each 2 cards you have in your Banish Zone; Banish them.
@@ -44,94 +44,87 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     --(1)Finish
     --(2)Start
-    --Cannot be Tributed
+    --Cannot be returned to hand
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetCode(EFFECT_CANNOT_TO_HAND)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(1)
     c:RegisterEffect(e4)
-    local e5=e4:Clone()
-    e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-    c:RegisterEffect(e5)
-    --Cannot be returned to hand
-    local e6=e4:Clone()
-    e6:SetCode(EFFECT_CANNOT_TO_HAND)
-    c:RegisterEffect(e6)
     --(2)Finish
     --(3)Start
     --Cannot be targeted (self)
-    local e7=Effect.CreateEffect(c)
-    e7:SetType(EFFECT_TYPE_SINGLE)
-    e7:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-    e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e7:SetRange(LOCATION_MZONE)
-    e7:SetValue(1)
-    c:RegisterEffect(e7)
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetValue(1)
+    c:RegisterEffect(e5)
     --(3)Finish
     --(4)Start
     --Negate the effects of opp
-    local e8=Effect.CreateEffect(c)
-    e8:SetDescription(aux.Stringid(id,0))
-    e8:SetCategory(CATEGORY_DISABLE)
-    e8:SetType(EFFECT_TYPE_QUICK_O)
-    e8:SetCode(EVENT_FREE_CHAIN)
-    e8:SetRange(LOCATION_MZONE)
-    e8:SetCountLimit(1)
-    e8:SetTarget(s.distg)
-    e8:SetOperation(s.disop)
-    c:RegisterEffect(e8)
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,0))
+    e6:SetCategory(CATEGORY_DISABLE)
+    e6:SetType(EFFECT_TYPE_QUICK_O)
+    e6:SetCode(EVENT_FREE_CHAIN)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCountLimit(1)
+    e6:SetTarget(s.distg)
+    e6:SetOperation(s.disop)
+    c:RegisterEffect(e6)
     --(4)Finish
     --(5)Start
     --Banish
-    local e9=Effect.CreateEffect(c)
-    e9:SetDescription(aux.Stringid(id,1))
-    e9:SetCategory(CATEGORY_REMOVE)
-    e9:SetType(EFFECT_TYPE_QUICK_O)
-    e9:SetCode(EVENT_FREE_CHAIN)
-    e9:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e9:SetRange(LOCATION_MZONE)
-    e9:SetTarget(s.rmtg)
-    e9:SetOperation(s.rmop)
-    e9:SetCountLimit(1)
-    c:RegisterEffect(e9)
+    local e7=Effect.CreateEffect(c)
+    e7:SetDescription(aux.Stringid(id,1))
+    e7:SetCategory(CATEGORY_REMOVE)
+    e7:SetType(EFFECT_TYPE_QUICK_O)
+    e7:SetCode(EVENT_FREE_CHAIN)
+    e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetTarget(s.rmtg)
+    e7:SetOperation(s.rmop)
+    e7:SetCountLimit(1)
+    c:RegisterEffect(e7)
     --(5)Finish
     --(6)Start
     --Banish 3 GY Draw 1
-    local e10=Effect.CreateEffect(c)
-    e10:SetDescription(aux.Stringid(id,2))
-    e10:SetCategory(CATEGORY_DRAW+CATEGORY_REMOVE)
-    e10:SetType(EFFECT_TYPE_IGNITION)
-    e10:SetCountLimit(1)
-    e10:SetRange(LOCATION_MZONE)
-    e10:SetCost(s.redrawcost)
-    e10:SetTarget(s.redrawtarget)
-    e10:SetOperation(s.redrawop)
-    c:RegisterEffect(e10)
+    local e8=Effect.CreateEffect(c)
+    e8:SetDescription(aux.Stringid(id,2))
+    e8:SetCategory(CATEGORY_DRAW+CATEGORY_REMOVE)
+    e8:SetType(EFFECT_TYPE_IGNITION)
+    e8:SetCountLimit(1)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetCost(s.redrawcost)
+    e8:SetTarget(s.redrawtarget)
+    e8:SetOperation(s.redrawop)
+    c:RegisterEffect(e8)
     --(6)Finish
     --(7)Start
     --Set opp LP to 0
-    local e11=Effect.CreateEffect(c)
-    e11:SetDescription(aux.Stringid(id,3))
-    e11:SetType(EFFECT_TYPE_IGNITION)
-    e11:SetCountLimit(1)
-    e11:SetRange(LOCATION_MZONE)
-    e11:SetCondition(s.wincon)
-    e11:SetOperation(s.winop)
-    c:RegisterEffect(e11)
+    local e9=Effect.CreateEffect(c)
+    e9:SetDescription(aux.Stringid(id,3))
+    e9:SetType(EFFECT_TYPE_IGNITION)
+    e9:SetCountLimit(1)
+    e9:SetRange(LOCATION_MZONE)
+    e9:SetCondition(s.wincon)
+    e9:SetOperation(s.winop)
+    c:RegisterEffect(e9)
     --(7)Finish
     --(8)Start
     --When destroyed, shuffle 4 banish, draw 1
-    local e12=Effect.CreateEffect(c)
-    e12:SetDescription(aux.Stringid(id,4))
-    e12:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e12:SetCode(EVENT_TO_GRAVE)
-    e12:SetCountLimit(1)
-    e12:SetCondition(s.shufflecon)
-    e12:SetTarget(s.shufftarget)
-    e12:SetOperation(s.shuffop)
-    c:RegisterEffect(e12)
+    local e10=Effect.CreateEffect(c)
+    e10:SetDescription(aux.Stringid(id,4))
+    e10:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e10:SetCode(EVENT_TO_GRAVE)
+    e10:SetCountLimit(1)
+    e10:SetCondition(s.shufflecon)
+    e10:SetTarget(s.shufftarget)
+    e10:SetOperation(s.shuffop)
+    c:RegisterEffect(e10)
     --(8)Finish
 end
 --(1) functions

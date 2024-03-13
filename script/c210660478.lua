@@ -9,7 +9,7 @@
 -- * 5: Once per turn (Igntion), You can remove 5 Fog Counter(s) on the field and Target 1 card on the field: Destroy it.
 -- * 10: Once per turn (Igntion), You can remove 10 Fog Counter(s) on the field and Target 1 Card in your GY; Add it to your hand.
 -- * 15: Once per turn (Igntion), You can add 4 Fog Counter(s) to this card but you cannot conduct your Battle Phase this turn.
--- * 25: Once per turn (Igntion), You can remove 25 Fog Counter(s) on the field; Shuffle your oppponent's GY and Hand to their deck. 
+-- * 30: Once per turn (Igntion), You can remove 25 Fog Counter(s) on the field; Shuffle your oppponent's GY and Hand to their deck. 
 -- * 40: During your End Phase: If there is 40 or more Fog Counter(s) on the field; You win the duel.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -128,7 +128,7 @@ function s.initial_effect(c)
     e11:SetCost(s.addfourcost)
     e11:SetOperation(s.addfouroperation)
     c:RegisterEffect(e11)
-    --Shuffle OP hand and deck (20 counters, 15 to remove)
+    --Shuffle OP hand and deck (30 counters, 25 to remove)
     local e12=Effect.CreateEffect(c)
     e12:SetDescription(aux.Stringid(id,4))
     e12:SetCategory(CATEGORY_TODECK)
@@ -140,7 +140,7 @@ function s.initial_effect(c)
     e12:SetTarget(s.shuffletarget)
     e12:SetOperation(s.shuffleoperation)
     c:RegisterEffect(e12)
-    --Win the game (30 counters)
+    --Win the game (40 counters)
     local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,5))
     e13:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
@@ -260,7 +260,7 @@ function s.addfouroperation(e,tp,eg,ep,ev,re,r,rp)
 end
 --e14
 function s.shufflecon(e,c)
-	return Duel.GetCounter(0,1,1,0x1019)>=25
+	return Duel.GetCounter(0,1,1,0x1019)>=30
 end
 function s.shufflecost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsCanRemoveCounter(tp,1,1,0x1019,25,REASON_COST) end

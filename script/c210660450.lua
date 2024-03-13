@@ -2,8 +2,8 @@
 --Scripted by Gideon
 --Effect
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
--- (2) Cannot be returned to hand, banished, or tributed. This effect cannot be negated.
--- (3) Cannot be targeted by card effects. This effect cannot be negated.
+-- (2) Cannot be returned to hand, banished, or tributed.
+-- (3) Cannot be targeted by card effects.
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
 -- (5) Unaffected by effects other than its own.
 -- (6) Each time card(s) on your side of the field are destroyed by card effect(s): Place one Castle Counter on this card.

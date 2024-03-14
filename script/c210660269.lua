@@ -2,7 +2,7 @@
 --Scripted by Konstak
 -- (1) When this card is Summoned: You can send 1 LIGHT monster from your Deck to the GY.
 -- (2) If this card destroys an opponent's monster by battle: You can banish 1 LIGHT monster from your Graveyard; draw 1 card. 
--- (3) This card gains 100 DEF for each LIGHT monster in your Graveyard.
+-- (3) LIGHT monsters you control gain 100 DEF for each LIGHT monster in your Graveyard.
 local s,id=GetID()
 function s.initial_effect(c)
     --send to grave (1)

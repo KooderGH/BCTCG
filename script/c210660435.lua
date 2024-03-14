@@ -52,7 +52,7 @@ function s.initial_effect(c)
 end
 --e2
 function s.rescon(sg,e,tp,mg)
-	return aux.ChkfMMZ(1)(sg,e,tp,mg) and sg:GetClassCount(Card.GetCode)==#sg,sg:GetClassCount(Card.GetCode)~=#sg and Duel.GetFieldGroupCount(c:GetControler(),LOCATION_MZONE,0,nil)==0
+	return aux.ChkfMMZ(1)(sg,e,tp,mg) and sg:GetClassCount(Card.GetCode)==#sg,sg:GetClassCount(Card.GetCode)~=#sg and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0
 end
 function s.spfilter(c)
 	return c:IsAttribute(ATTRIBUTE_LIGHT)

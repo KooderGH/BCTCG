@@ -4,7 +4,7 @@
 -- (2) During each end phase; Add 2 Fog Counter to each face-up monster that is Level 4 or higher.
 -- (3) If this card would be destroyed; You can remove 3 Fog Counter(s) on the field instead.
 -- (4) Fairy monster's you control cannot be returned to the hand.
--- (5) Once per turn (Ignition), If you control 4 or more Fairy Type monsters: You can Tribute 1 Fairy monster to add 2 Fairy monsters with different attributes (of the tributed monster) from your Deck to your Hand.
+-- (5) Once per turn (Ignition), If you control 4 or more Fairy Type monsters: You can Tribute 1 Fairy monster to add 2 Level 3 or lower Fairy monsters with different attributes (of the tributed monster) from your Deck to your Hand.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Opp monster with counters cannot attack
@@ -92,7 +92,7 @@ function s.tributefilter(c)
 	return c:IsRace(RACE_FAIRY) and c:IsAbleToHand()
 end
 function s.fairyfilter2(c)
-	return c:IsFaceup() and c:IsRace(RACE_FAIRY)
+	return c:IsFaceup() and c:IsRace(RACE_FAIRY) and c:IsLevelBelow(3)
 end
 function s.tributecondition(e)
 	return Duel.IsExistingMatchingCard(s.fairyfilter2,e:GetHandlerPlayer(),LOCATION_MZONE,0,4,nil)

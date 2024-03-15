@@ -6,16 +6,17 @@
 -- (3) Card's cannot be returned to hand while this card is face-up on the field.
 -- (4) Cannot be destroyed by battle.
 -- (5) During your standby phase: If this card is the only monster you control; Draw 1 card.
+-- (6) If a monster you control would be destroyed by battle or card effect, banish this card from GY instead.
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Special Summon this card
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCondition(s.spcon)
-	c:RegisterEffect(e1)
+    -- Special Summon this card
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCondition(s.spcon)
+    c:RegisterEffect(e1)
     --to defense
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
@@ -56,6 +57,15 @@ function s.initial_effect(c)
     e7:SetCondition(s.condition)
     e7:SetOperation(s.operation)
     c:RegisterEffect(e7)
+    --destroy replace
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e8:SetCode(EFFECT_DESTROY_REPLACE)
+    e8:SetRange(LOCATION_GRAVE)
+    e8:SetTarget(s.reptg)
+    e8:SetValue(s.repval)
+    e8:SetOperation(s.repop)
+    c:RegisterEffect(e8)
 end
 --e1
 function s.spcon(e,c)
@@ -80,4 +90,20 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(tp,1,REASON_EFFECT)
+end
+--e8
+function s.repfilter(c,tp)
+    return c:IsFaceup() and c:IsOnField()
+        and c:IsControler(tp) and not c:IsReason(REASON_REPLACE) and c:IsReason(REASON_EFFECT|REASON_BATTLE)
+end
+function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return c:IsAbleToRemove() and eg:IsExists(s.repfilter,1,nil,tp) end
+    return Duel.SelectEffectYesNo(tp,c,96)
+end
+function s.repval(e,c)
+    return s.repfilter(c,e:GetHandlerPlayer())
+end
+function s.repop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Remove(e:GetHandler(),POS_FACEUP,REASON_EFFECT+REASON_REPLACE)
 end

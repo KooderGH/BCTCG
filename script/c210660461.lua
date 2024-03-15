@@ -11,34 +11,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
-    --Makes it unsummonable via normal
-    c:EnableUnsummonable()
-    --Cannot be SS by other ways other then it's own effect via above and this function
-    local e0=Effect.CreateEffect(c)
-    e0:SetType(EFFECT_TYPE_SINGLE)
-    e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-    e0:SetValue(aux.FALSE)
-    c:RegisterEffect(e0)
-    --SS from Hand
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    e1:SetCode(EFFECT_SPSUMMON_PROC)
-    e1:SetRange(LOCATION_HAND)
-    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-    e1:SetCondition(s.spcon)
-    e1:SetTarget(s.sptg)
-    e1:SetOperation(s.spop)
-    e1:SetValue(1)
-    c:RegisterEffect(e1)
-    --Move to EMZ
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e2:SetOperation(s.mvop)
-    c:RegisterEffect(e2)
+    c:EnableReviveLimit()
+    --Link Summon Procedure
+    Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_FIEND),2,nil,s.matcheck)
     --(1)Finish
     --(2)Start
     --Summon cannot be disabled (Hopefully)
@@ -131,42 +106,8 @@ function s.initial_effect(c)
     --(7)Finish
 end
 --(1) functions
-function s.cfilter(c)
-	return c:IsRace(RACE_FIEND) and c:IsReleasable()
-end
-function s.spcon(e,c)
-	if c==nil then return true end
-	local tp=e:GetHandlerPlayer()
-	local rg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_MZONE,0,nil)
-	return #rg>0 and aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0)
-end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,c)
-	local rg=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_MZONE,0,nil)
-	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_RELEASE,nil,nil,true)
-	if #g>0 then
-		g:KeepAlive()
-		e:SetLabelObject(g)
-		return true
-	end
-	return false
-end
-function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=e:GetLabelObject()
-	if not g then return end
-	Duel.Release(g,REASON_COST)
-	g:DeleteGroup()
-end
-function s.mvop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local tp=c:GetControler()
-    if (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1)) then
-        local lftezm=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,5) and 0x20 or 0
-        local rgtemz=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,6) and 0x40 or 0
-		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
-        local selected=Duel.SelectFieldZone(tp,1,LOCATION_MZONE,0,~ZONES_EMZ|(lftezm|rgtemz))
-        selected=selected==0x20 and 5 or 6
-        Duel.MoveSequence(c,selected)
-    end
+function s.matcheck(g,lc,sumtype,tp)
+    return g:IsExists(Card.IsLevelBellow,1,nil,3)
 end
 --(3) functions
 function s.rmlimit(e,c,tp,r,re)

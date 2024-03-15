@@ -4,7 +4,7 @@
 -- (1) Cannot be Special Summoned.
 -- (2) When this card is Summoned: If the LP difference between both players' LP is 4000 or more; Both player's LP become 9000, then banish this card.
 -- (3) Cannot be attacked or targeted by effects.
--- (4) During the End phase: Target 1 Card in your GY; Add it to your hand.
+-- (4) During the End phase: Target 1 Card in your GY; Add it to your hand. You can only use this effect of "Yuletide Nurse" twice per Duel.
 -- (5) Once per turn (Ignition): You can target 1 monster you control and declare a monster type and attribute; Both this card and that monster become that type and attribute while face-up on the field.
 -- (6) During your turn, except the turn this card was sent to the GY: You can banish this card from your GY; Gain 300 LP for each card in your opponent's deck.
 -- (7) While this card is in your hand, If a monster is targeted by a effect: Reveal this card; Negate the effect that targeted that monster and destroy it. You can only use this effect of "Yuletide Nurse" once per Duel.
@@ -55,7 +55,7 @@ function s.initial_effect(c)
     e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e7:SetRange(LOCATION_MZONE)
     e7:SetCode(EVENT_PHASE+PHASE_END)
-    e7:SetCountLimit(1)
+    e7:SetCountLimit(2,id,EFFECT_COUNT_CODE_DUEL)
     e7:SetTarget(s.stg)
     e7:SetOperation(s.sop)
     c:RegisterEffect(e7)

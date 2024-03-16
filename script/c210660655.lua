@@ -1,9 +1,9 @@
 --Bliza
 --Scripted by Gideon.
 -- (1) If you control a Fairy monster: You can Special Summon this card from your hand.
--- (2) Your opponent monsters with Fog Counter(s) lose 100 ATK/DEF for each Fog Counter(s).
--- (3) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 1 Fog Counter(s) to it.
--- (4) During each end phase: Gain x100 LP's for each Fog Counter on the field. You can only activate this effect of "Bliza" once per turn.
+-- (2) Your opponent's monsters with Fog Counter(s) lose 100 ATK/DEF for each Fog Counter they have.
+-- (3) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 1 Fog Counter to it.
+-- (4) During each end phase: Gain x100 LP for each Fog Counter on the field. You can only activate this effect of "Bliza" once per turn.
 -- (5) You can only control one "Bliza"
 local s,id=GetID()
 function s.initial_effect(c)

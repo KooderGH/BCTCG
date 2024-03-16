@@ -1,5 +1,5 @@
 --Legeluga
---Scripted by Gideon with Naim's help. Special thanks to Naim for the EMZ effects!
+--Scripted by Gideon with Naim's help. Special thanks to Naim for the EMZ effects! Link Precedure by Konstak
 --Effect
 -- Link Monster ↙↘	
 -- 2 Level 3 or lower Fiend Monsters

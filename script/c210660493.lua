@@ -1,5 +1,6 @@
 --Gaia the Creator
 --Scripted by Gideon, Link Precedure by Konstak
+--Effect
 -- Link Monster ↙⬇↘	
 -- 3 Monsters
 -- (1) Cannot be returned to hand or banished.

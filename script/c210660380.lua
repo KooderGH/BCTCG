@@ -3,8 +3,8 @@
 -- (1) If you control a DARK Level 2 monster, you can Special Summon this card from your hand.
 -- (2) When this card destroys a monster by battle; Gain LP equal to that monsters attack points, then this card gains 500 ATK.
 -- (3) If you control "D'arktanyan", you can activate this effect (Quick): Destroy all other cards on the field. You can only use this effect of "D'artanyan" once per Duel.
--- (4) When you control 3 or more LIGHT monsters: You choose the attack targets for your opponent's attacks.
--- (5) If this card is sent to the GY; Send 1 LIGHT monster from the Deck to GY.
+-- (4) When you control 3 or more LIGHT monsters: You choose the attack targets for your opponent's attacks. You can only use this effect of "D'arktanyan" once per turn.
+-- (5) If this card is sent to the GY; Send 1 LIGHT monster from the Deck to GY. You can only use this effect of "D'arktanyan" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon (1)
@@ -46,6 +46,7 @@ function s.initial_effect(c)
     e4:SetRange(LOCATION_MZONE)
     e4:SetCode(EFFECT_PATRICIAN_OF_DARKNESS)
     e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e4:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
     e4:SetTargetRange(0,1)
     e4:SetCondition(s.atcon)
     c:RegisterEffect(e4)
@@ -56,6 +57,7 @@ function s.initial_effect(c)
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetProperty(EFFECT_FLAG_DELAY)
     e5:SetCode(EVENT_TO_GRAVE)
+    e5:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
     e5:SetTarget(s.tgtg)
     e5:SetOperation(s.tgop)
     c:RegisterEffect(e5)

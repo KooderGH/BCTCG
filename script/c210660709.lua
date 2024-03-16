@@ -1,9 +1,8 @@
 --Blue-Eyed Asuka
 --Scripted by Gideon
 -- (1) You can discard 1 Spell; Special Summon this card from your hand. (Ignition)
--- (2) This card cannot be targeted by card effects.
--- (3) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Blue-Eyed Asuka" once per turn.
--- (4) You can only control one "Blue-Eyed Asuka".
+-- (2) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Blue-Eyed Asuka" once per turn.
+-- (3) You can only control one "Blue-Eyed Asuka".
 local s,id=GetID()
 function s.initial_effect(c)
 	--Can only control one
@@ -18,27 +17,19 @@ function s.initial_effect(c)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
-	--cannot be target
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetValue(1)
-	c:RegisterEffect(e2)
 	--Negate effects
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetCategory(CATEGORY_DISABLE)
-	e3:SetType(EFFECT_TYPE_QUICK_O)
-	e3:SetCode(EVENT_FREE_CHAIN)
-	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
-	e3:SetCountLimit(1,id)
-	e3:SetTarget(s.negtarget)
-	e3:SetOperation(s.negoperation)
-	c:RegisterEffect(e3)
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_DISABLE)
+	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetCode(EVENT_FREE_CHAIN)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
+	e2:SetCountLimit(1,id)
+	e2:SetTarget(s.negtarget)
+	e2:SetOperation(s.negoperation)
+	c:RegisterEffect(e2)
 end
 --e1
 function s.spcfilter(c)

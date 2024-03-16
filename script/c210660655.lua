@@ -1,20 +1,11 @@
 --Bliza
 --Scripted by Gideon.
--- (1) When this card is Normal Summoned: Fairy monster's you control are uneffected by card effects for the rest of this turn.
--- (2) If you control a Fairy monster: You can Special Summon this card from your hand.
--- (3) Your opponent monsters with Fog Counter(s) lose 200 ATK/DEF for each Fog Counter(s).
--- (4) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 2 Fog Counter(s) to it.
--- (5) During each end phase: Gain x300 LP's for each Fog Counter on the field.
+-- (1) If you control a Fairy monster: You can Special Summon this card from your hand.
+-- (2) Your opponent monsters with Fog Counter(s) lose 200 ATK/DEF for each Fog Counter(s).
+-- (3) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 2 Fog Counter(s) to it.
+-- (4) During each end phase: Gain x100 LP's for each Fog Counter on the field. You can only activate this effect of "Bliza" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
-	--Normal Summon: Immune
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
-	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetOperation(s.immop)
-	c:RegisterEffect(e1)
 	--special summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
@@ -53,7 +44,7 @@ function s.initial_effect(c)
 	e6:SetCode(EVENT_PHASE+PHASE_END)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e6:SetCountLimit(1)
+    e6:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e6:SetTarget(s.rectg)
 	e6:SetOperation(s.recop)
 	c:RegisterEffect(e6)
@@ -103,8 +94,8 @@ end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(Duel.GetCounter(0,1,1,0x1019)*300)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,Duel.GetCounter(0,1,1,0x1019)*300)
+	Duel.SetTargetParam(Duel.GetCounter(0,1,1,0x1019)*100)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,Duel.GetCounter(0,1,1,0x1019)*100)
 end
 function s.recop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)

@@ -109,7 +109,7 @@ function s.initial_effect(c)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)
-	return c:IsLevelBelow(3) and c:IsRace(RACE_FIEND)
+	return c:IsLevelBelow(3) and c:IsRace(RACE_FIEND) and c:IsFaceup()
 end
 --(3) functions
 function s.rmlimit(e,c,tp,r,re)

@@ -3,63 +3,65 @@
 --Effect
 -- Link Monster ↙↘	
 -- 2 Level 3 or lower Fiend Monsters
--- (1) Summon Cannot be Negated.
--- (2) This cards Summon and Effects cannot be negated.
--- (3) Cannot be returned to hand, banished, or tributed while on the field.
--- (4) After 10 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
--- (5) Once per turn during your Main phase: You can Special Summon one Fiend monster from your hand or GY.
--- (6) If you control 4 or more Fiend monsters, your opponent cannot enter the battle phase.
--- (7) When this card leaves the field; banish it.
+-- (1) Cannot be used as Link material.
+-- (2) Summon Cannot be Negated.
+-- (3) This cards Summon and Effects cannot be negated.
+-- (4) Cannot be returned to hand, banished, or tributed while on the field.
+-- (5) After 10 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
+-- (6) Once per turn during your Main phase: You can Special Summon one Fiend monster from your hand or GY.
+-- (7) If you control 4 or more Fiend monsters, your opponent cannot enter the battle phase.
+-- (8) When this card leaves the field; banish it.
 local s,id=GetID()
 function s.initial_effect(c)
-    --(1)Start
     c:EnableReviveLimit()
     --Link Summon Procedure
 	Link.AddProcedure(c,s.matfilter,2,2)
-    --(1)Finish
-    --(2)Start
+	--cannot link material
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+	e1:SetValue(1)
+	c:RegisterEffect(e1)
     --Summon cannot be disabled (Hopefully)
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    c:RegisterEffect(e1)
-    --(2)Finish
-    --(3)Start
-    --Cannot be Tributed
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_NEGATE)
-    e2:SetCode(EFFECT_UNRELEASABLE_SUM)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetValue(1)
+    e2:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
+    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     c:RegisterEffect(e2)
-    local e3=e2:Clone()
-    e3:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    --Cannot be Tributed
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_NEGATE)
+    e3:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetValue(1)
     c:RegisterEffect(e3)
-    --Cannot be returned to hand
-    local e4=e2:Clone()
-    e4:SetCode(EFFECT_CANNOT_TO_HAND)
+    local e4=e3:Clone()
+    e4:SetCode(EFFECT_UNRELEASABLE_NONSUM)
     c:RegisterEffect(e4)
-    --Cannot banish while on the field
-    local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_SINGLE)
-    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e5:SetCode(EFFECT_CANNOT_REMOVE)
-    e5:SetRange(LOCATION_MZONE)
+    --Cannot be returned to hand
+    local e5=e3:Clone()
+    e5:SetCode(EFFECT_CANNOT_TO_HAND)
     c:RegisterEffect(e5)
-    local e6=e5:Clone()
-    e6:SetType(EFFECT_TYPE_FIELD)
-    e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e6:SetTargetRange(1,1)
-    e6:SetTarget(s.rmlimit)
+    --Cannot banish while on the field
+    local e6=Effect.CreateEffect(c)
+    e6:SetType(EFFECT_TYPE_SINGLE)
+    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e6:SetCode(EFFECT_CANNOT_REMOVE)
+    e6:SetRange(LOCATION_MZONE)
     c:RegisterEffect(e6)
-    --(3)Finish
-    --(4)Start
-    local e7=Effect.CreateEffect(c)
-    e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS+EFFECT_FLAG_CANNOT_NEGATE)
-    e7:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e7:SetOperation(s.activate)
+    local e7=e6:Clone()
+    e7:SetType(EFFECT_TYPE_FIELD)
+    e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e7:SetTargetRange(1,1)
+    e7:SetTarget(s.rmlimit)
+    c:RegisterEffect(e7)
+    --Legelan Timer
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS+EFFECT_FLAG_CANNOT_NEGATE)
+    e8:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e8:SetOperation(s.activate)
     aux.GlobalCheck(s,function()
         local ge1=Effect.CreateEffect(c)
         ge1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -73,39 +75,34 @@ function s.initial_effect(c)
         ge2:SetOperation(s.winop)
         Duel.RegisterEffect(ge2,0)
         end)
-    c:RegisterEffect(e7)
-    --(4)Finish
-    --(5)Start
-    --Special summon a fiend
-    local e8=Effect.CreateEffect(c)
-    e8:SetDescription(aux.Stringid(id,0))
-    e8:SetCategory(CATEGORY_SPECIAL_SUMMON)
-    e8:SetType(EFFECT_TYPE_IGNITION)
-    e8:SetProperty(EFFECT_FLAG_CANNOT_NEGATE)
-    e8:SetCountLimit(1,{id,1})
-    e8:SetRange(LOCATION_MZONE)
-    e8:SetTarget(s.specialfiendtarget)
-    e8:SetOperation(s.specialfiendop)
     c:RegisterEffect(e8)
-    --(5)Finish
-    --(6)Start
+    --Special summon a fiend
     local e9=Effect.CreateEffect(c)
-    e9:SetType(EFFECT_TYPE_FIELD)
-    e9:SetCode(EFFECT_CANNOT_BP)
-    e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_NEGATE)
+    e9:SetDescription(aux.Stringid(id,0))
+    e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e9:SetType(EFFECT_TYPE_IGNITION)
+    e9:SetProperty(EFFECT_FLAG_CANNOT_NEGATE)
+    e9:SetCountLimit(1,{id,1})
     e9:SetRange(LOCATION_MZONE)
-    e9:SetTargetRange(0,1)
-    e9:SetCondition(s.bpcond)
+    e9:SetTarget(s.specialfiendtarget)
+    e9:SetOperation(s.specialfiendop)
     c:RegisterEffect(e9)
-    --(6)Finish
-    --(7)Start
+    --Cannot enter battle phase
     local e10=Effect.CreateEffect(c)
-    e10:SetType(EFFECT_TYPE_SINGLE)
-    e10:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
-    e10:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CANNOT_NEGATE)
-    e10:SetValue(LOCATION_REMOVED)
+    e10:SetType(EFFECT_TYPE_FIELD)
+    e10:SetCode(EFFECT_CANNOT_BP)
+    e10:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_NEGATE)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetTargetRange(0,1)
+    e10:SetCondition(s.bpcond)
     c:RegisterEffect(e10)
-    --(7)Finish
+    --When this card leaves the field; banish it.
+    local e11=Effect.CreateEffect(c)
+    e11:SetType(EFFECT_TYPE_SINGLE)
+    e11:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
+    e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CANNOT_NEGATE)
+    e11:SetValue(LOCATION_REMOVED)
+    c:RegisterEffect(e11)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)

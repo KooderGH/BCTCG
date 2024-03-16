@@ -89,10 +89,10 @@ function s.fairyfilter(e,c)
 end
 --e5
 function s.tributefilter(c)
-	return c:IsRace(RACE_FAIRY) and c:IsAbleToHand()
+	return c:IsRace(RACE_FAIRY) and c:IsAbleToHand() and c:IsLevelBelow(3)
 end
 function s.fairyfilter2(c)
-	return c:IsFaceup() and c:IsRace(RACE_FAIRY) and c:IsLevelBelow(3)
+	return c:IsFaceup() and c:IsRace(RACE_FAIRY)
 end
 function s.tributecondition(e)
 	return Duel.IsExistingMatchingCard(s.fairyfilter2,e:GetHandlerPlayer(),LOCATION_MZONE,0,4,nil)

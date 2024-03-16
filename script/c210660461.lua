@@ -1,14 +1,15 @@
 --Legeluga
 --Scripted by Gideon with Naim's help. Special thanks to Naim for the EMZ effects!
 --Effect
--- Link Monster ↙⬇↘	
+-- Link Monster ↙↘	
 -- 2 Level 3 or lower Fiend Monsters
--- (1) This cards Summon and Effects cannot be negated.
--- (2) Cannot be returned to hand, banished, or tributed while on the field.
--- (3) After 10 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
--- (4) Once per turn during your Main phase: You can Special Summon one Fiend monster from your hand or GY.
--- (5) If you control 4 or more Fiend monsters, your opponent cannot enter the battle phase.
--- (6) When this card leaves the field; banish it.
+-- (1) Summon Cannot be Negated.
+-- (2) This cards Summon and Effects cannot be negated.
+-- (3) Cannot be returned to hand, banished, or tributed while on the field.
+-- (4) After 10 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
+-- (5) Once per turn during your Main phase: You can Special Summon one Fiend monster from your hand or GY.
+-- (6) If you control 4 or more Fiend monsters, your opponent cannot enter the battle phase.
+-- (7) When this card leaves the field; banish it.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start

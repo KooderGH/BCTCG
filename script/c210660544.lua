@@ -3,12 +3,13 @@
 --Effect
 -- Link Monster ↙⬇↘	
 -- 3 Monsters
--- (1) Cannot be returned to hand or banished.
--- (2) Cannot be targeted by card effects. This effect cannot be negated.
--- (3) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
--- (4) Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
--- (5) This card can attack your opponents monsters once each.
--- (6) If this card is in your GY: You can banish 3 cards from top of your deck facedown; Add this card to your hand.
+-- (1) Cannot be used as Link material.
+-- (2) Cannot be returned to hand or banished.
+-- (3) Cannot be targeted by card effects. This effect cannot be negated.
+-- (4) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
+-- (5) Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
+-- (6) This card can attack your opponents monsters once each.
+-- (7) If this card is in your GY: You can banish 3 cards from top of your deck facedown; Add this card to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start

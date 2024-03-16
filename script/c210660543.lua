@@ -1,54 +1,45 @@
 --Kasli the Bane
 --Scripted by Gideon
 -- (1) You can Discard 1 card to Special Summon this card from your hand. You can only use this effect of "Kasli the Bane" once per turn.
--- (2) This card cannot be targeted by card effects.
--- (3) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Kasli the Bane" once per turn.
--- (4) If this card is sent from the field to the GY: Target 1 Spell Card in your GY; Set that target. That Set card cannot be activated this turn. You can only use this effect of "Kasli the Bane" once per turn
+-- (2) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Kasli the Bane" once per turn.
+-- (3) If this card is sent from the field to the GY: Target 1 Spell Card in your GY; Set that target. That Set card cannot be activated this turn. You can only use this effect of "Kasli the Bane" once per turn
 local s,id=GetID()
 function s.initial_effect(c)
-	--special summon
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCondition(s.spcon)
-	e1:SetTarget(s.sptg)
-	e1:SetOperation(s.spop)
-	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
-	c:RegisterEffect(e1)
-	--cannot be target
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetValue(1)
-	c:RegisterEffect(e2)
-	--Negate effects
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetCategory(CATEGORY_DISABLE)
-	e3:SetType(EFFECT_TYPE_QUICK_O)
-	e3:SetCode(EVENT_FREE_CHAIN)
-	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
-	e3:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
-	e3:SetTarget(s.negtarget)
-	e3:SetOperation(s.negoperation)
-	c:RegisterEffect(e3)
-	--set spell
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e4:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CARD_TARGET)
-	e4:SetCode(EVENT_TO_GRAVE)
-	e4:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
-	e4:SetCondition(s.setcon)
-	e4:SetTarget(s.settg)
-	e4:SetOperation(s.setop)
-	c:RegisterEffect(e4)
+    --special summon
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_SPSUMMON_PROC)
+    e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCondition(s.spcon)
+    e1:SetTarget(s.sptg)
+    e1:SetOperation(s.spop)
+    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+    c:RegisterEffect(e1)
+    --Negate effects
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetCategory(CATEGORY_DISABLE)
+    e2:SetType(EFFECT_TYPE_QUICK_O)
+    e2:SetCode(EVENT_FREE_CHAIN)
+    e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
+    e2:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_OATH)
+    e2:SetTarget(s.negtarget)
+    e2:SetOperation(s.negoperation)
+    c:RegisterEffect(e2)
+    --set spell
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CARD_TARGET)
+    e3:SetCode(EVENT_TO_GRAVE)
+    e3:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
+    e3:SetCondition(s.setcon)
+    e3:SetTarget(s.settg)
+    e3:SetOperation(s.setop)
+    c:RegisterEffect(e3)
 end
 --e1
 function s.spcon(e,c)

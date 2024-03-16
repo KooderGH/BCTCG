@@ -15,71 +15,67 @@ function s.initial_effect(c)
     --(1)Start
     c:EnableReviveLimit()
     --Link Summon Procedure
-	Link.AddProcedure(c,s.matfilter,3,3)
-    --(1)Finish
-    --(2)Start
-    --Cannot be returned to hand
+    Link.AddProcedure(c,s.matfilter,3,3)
+    --cannot link material
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetCode(EFFECT_CANNOT_TO_HAND)
-    e1:SetRange(LOCATION_MZONE)
+    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
     e1:SetValue(1)
     c:RegisterEffect(e1)
-    --Cannot banish
-    local e2=e1:Clone()
-    e2:SetCode(EFFECT_CANNOT_REMOVE)
+    --Cannot be returned to hand
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e2:SetCode(EFFECT_CANNOT_TO_HAND)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetValue(1)
     c:RegisterEffect(e2)
-    --(2)Finish
-    --(3)Start
-    --Cannot be targeted (self)
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetValue(1)
+    --Cannot banish
+    local e3=e2:Clone()
+    e3:SetCode(EFFECT_CANNOT_REMOVE)
     c:RegisterEffect(e3)
-    --(3)Finish
-    --(4)Start
+    --Cannot be targeted (self)
     local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e4:SetTarget(s.handtg)
-    e4:SetOperation(s.handop)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
     c:RegisterEffect(e4)
-    --(4)Finish
-    --(5)Start
-    --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
+    --Banish from Opp hand.
     local e5=Effect.CreateEffect(c)
-    e5:SetCode(EFFECT_DESTROY_REPLACE)
-    e5:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1)
-    e5:SetTarget(s.desreptg)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e5:SetTarget(s.handtg)
+    e5:SetOperation(s.handop)
     c:RegisterEffect(e5)
-    --(5)Finish
-    --(6)Start
-    --This card can attack your opponents monsters once each.
+    --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
     local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_SINGLE)
-    e6:SetCode(EFFECT_ATTACK_ALL)
-    e6:SetValue(1)
+    e6:SetCode(EFFECT_DESTROY_REPLACE)
+    e6:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCountLimit(1)
+    e6:SetTarget(s.desreptg)
     c:RegisterEffect(e6)
-    --(6)Finish
-    --(7)Start
-    --Add this card from the GY to your hand
+    --This card can attack your opponents monsters once each.
     local e7=Effect.CreateEffect(c)
-    e7:SetDescription(aux.Stringid(id,0))
-    e7:SetCategory(CATEGORY_TOHAND)
-    e7:SetType(EFFECT_TYPE_IGNITION)
-    e7:SetRange(LOCATION_GRAVE)
-    e7:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-    e7:SetCost(s.thcost)
-    e7:SetTarget(s.thtg)
-    e7:SetOperation(s.thop)
+    e7:SetType(EFFECT_TYPE_SINGLE)
+    e7:SetCode(EFFECT_ATTACK_ALL)
+    e7:SetValue(1)
     c:RegisterEffect(e7)
+    --Add this card from the GY to your hand
+    local e8=Effect.CreateEffect(c)
+    e8:SetDescription(aux.Stringid(id,0))
+    e8:SetCategory(CATEGORY_TOHAND)
+    e8:SetType(EFFECT_TYPE_IGNITION)
+    e8:SetRange(LOCATION_GRAVE)
+    e8:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e8:SetCost(s.thcost)
+    e8:SetTarget(s.thtg)
+    e8:SetOperation(s.thop)
+    c:RegisterEffect(e8)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)

@@ -1,11 +1,14 @@
 --Bliza
 --Scripted by Gideon.
 -- (1) If you control a Fairy monster: You can Special Summon this card from your hand.
--- (2) Your opponent monsters with Fog Counter(s) lose 200 ATK/DEF for each Fog Counter(s).
--- (3) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 2 Fog Counter(s) to it.
+-- (2) Your opponent monsters with Fog Counter(s) lose 100 ATK/DEF for each Fog Counter(s).
+-- (3) Once during either player's turn (Quick): You can Target one face-up card on the field; Add 1 Fog Counter(s) to it.
 -- (4) During each end phase: Gain x100 LP's for each Fog Counter on the field. You can only activate this effect of "Bliza" once per turn.
+-- (5) You can only control one "Bliza"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--special summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
@@ -74,20 +77,20 @@ function s.spcon(e,c)
 end
 --e3
 function s.adval(e,c)
-	return c:GetCounter(0x1019)*-200
+	return c:GetCounter(0x1019)*-100
 end
 --e5
 function s.fctarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsCanAddCounter(0x1019,2) end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsCanAddCounter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil,0x1019,2) end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsCanAddCounter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil,0x1019,1) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,Card.IsCanAddCounter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil,0x1019,2)
+	Duel.SelectTarget(tp,Card.IsCanAddCounter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil,0x1019,1)
 	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0)
 end
 function s.fcoperation(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) and tc:IsCanAddCounter(0x1019,2) then
-		tc:AddCounter(0x1019,2)
+	if tc and tc:IsRelateToEffect(e) and tc:IsCanAddCounter(0x1019,1) then
+		tc:AddCounter(0x1019,1)
 	end
 end
 --e6

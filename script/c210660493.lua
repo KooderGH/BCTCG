@@ -11,7 +11,7 @@
 -- (6) Inflict's Piercing Damage. This effect cannot be negated.
 -- (7) All effects that add or subtract ATK/DEF are reversed. This effect cannot be negated.
 -- (8) When this card destroys an opponent's monster by battle and sends it to the GY: Special Summon that monster to your field. This effect cannot be negated.
--- (9) When this card leaves the field: You can target 1 Monster in either GY; Special Summon it
+-- (9) When this card leaves the field: You can target 1 Monster in either GY except "Gaia the Creator": Special Summon it
 -- (10) During the battle phase: This card is unaffected by other card effects.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -143,7 +143,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 		and e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
 end
 function s.filter(c,e,tp)
-	return c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsCode(id)
 end
 function s.gtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and s.filter(chkc,e,tp) end

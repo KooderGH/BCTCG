@@ -14,7 +14,7 @@ function s.initial_effect(c)
     --(1)Start
     c:EnableReviveLimit()
     --Link Summon Procedure
-    Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_FIEND),2,nil,s.matcheck)
+	Link.AddProcedure(c,s.matfilter,2,2)
     --(1)Finish
     --(2)Start
     --Summon cannot be disabled (Hopefully)
@@ -107,8 +107,8 @@ function s.initial_effect(c)
     --(7)Finish
 end
 --(1) functions
-function s.matcheck(g,lc,sumtype,tp)
-    return g:IsExists(Card.IsLevelBellow,1,nil,3)
+function s.matfilter(c,lc,sumtype,tp)
+	return c:IsLevelBelow(3) and c:IsRace(RACE_FIEND)
 end
 --(3) functions
 function s.rmlimit(e,c,tp,r,re)

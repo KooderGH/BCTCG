@@ -5,8 +5,11 @@
 -- (3) (Quick) You can remove 3 Fog Counter(s) from the field to Special summon One Fairy monster from your Hand. You can only activate this effect of "Volta" once per turn.
 -- (4) If this card is removed from the field while having a Fog Counter on it; You can add one Fairy monster from your deck or GY to your hand. You can only activate this effect of "Volta" once per turn.
 -- (5) When monster(s) are Special Summoned: Target 1 of those monsters; Place 2 Fog Counter(s) on it.
+-- (6) You can only control one "Volta"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     --Special Summon (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)

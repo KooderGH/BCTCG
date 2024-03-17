@@ -18,8 +18,8 @@ function s.initial_effect(c)
 	--Destroy replace (2)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e2:SetCode(EFFECT_DESTROY_REPLACE)
+	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTarget(s.desreptg)
 	c:RegisterEffect(e2)
@@ -58,15 +58,17 @@ function s.spcon(e,c)
 end
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return c:IsFaceup() end
-		local e2=Effect.CreateEffect(c)
-		e2:SetType(EFFECT_TYPE_SINGLE)
-		e2:SetProperty(EFFECT_FLAG_COPY_INHERIT)
-		e2:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
-		e2:SetCode(EFFECT_UPDATE_ATTACK)
-		e2:SetValue(500)
-		c:RegisterEffect(e2)
+    if chk==0 then return c:IsFaceup() end
+        local e2=Effect.CreateEffect(c)
+        e2:SetType(EFFECT_TYPE_SINGLE)
+        e2:SetProperty(EFFECT_FLAG_COPY_INHERIT)
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+        e2:SetCode(EFFECT_UPDATE_ATTACK)
+        e2:SetValue(500)
+        c:RegisterEffect(e2)
+	return true
 end
+
 --e2
 function s.cfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_DARK)

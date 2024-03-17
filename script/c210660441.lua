@@ -57,18 +57,17 @@ function s.spcon(e,c)
 		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,1,nil)
 end
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
+    local c=e:GetHandler()
     if chk==0 then return c:IsFaceup() end
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetProperty(EFFECT_FLAG_COPY_INHERIT)
-        e2:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
-        e2:SetCode(EFFECT_UPDATE_ATTACK)
-        e2:SetValue(500)
-        c:RegisterEffect(e2)
-	return true
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetProperty(EFFECT_FLAG_COPY_INHERIT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(500)
+        c:RegisterEffect(e1)
+    return true
 end
-
 --e2
 function s.cfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_DARK)

@@ -10,7 +10,7 @@
 -- * 10: Once per turn (Igntion), You can remove 10 Fog Counter(s) on the field and Target 1 Card in your GY; Add it to your hand.
 -- * 15: Once per turn (Igntion), You can add 4 Fog Counter(s) to this card but you cannot conduct your Battle Phase this turn.
 -- * 30: Once per turn (Igntion), You can remove 25 Fog Counter(s) on the field; Shuffle your oppponent's GY and Hand to their deck. 
--- * 40: During your End Phase: If there is 40 or more Fog Counter(s) on the field; You win the duel.
+-- * 100: During your End Phase: If there is 100 or more Fog Counter(s) on the field; You win the duel.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -140,7 +140,7 @@ function s.initial_effect(c)
     e12:SetTarget(s.shuffletarget)
     e12:SetOperation(s.shuffleoperation)
     c:RegisterEffect(e12)
-    --Win the game (40 counters)
+    --Win the game (100 counters)
     local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,5))
     e13:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
@@ -148,7 +148,7 @@ function s.initial_effect(c)
     e13:SetCode(EVENT_PHASE+PHASE_END)
     e13:SetCountLimit(1)
     e13:SetRange(LOCATION_MZONE)
-    e13:SetCondition(function(_,tp) return Duel.IsTurnPlayer(tp) and Duel.GetCounter(0,1,1,0x1019)>=40 end)
+    e13:SetCondition(function(_,tp) return Duel.IsTurnPlayer(tp) and Duel.GetCounter(0,1,1,0x1019)>=100 end)
     e13:SetOperation(s.winoperation)
     c:RegisterEffect(e13)
 end

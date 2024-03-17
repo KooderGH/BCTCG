@@ -4,8 +4,11 @@
 -- (2) While you control 2 or more non-WIND Fairy monsters; This card cannot be destroyed by battle and you take no battle damage involving this card.
 -- (3) When a Spell/Trap card is activated; place 1 Fog Counter(s) on this card.
 -- (4) You can remove 2 Fog Counter(s) on the field and target 1 card on the field (Quick); Return that target to the owners hand. You can only use this effect of "Aer" once per turn.
+-- (5) You can only control one "Aer"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--Reveal (1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

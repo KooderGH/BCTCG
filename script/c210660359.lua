@@ -5,8 +5,11 @@
 -- (3) This card gains 500 ATK/DEF for each Fog Counter(s) on the field.
 -- (4) During your opponent's end phase: Place 1 Fog Counter on each face-up card on the field. 
 -- (5) If this card is destroyed by card effect and send to the GY: You can remove 4 Fog Counter(s) on the field; Special Summon this card from the GY.
+-- (6) You can only control one "Bora"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--special summon
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)

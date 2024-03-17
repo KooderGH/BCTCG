@@ -4,8 +4,11 @@
 -- (2) During each end phase; Add 2 Fog Counter to each face-up monster that is Level 4 or higher.
 -- (3) If this card would be destroyed; You can remove 3 Fog Counter(s) on the field instead.
 -- (4) Fairy monster's you control cannot be returned to the hand.
+-- (5) You can only control one "Yamii"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--Opp monster with counters cannot attack
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)

@@ -3,8 +3,11 @@
 -- (1) Once during either players turn (Quick): You can Target one face-up card on the field; Add 2 Fog Counter to it.
 -- (2) Longs you control 3 or more Fairy type monsters: Any cards on your opponents side of the field that has a Fog Counter have their effects negated.
 -- (3) When this card is Normal Summoned: Add 1 Fairy type Monster from your Deck to your Hand.
+-- (4) You can only control one "Mizli"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--Place 2 Fog Counter
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

@@ -5,8 +5,11 @@
 -- (3) After this card deals direct battle damage: You can remove 3 Fog Counter(s) on the field; Draw 1 card.  
 -- (4) Monster's you control with 4 or more Fog Counter(s) cannot be targeted for effects.
 -- (5) During your end phase: If this card did not attack this turn; Add 3 Fog Counter(s) on this card.
+-- (6) You can only control one "Gravi"
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--Remove 3 counter, waboku (1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

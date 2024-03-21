@@ -10,7 +10,7 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e1:SetTarget(s.drtg)
     e1:SetOperation(s.drop)
-    c:RegisterEffect(e2)
+    c:RegisterEffect(e1)
     --No battle damage
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)

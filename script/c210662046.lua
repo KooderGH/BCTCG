@@ -10,6 +10,11 @@ function s.initial_effect(c)
     e1:SetTarget(s.drtg)
     e1:SetOperation(s.drop)
     c:RegisterEffect(e1)
+    --No battle damage
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    c:RegisterEffect(e2)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsPlayerCanDraw(1-tp,1) end

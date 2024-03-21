@@ -12,7 +12,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.limittg)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
-	e2:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
+	e2:SetCode(EFFECT_CAN
 	c:RegisterEffect(e2)
     --counter
     local et=Effect.CreateEffect(c)

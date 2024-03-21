@@ -1,4 +1,5 @@
 -- Sir Seal
+--Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
     --This card can attack your opponents monsters once each.

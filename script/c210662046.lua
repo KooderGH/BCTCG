@@ -1,4 +1,5 @@
 -- Doge Dark
+--Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableUnsummonable()
@@ -11,19 +12,19 @@ function s.initial_effect(c)
 	e1:SetCondition(s.spcon)
 	c:RegisterEffect(e1)
     --draw
-    local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_DRAW)	
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_TO_GRAVE)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetTarget(s.drtg)
-    e1:SetOperation(s.drop)
-    c:RegisterEffect(e1)
-    --No battle damage
     local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e2:SetCategory(CATEGORY_DRAW)	
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e2:SetCode(EVENT_TO_GRAVE)
+    e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e2:SetTarget(s.drtg)
+    e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
+    --No battle damage
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    c:RegisterEffect(e3)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

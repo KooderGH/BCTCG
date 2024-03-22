@@ -2,7 +2,7 @@
 --Scripted by Konstak.
 local s,id=GetID()
 function s.initial_effect(c)
-	--Place as Spell (3)
+	--Place as Spell
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,2))
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.spelltarget)
 	e1:SetOperation(s.spellop)
 	c:RegisterEffect(e1)
-	--Target 2400 or lower as spell then SS to opp
+	--Then SS to opp
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,3))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)

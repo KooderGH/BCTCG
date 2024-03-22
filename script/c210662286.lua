@@ -32,6 +32,13 @@ function s.initial_effect(c)
 	e4:SetTarget(s.destg)
 	e4:SetOperation(s.desop)
 	c:RegisterEffect(e4)
+	--When Special Summoned, Skip opp battle
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e5:SetCode(EVENT_ATTACK_ANNOUNCE)
+	e5:SetCondition(s.skipbpsscon)
+	e5:SetOperation(s.skipbpssop)
+	c:RegisterEffect(e5)
 end
 --e1
 function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -73,4 +80,30 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 			Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
 		end
 	end
+end
+--e5
+function s.skipbpsscon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsRelateToBattle()
+end
+function s.skipbpssop(e,tp,eg,ep,ev,re,r,rp)
+	local effp=e:GetHandler():GetControler()
+	local c=e:GetHandler()
+	if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_FIELD)
+		e1:SetCode(EFFECT_CANNOT_BP)
+		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+		e1:SetTargetRange(0,1)
+		if Duel.GetTurnPlayer()==effp then
+			e1:SetLabel(Duel.GetTurnCount())
+			e1:SetCondition(s.skipcon)
+			e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+		else
+			e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+		end
+		Duel.RegisterEffect(e1,effp)
+	end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end

@@ -25,21 +25,27 @@ function s.initial_effect(c)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
 end
-function s.Zombiefilter(c)
+function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.Zombiefilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.Zombiefilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
 	return true
 	end
 	return false
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
+	local g=e:GetLabelObject()
+	if not g then return end
+	Duel.Release(g,REASON_COST)
+	g:DeleteGroup()
 end
 function s.sumcon(e,tp,c)
 	if c==nil then return true end

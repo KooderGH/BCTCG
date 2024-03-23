@@ -17,7 +17,7 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e3)
-    --Pay 250 LP
+    --Pay 500 LP
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
     e4:SetRange(LOCATION_MZONE)
@@ -39,6 +39,6 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(1-tp,250)
+        Duel.PayLPCost(1-tp,500)
 	end
 end

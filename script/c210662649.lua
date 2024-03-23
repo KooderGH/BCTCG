@@ -66,10 +66,6 @@ function s.cattop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetCode(EFFECT_CANNOT_ATTACK)
         e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
-        e1:SetCondition(s.rcon)
         tc:RegisterEffect(e1)
 	end
-end
-function s.rcon(e)
-	return e:GetOwner():IsHasCardTarget(e:GetHandler())
 end

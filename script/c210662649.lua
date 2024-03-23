@@ -20,7 +20,7 @@ function s.initial_effect(c)
     e2:SetTarget(s.bntg)
     e2:SetOperation(s.bnop)
     c:RegisterEffect(e2)
-	--summon success
+	--cannot attack
 	local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_DISABLE)

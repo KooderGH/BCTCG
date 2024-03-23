@@ -36,10 +36,10 @@ function s.spcon(e,c)
 	return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_LIGHT),c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsPlayerCanDraw(1-tp,1) end
+    if chk==0 then return Duel.IsPlayerCanDraw(1-tp,2) end
     Duel.SetTargetPlayer(1-tp)
-    Duel.SetTargetParam(1)	
-    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,1-tp,1)
+    Duel.SetTargetParam(2)	
+    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,1-tp,2)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
     local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)

@@ -2,6 +2,16 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
+    --Toxic Ability
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_DISABLE)
+    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e1:SetCode(EVENT_BATTLE_START)
+	e1:SetCondition(s.cattcon)
+	e1:SetTarget(s.catttg)
+	e1:SetOperation(s.cattop)
+    c:RegisterEffect(e1)
     --No battle damage
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
@@ -17,6 +27,33 @@ function s.initial_effect(c)
     e3:SetValue(1)
     c:RegisterEffect(e3)
 end
+--Cannot Attack Battle function
+function s.cattcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()==tp
+end
+function s.catttg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.cattop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+	if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+		Duel.NegateAttack()
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(-500)
+        tc:RegisterEffect(e1)
+        local e2=Effect.CreateEffect(c)
+        e2:SetType(EFFECT_TYPE_SINGLE)
+        e2:SetCode(EFFECT_UPDATE_DEFENSE)
+        e2:SetValue(-500)
+        tc:RegisterEffect(e2)
+	end
+end
+--cannot be attacked function
 function s.owlbrowfilter(c)
 	return not c:IsCode(id)
 end

@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--Place as Spell
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,2))
+	e1:SetDescription(aux.Stringid(id,1))
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e1:SetCode(EVENT_SUMMON_SUCCESS)
@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--Then SS to opp
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,3))
+	e2:SetDescription(aux.Stringid(id,2))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e2:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
@@ -26,6 +26,16 @@ function s.initial_effect(c)
 	e2:SetTarget(s.destg)
 	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)
+    --Cannot attack battle ability
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,3))
+    e2:SetCategory(CATEGORY_DISABLE)
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e2:SetCode(EVENT_BATTLE_START)
+	e2:SetCondition(s.cattcon)
+	e2:SetTarget(s.catttg)
+	e2:SetOperation(s.cattop)
+    c:RegisterEffect(e2)
 end
 --e1
 function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -66,5 +76,28 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		if c:IsRelateToEffect(e) then
 			Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
 		end
+	end
+end
+--Cannot Attack Battle function
+function s.cattcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()==tp
+end
+function s.catttg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.cattop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+	if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+        c:SetCardTarget(tc)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        tc:RegisterEffect(e1)
+		Duel.NegateAttack()
 	end
 end

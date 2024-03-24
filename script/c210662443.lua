@@ -16,7 +16,7 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_ATTACK_ALL)
     e2:SetValue(1)
     c:RegisterEffect(e2)
-	--cannot be destroyed by battle
+	--cannot be attacked
     local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
 	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)

@@ -19,11 +19,6 @@ function s.initial_effect(c)
     e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
-    --No battle damage
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetCode(EFFECT_NO_BATTLE_DAMAGE)
-    c:RegisterEffect(e3)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

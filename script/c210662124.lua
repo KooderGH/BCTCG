@@ -17,7 +17,6 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetCode(EVENT_TO_GRAVE)
     e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e2:SetTarget(s.drtg)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
     --No battle damage
@@ -31,13 +30,19 @@ function s.spcon(e,c)
 	local tp=e:GetHandlerPlayer()
 	return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_DARK),c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsPlayerCanDraw(1-tp,1) end
-    Duel.SetTargetPlayer(1-tp)
-    Duel.SetTargetParam(1)	
-    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,1-tp,1)
-end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-    Duel.Draw(p,d,REASON_EFFECT)
+    local c=e:GetHandler()
+    if Duel.IsPlayerCanDraw(1-tp,1) then
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e1:SetRange(LOCATION_GRAVE)
+    e1:SetCode(EVENT_PHASE+PHASE_DRAW)
+	e1:SetReset(RESET_PHASE+PHASE_END,2)
+    e1:SetCountLimit(1)
+    e1:SetOperation(s.drawop)
+    c:RegisterEffect(e1)
+    end
+end
+function s.drawop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Draw(1-tp,1,REASON_EFFECT)
 end

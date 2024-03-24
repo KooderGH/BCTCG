@@ -2,7 +2,7 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --once normal summoned, Special summon as many grateful cranes as possible (3 *1)
+    --once normal summoned, SS as many brollows as possible
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -16,6 +16,29 @@ function s.initial_effect(c)
     local e2=e1:Clone()
     e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e2)
+    --destroy both
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_DESTROY)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BATTLE_START)
+	e3:SetTarget(s.destg)
+	e3:SetOperation(s.desop)
+    c:RegisterEffect(e3)
+    --no battle damage
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    c:RegisterEffect(e4)
+    --During end phase, SS as many brollows as possible
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetCode(EVENT_PHASE+PHASE_END)
+    e5:SetCountLimit(1,id)
+    e5:SetTarget(s.sptg)
+    e5:SetOperation(s.spop)
+    c:RegisterEffect(e5)
 end
 --Special summon
 function s.spfilter(c,e,tp)
@@ -32,6 +55,19 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,ft,ft,nil,e,tp)
     if #g>0 then
-        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_ATTACK)
+    end
+end
+--Destroy both Function
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,bc,1,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local bc=e:GetHandler():GetBattleTarget()
+    if bc:IsRelateToBattle() then
+        Duel.Destroy(bc,REASON_EFFECT)
+        Duel.Destroy(e:GetHandler(),REASON_EFFECT)
     end
 end

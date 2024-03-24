@@ -70,7 +70,7 @@ end
 function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
     if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_ZOMBIE) end
-    Duel.SetOperationInfo(0,CATEGORY_DESTROY,bc,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
 end
 function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     local bc=e:GetHandler():GetBattleTarget()

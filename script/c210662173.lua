@@ -10,6 +10,15 @@ function s.initial_effect(c)
     e1:SetTarget(s.atktg)
     e1:SetOperation(s.atkop)
     c:RegisterEffect(e1)
+    --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
+    local e2=Effect.CreateEffect(c)
+    e2:SetCode(EFFECT_DESTROY_REPLACE)
+    e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.desreptg)
+    c:RegisterEffect(e2)
 end
 --during damage calculation function
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -33,4 +42,22 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         bc:RegisterEffect(e2)
     end
+end
+--e2
+function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return not c:IsReason(REASON_REPLACE) end
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(200)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+	c:RegisterEffect(e1)
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	e2:SetValue(200)
+	e2:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+	c:RegisterEffect(e2)
+	return true
 end

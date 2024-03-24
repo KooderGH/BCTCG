@@ -102,6 +102,7 @@ function s.skipbpssop(e,tp,eg,ep,ev,re,r,rp)
 			e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
 		end
 		Duel.RegisterEffect(e1,effp)
+		Duel.NegateAttack()
 	end
 end
 function s.skipcon(e)

@@ -43,7 +43,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         bc:RegisterEffect(e2)
     end
 end
---e2
+--Replace destroy function
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return not c:IsReason(REASON_REPLACE) end

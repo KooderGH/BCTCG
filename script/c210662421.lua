@@ -13,14 +13,14 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --draw
+    --Once while this card is face-up on the field: If it would be destroyed; gain 500 ATK instead.
     local e2=Effect.CreateEffect(c)
-    e2:SetCategory(CATEGORY_DRAW)	
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_TO_GRAVE)
-    e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e2:SetTarget(s.drtg)
-    e2:SetOperation(s.drop)
+    e2:SetCode(EFFECT_DESTROY_REPLACE)
+    e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.desreptg)
     c:RegisterEffect(e2)
     --Can banish zombie monsters
     local e3=Effect.CreateEffect(c)
@@ -54,15 +54,17 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
 end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsPlayerCanDraw(1-tp,2) end
-    Duel.SetTargetPlayer(1-tp)
-    Duel.SetTargetParam(2)	
-    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,1-tp,2)
-end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-    Duel.Draw(p,d,REASON_EFFECT)
+--Replace destroy function
+function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return not c:IsReason(REASON_REPLACE) end
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(500)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+	c:RegisterEffect(e1)
+	return true
 end
 --Banish Zombies function
 function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)

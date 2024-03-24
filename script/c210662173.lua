@@ -10,7 +10,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.atktg)
     e1:SetOperation(s.atkop)
     c:RegisterEffect(e1)
-    --Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
+    --Once while this card is face-up on the field: If it would be destroyed; It isn't.
     local e2=Effect.CreateEffect(c)
     e2:SetCode(EFFECT_DESTROY_REPLACE)
     e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
@@ -47,11 +47,5 @@ end
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return not c:IsReason(REASON_REPLACE) end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetValue(200)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-	c:RegisterEffect(e1)
 	return true
 end

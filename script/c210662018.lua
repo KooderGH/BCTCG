@@ -15,7 +15,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function s.floatingfilter(c)
-	return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_WARRIOR)
+	return c:IsAttribute(ATTRIBUTE_WIND)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

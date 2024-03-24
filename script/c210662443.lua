@@ -1,36 +1,63 @@
 -- MesocosmoCyclone
 local s,id=GetID()
 function s.initial_effect(c)
-    --during damage calculation FIRE lose half of their ATK/DEF (1)
+    --warp mechanic
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_REMOVE)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetCode(EVENT_BATTLE_START)
-    e1:SetTarget(s.atktg)
-    e1:SetOperation(s.atkop)
+	e1:SetTarget(s.warptg)
+	e1:SetOperation(s.warpop)
     c:RegisterEffect(e1)
+    --Attack all each time
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_ATTACK_ALL)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
+	--cannot be destroyed by battle
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+    e3:SetCondition(s.cbdcon)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
 end
---during damage calculation function
-function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.warptg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE)) end
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
 end
-function s.atkop(e,tp,eg,ep,ev,re,r,rp)
+function s.warpop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local bc=e:GetHandler():GetBattleTarget()
-    if c:IsRelateToBattle() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(-bc:GetAttack()/2)
-        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetCode(EFFECT_UPDATE_DEFENSE)
-        e2:SetValue(-bc:GetDefense()/2)
-        e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e2)
-    end
+    local tc=e:GetHandler():GetBattleTarget()
+	if tc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
+		if Duel.Remove(tc,tc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+			e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
+			e1:SetLabel(Duel.GetTurnCount())
+			e1:SetReset(RESET_PHASE+PHASE_MAIN1,1)
+			e1:SetLabelObject(tc)
+			e1:SetCountLimit(1)
+			e1:SetOperation(s.returnop)
+			Duel.RegisterEffect(e1,tp)
+		end
+	end
+end
+function s.returnop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetTurnCount()~=e:GetLabel() and tp==Duel.GetTurnPlayer() then
+		Duel.Hint(HINT_CARD,0,id)
+		Duel.ReturnToField(e:GetLabelObject())
+	end
+end
+function s.alienfilter(c)
+	return c:IsAttribute(ATTRIBUTE_WATER) and not c:IsCode(id)
+end
+function s.cbdcon(e,c)
+	if c==nil then end
+    return Duel.IsExistingMatchingCard(s.alienfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

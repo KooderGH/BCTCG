@@ -1,7 +1,7 @@
 -- Shibalien Elite
 local s,id=GetID()
 function s.initial_effect(c)
-	--remove
+    --warp mechanic
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_REMOVE)
     e1:SetType(EFFECT_TYPE_IGNITION)

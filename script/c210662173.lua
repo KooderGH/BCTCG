@@ -53,11 +53,5 @@ function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	e1:SetValue(200)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
 	c:RegisterEffect(e1)
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_UPDATE_DEFENSE)
-	e2:SetValue(200)
-	e2:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-	c:RegisterEffect(e2)
 	return true
 end

@@ -58,5 +58,5 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function s.drawop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Draw(1-tp,1,REASON_EFFECT)
+    Duel.Draw(1-tp,2,REASON_EFFECT)
 end

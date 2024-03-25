@@ -13,6 +13,14 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
+    --Pay 1000 LP
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCode(EVENT_PHASE+PHASE_END)
+    e2:SetCountLimit(1)
+    e2:SetOperation(s.lpop)
+    c:RegisterEffect(e2)
 end
 function s.firefilter(c)
 	return c:IsAttribute(ATTRIBUTE_FIRE)
@@ -35,4 +43,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	if not g then return end
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
+end
+function s.lpop(e,tp,eg,ep,ev,re,r,rp)
+    if e:GetHandler():IsRelateToEffect(e) then
+        Duel.PayLPCost(1-tp,1000)
+	end
 end

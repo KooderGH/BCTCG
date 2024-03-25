@@ -1,7 +1,7 @@
 -- Shibalien Elite
 local s,id=GetID()
 function s.initial_effect(c)
-    --warp mechanic
+	--Targetable Warp Mechanic
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_REMOVE)
     e1:SetType(EFFECT_TYPE_IGNITION)
@@ -16,7 +16,7 @@ end
 function s.warptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
 	local g=Duel.GetMatchingGroup(s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function s.warpop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
@@ -29,10 +29,10 @@ function s.warpop(e,tp,eg,ep,ev,re,r,rp)
 			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 			e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
 			e1:SetLabel(Duel.GetTurnCount())
-			e1:SetReset(RESET_PHASE+PHASE_MAIN1+RESET_SELF_TURN,1)
+			e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
 			e1:SetLabelObject(tc)
 			e1:SetCountLimit(1)
-			e1:SetOperation(s.retop)
+			e1:SetOperation(s.returnop)
 			Duel.RegisterEffect(e1,tp)
 		end
 	end

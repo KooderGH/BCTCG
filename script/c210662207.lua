@@ -54,7 +54,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
     if ft<=0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,ft,ft,nil,e,tp)
-    if #g>0 then
+    if #g>0 and Duel.TossCoin(tp,1)==COIN_HEADS then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_ATTACK)
     end
 end
@@ -66,7 +66,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local bc=e:GetHandler():GetBattleTarget()
-    if bc:IsRelateToBattle() then
+    if bc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
         Duel.Destroy(bc,REASON_EFFECT)
         Duel.Destroy(e:GetHandler(),REASON_EFFECT)
     end

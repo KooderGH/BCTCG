@@ -13,7 +13,7 @@ function s.initial_effect(c)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(1-tp,250)
-        Duel.PayLPCost(tp,250)
+        Duel.PayLPCost(1-tp,500)
+        Duel.PayLPCost(tp,500)
 	end
 end

@@ -8,15 +8,15 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e1:SetTarget(s.rdtg)
-	e1:SetOperation(s.rdop)
+	e1:SetTarget(s.wavetg)
+	e1:SetOperation(s.waveop)
 	c:RegisterEffect(e1)
 end
-function s.rdtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.wavetg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)
 end
-function s.rdop(e,tp,eg,ep,ev,re,r,rp)
+function s.waveop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local d1=6
 	while d1>3 do

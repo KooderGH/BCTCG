@@ -29,7 +29,7 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Cannot attack battle ability
+    --Knockback ability
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,3))
     e4:SetCategory(CATEGORY_DISABLE)

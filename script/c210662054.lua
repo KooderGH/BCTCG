@@ -29,6 +29,16 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
+    --Cannot attack battle ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,3))
+    e4:SetCategory(CATEGORY_DISABLE)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e4:SetCondition(s.kbcon)
+    e4:SetTarget(s.kbtg)
+    e4:SetOperation(s.kbop)
+    c:RegisterEffect(e4)
 end
 function s.smhfilter(c)
     return c:IsFaceup() and c:IsCode(210662047)
@@ -66,4 +76,26 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
+end
+--Knockback function
+function s.kbcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
+end
+function s.kbtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.kbop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,6)
+        tc:RegisterEffect(e1)
+        Duel.NegateAttack()
+    end
 end

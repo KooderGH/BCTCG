@@ -26,6 +26,6 @@ end
 function s.defop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) then
-		Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
-	end
+        Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
+    end
 end

@@ -37,6 +37,14 @@ function s.initial_effect(c)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(1)
     c:RegisterEffect(e4)
+    --Lost 1000 LP
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetCode(EVENT_PHASE+PHASE_END)
+    e5:SetCountLimit(1)
+    e5:SetOperation(s.lpop)
+    c:RegisterEffect(e5)
 end
 function s.smsfilter(c)
     return c:IsFaceup() and c:IsCode(210662358)
@@ -74,4 +82,10 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
+end
+--Lose LP function
+function s.lpop(e,tp,eg,ep,ev,re,r,rp)
+    if e:GetHandler():IsRelateToEffect(e) then
+        Duel.PayLPCost(1-tp,1000)
+    end
 end

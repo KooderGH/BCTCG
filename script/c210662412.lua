@@ -35,13 +35,6 @@ function s.curseop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetCode(EFFECT_DISABLE)
         e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
         tc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e2:SetCode(EFFECT_DISABLE_EFFECT)
-        e2:SetValue(RESET_TURN_SET)
-        e2:SetReset(RESET_PHASE+PHASE_MAIN1,2)
-        tc:RegisterEffect(e2)
         Duel.NegateAttack()
     end
 end

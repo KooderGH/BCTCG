@@ -12,7 +12,7 @@ function s.initial_effect(c)
 end
 --Freeze Function
 function s.freezecon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsRelateToBattle()
+	return e:GetHandler():IsRelateToBattle() and Duel.GetTurnPlayer()==tp
 end
 function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
     local effp=e:GetHandler():GetControler()

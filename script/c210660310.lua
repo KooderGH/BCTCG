@@ -1,5 +1,6 @@
 --Yuletide Nurse
 --Scripted by Konstak (effect 7 fixed by Gideon)
+--Nerfed by Tungnon
 --Effect
 -- (1) Cannot be Special Summoned.
 -- (2) When this card is Summoned: If the LP difference between both players' LP is 4000 or more; Both player's LP become 9000, then banish this card.
@@ -47,19 +48,7 @@ function s.initial_effect(c)
     e6:SetRange(LOCATION_MZONE)
     e6:SetValue(1)
     c:RegisterEffect(e6)
-    --Add one card from GY to Hand (4)
-    local e7=Effect.CreateEffect(c)
-    e7:SetDescription(aux.Stringid(id,1))
-    e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e7:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-    e7:SetRange(LOCATION_MZONE)
-    e7:SetCode(EVENT_PHASE+PHASE_END)
-    e7:SetCountLimit(2,id,EFFECT_COUNT_CODE_DUEL)
-    e7:SetTarget(s.stg)
-    e7:SetOperation(s.sop)
-    c:RegisterEffect(e7)
-    --Change its Type and Attribute (5)
+    --Change its Type and Attribute (4)
     local e8=Effect.CreateEffect(c)
     e8:SetDescription(aux.Stringid(id,2))
     e8:SetType(EFFECT_TYPE_IGNITION)
@@ -68,7 +57,7 @@ function s.initial_effect(c)
     e8:SetTarget(s.chtg)
     e8:SetOperation(s.chop)
     c:RegisterEffect(e8)
-    --during your turn banish from GY and gain 300 LP from opp's deck (6)
+    --during your turn banish from GY and gain 300 LP from opp's deck (5)
     local e9=Effect.CreateEffect(c)
     e9:SetDescription(aux.Stringid(id,3))
     e9:SetCategory(CATEGORY_RECOVER)
@@ -105,22 +94,6 @@ function s.smop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Remove(e:GetHandler(),POS_FACEUP,REASON_EFFECT)
 end
 --(4)
-function s.searchfilter(c,e,tp)
-    return c:IsAbleToHand()
-end
-function s.stg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.searchfilter,tp,LOCATION_GRAVE,0,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
-end
-function s.sop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.searchfilter,tp,LOCATION_GRAVE,0,1,1,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
-end
---(5)
 function s.racefilter(c)
     return c:IsFaceup() and not c:IsCode(id)
 end
@@ -157,7 +130,7 @@ function s.chop(e,tp,eg,ep,ev,re,r,rp)
         local e4=e3:Clone()
         tc:RegisterEffect(e4)
 end
---(6)
+--(5)
 function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 and Duel.GetTurnPlayer()==e:GetHandlerPlayer() then return Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)>0 end
     local rt=Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)*300
@@ -169,7 +142,7 @@ function s.roperation(e,tp,eg,ep,ev,re,r,rp)
     local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
     Duel.Recover(p,rt,REASON_EFFECT)
 end
---(7)
+--(6)
 function s.tgfilter(c,tp)
 	return c:IsFaceup() and c:IsLocation(LOCATION_MZONE) and c:IsControler(tp)
 end

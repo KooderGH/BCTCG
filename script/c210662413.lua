@@ -2,41 +2,30 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Negate effects
+    --To Defense
     local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_DISABLE)
-    e1:SetType(EFFECT_TYPE_IGNITION)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetCountLimit(1)
-    e1:SetTarget(s.negtarget)
-    e1:SetOperation(s.negoperation)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_POSITION)
+    e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
+    e1:SetCode(EVENT_SUMMON_SUCCESS)
+    e1:SetTarget(s.deftg)
+    e1:SetOperation(s.defop)
     c:RegisterEffect(e1)
+    local e2=e1:Clone()
+    e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+    c:RegisterEffect(e2)
+    local e3=e1:Clone()
+    e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+    c:RegisterEffect(e3)
 end
---e3
-function s.negtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_NEGATE)
-	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_MZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
+--To Defense Function
+function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chk==0 then return e:GetHandler():IsAttackPos() end
+    Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler(),1,0,0)
 end
-function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local tc=Duel.GetFirstTarget()
-	if tc and (tc:IsFaceup() and not tc:IsDisabled()) and tc:IsRelateToEffect(e) then
-        Duel.NegateRelatedChain(tc,RESET_TURN_SET)
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCode(EFFECT_DISABLE)
-        e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
-        tc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e2:SetCode(EFFECT_DISABLE_EFFECT)
-        e2:SetValue(RESET_TURN_SET)
-        e2:SetReset(RESET_PHASE+PHASE_MAIN1,2)
-        tc:RegisterEffect(e2)
-	end
+function s.defop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) then
+        Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
+    end
 end

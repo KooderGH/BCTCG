@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --to defense
+    --To Defense
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_POSITION)
@@ -26,7 +26,7 @@ function s.initial_effect(c)
     e4:SetOperation(s.lpop)
     c:RegisterEffect(e4)
 end
---e2
+--e1
 function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chk==0 then return e:GetHandler():IsAttackPos() end
     Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler(),1,0,0)
@@ -37,6 +37,7 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
     end
 end
+--e2
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
         Duel.PayLPCost(1-tp,500)

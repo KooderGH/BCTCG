@@ -14,7 +14,7 @@ function s.initial_effect(c)
 end
 --Shield Mechanic
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsReason(REASON_BATTLE) and c:IsFaceup() end
-	return true
+    local c=e:GetHandler()
+    if chk==0 then return c:IsReason(REASON_BATTLE) and c:IsFaceup() end
+    return true
 end

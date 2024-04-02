@@ -49,6 +49,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         bc:RegisterEffect(e2)
     end
 end
+--Destroy That Target Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end
     if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end

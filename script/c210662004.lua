@@ -11,17 +11,18 @@ function s.initial_effect(c)
     e1:SetOperation(s.drop)
     c:RegisterEffect(e1)
 end
+--Draw Function
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if Duel.IsPlayerCanDraw(1-tp,1) then
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-    e1:SetRange(LOCATION_GRAVE)
-    e1:SetCode(EVENT_PHASE+PHASE_DRAW)
-    e1:SetReset(RESET_PHASE+PHASE_END,2)
-    e1:SetCountLimit(1)
-    e1:SetOperation(s.drawop)
-    c:RegisterEffect(e1)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+        e1:SetRange(LOCATION_GRAVE)
+        e1:SetCode(EVENT_PHASE+PHASE_DRAW)
+        e1:SetReset(RESET_PHASE+PHASE_END,2)
+        e1:SetCountLimit(1)
+        e1:SetOperation(s.drawop)
+        c:RegisterEffect(e1)
     end
 end
 function s.drawop(e,tp,eg,ep,ev,re,r,rp)

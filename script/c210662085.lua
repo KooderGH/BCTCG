@@ -31,7 +31,7 @@ function s.initial_effect(c)
 end
 --Special Summon Samurai Function
 function s.hybridfilter(c)
-    return c:IsAttribute(ATTRIBUTE_FIRE) or c:IsAttribute(ATTRIBUTE_DARK)
+    return c:IsFaceup() and (c:IsAttribute(ATTRIBUTE_FIRE)) or (c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_WARRIOR))
 end
 function s.spcon(e,c)
     if c==nil then return true end

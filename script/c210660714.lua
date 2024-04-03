@@ -1,0 +1,3 @@
+--By Tungnon
+--Deep-Diver Kanna
+--Insert Bystial Magnamhut effects here (without Dragon searching)

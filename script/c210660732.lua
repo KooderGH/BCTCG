@@ -1,5 +1,5 @@
 --By Tungnon
---Adventurer Kanna
+--Ninja Girl Tomoe
 local s,id=GetID()
 function s.initial_effect(c)
 	--Inactivate
@@ -24,7 +24,7 @@ function s.initial_effect(c)
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	local loc=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)
-	return ep~=tp and Duel.IsChainDisablable(ev) and loc==LOCATION_GRAVE
+	return ep~=tp and Duel.IsChainDisablable(ev) and loc==LOCATION_HAND
 end
 function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
@@ -37,3 +37,4 @@ end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateEffect(ev)
 end
+

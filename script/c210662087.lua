@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     -- Special Summon Tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -21,6 +21,15 @@ function s.initial_effect(c)
     e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
+    --Base Destroyer Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DESTROY)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BATTLE_CONFIRM)
+    e3:SetCondition(function() return Duel.GetAttackTarget()==nil end)
+    e3:SetOperation(s.desop)
+    c:RegisterEffect(e3)
 end
 function s.blackfilter(c)
 	return c:IsAttribute(ATTRIBUTE_DARK)
@@ -59,4 +68,17 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.drawop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(1-tp,2,REASON_EFFECT)
+end
+--Base Destroyer Function
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if not c:IsRelateToEffect(e) then return end
+    if c:IsFaceup() then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(c:GetAttack())
+        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
+        c:RegisterEffect(e1)
+    end
 end

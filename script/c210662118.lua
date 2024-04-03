@@ -12,7 +12,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
-	if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(1-tp,500)
-	end
+    if e:GetHandler():IsRelateToEffect(e) then
+        Duel.Damage(1-tp,500,REASON_EFFECT)
+    end
 end

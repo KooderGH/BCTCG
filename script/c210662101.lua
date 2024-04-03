@@ -46,6 +46,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(1-tp,1000)
-	end
+        Duel.Damage(1-tp,1000,REASON_EFFECT)
+    end
 end

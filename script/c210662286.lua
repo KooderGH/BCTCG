@@ -22,7 +22,7 @@ function s.initial_effect(c)
     --Then SS to opp
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,3))
-    e4:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
+    e4:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
     e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
     e4:SetRange(LOCATION_SZONE)
@@ -67,14 +67,14 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     local c=e:GetHandler()
     if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.desfilter(chkc,c:GetAttack()) end
     if chk==0 then return Duel.IsExistingTarget(s.desfilter,tp,0,LOCATION_MZONE,1,nil,c:GetAttack()) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
     local g=Duel.SelectTarget(tp,s.desfilter,tp,0,LOCATION_MZONE,1,1,nil,c:GetAttack())
-    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_SZONE)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFirstTarget()
-    if tc:IsRelateToEffect(e) and Duel.Destroy(tc,REASON_EFFECT)~=0 then
+    if tc:IsRelateToEffect(e) and Duel.SendtoGrave(tc,REASON_EFFECT)~=0 then
         local c=e:GetHandler()
         if c:IsRelateToEffect(e) then
             Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)

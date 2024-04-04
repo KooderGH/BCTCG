@@ -32,7 +32,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
 end
 function s.blackfilter(c)
-	return c:IsAttribute(ATTRIBUTE_DARK)
+	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_WARRIOR) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

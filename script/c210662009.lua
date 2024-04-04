@@ -15,7 +15,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function s.traitlessfilter(c)
-	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_WARRIOR)
+	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_WARRIOR) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

@@ -1,4 +1,4 @@
--- ??
+-- Red Bot
 --Scripted By Konstak
 local s,id=GetID()
 local COUNTER_CAULDRON=0x14e

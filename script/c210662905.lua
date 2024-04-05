@@ -1,4 +1,4 @@
--- ???
+-- Li'l Red Bot
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)

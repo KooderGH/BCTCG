@@ -45,17 +45,6 @@ function s.initial_effect(c)
 	e4:SetTargetRange(LOCATION_MZONE,0)
 	e4:SetTarget(s.fairyfilter)
 	c:RegisterEffect(e4)
-	--Tribute, Search
-	local e5=Effect.CreateEffect(c)
-    	e5:SetDescription(aux.Stringid(id,2))
-    	e5:SetType(EFFECT_TYPE_IGNITION)
-    	e5:SetRange(LOCATION_MZONE)
-	e5:SetCountLimit(1)
-	e5:SetCondition(s.tributecondition)
-	e5:SetCost(s.trcost)
-	e5:SetTarget(s.trtg)
-	e5:SetOperation(s.trop)
-	c:RegisterEffect(e5)
 end
 --Fog counter
 s.counter_place_list={0x1019}

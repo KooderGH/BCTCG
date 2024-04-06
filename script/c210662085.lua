@@ -21,12 +21,15 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_MZONE)
     e2:SetValue(ATTRIBUTE_DARK)
     c:RegisterEffect(e2)
-    --Slow Ability
+    --Knockback ability
     local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_DISABLE)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e3:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e3:SetCondition(s.slowcon)
-    e3:SetOperation(s.slowop)
+    e3:SetCondition(s.knockbackcon)
+    e3:SetTarget(s.knockbacktg)
+    e3:SetOperation(s.knockbackop)
     c:RegisterEffect(e3)
 end
 --Special Summon Samurai Function
@@ -52,30 +55,25 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
---Slow Ability Function
-function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle()
+--Knockback function
+function s.knockbackcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
 end
-function s.slowop(e,tp,eg,ep,ev,re,r,rp)
-    local effp=e:GetHandler():GetControler()
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
-        local e1=Effect.CreateEffect(e:GetHandler())
-        e1:SetType(EFFECT_TYPE_FIELD)
-        e1:SetCode(EFFECT_CANNOT_BP)
-        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-        e1:SetTargetRange(0,1)
-        if Duel.GetTurnPlayer()==effp then
-            e1:SetLabel(Duel.GetTurnCount())
-            e1:SetCondition(s.skipcon)
-            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
-        else
-            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
-        end
-        Duel.RegisterEffect(e1,effp)
+    local tc=e:GetHandler():GetBattleTarget()
+    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        tc:RegisterEffect(e1)
         Duel.NegateAttack()
     end
-end
-function s.skipcon(e)
-    return Duel.GetTurnCount()~=e:GetLabel()
 end

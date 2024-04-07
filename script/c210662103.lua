@@ -10,5 +10,5 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function s.filter(c)
-    return c:IsAttribute(ATTRIBUTE_FIRE) or c:IsAttribute(ATTRIBUTE_DARK) or c:IsAttribute(ATTRIBUTE_WIND)
+    return c:IsAttribute(ATTRIBUTE_DARK) or c:IsAttribute(ATTRIBUTE_WIND) or c:IsAttribute(ATTRIBUTE_FIRE)
 end

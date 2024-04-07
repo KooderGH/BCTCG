@@ -9,7 +9,7 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_MZONE)
     e1:SetCode(EFFECT_SELF_DESTROY)
     c:RegisterEffect(e1)
-    --Death Weaken
+    --Death Slow
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetCode(EVENT_TO_GRAVE)

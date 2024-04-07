@@ -22,5 +22,7 @@ function s.tfilter(c)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE+LOCATION_GRAVE+LOCATION_HAND,nil)
-	Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+	if g then
+        Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+	end
 end

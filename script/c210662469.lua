@@ -2,7 +2,7 @@
 --Scripted by Konstak.
 local s,id=GetID()
 function s.initial_effect(c)
-	--Place as Spell (3)
+	--Burrow down
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,2))
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
@@ -19,7 +19,7 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e3)
-	--Target 2400 or lower as spell then SS to opp
+	--Burrow up
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,3))
 	e4:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)

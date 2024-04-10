@@ -28,6 +28,15 @@ function s.initial_effect(c)
     e3:SetCondition(s.crabcountcondition)
     e3:SetValue(1)
     c:RegisterEffect(e3)
+    --Critical Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,0))
+    e4:SetCategory(CATEGORY_REMOVE)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_BATTLE_START)
+    e4:SetTarget(s.crittg)
+    e4:SetOperation(s.critop)
+    c:RegisterEffect(e4)
 end
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
@@ -50,4 +59,16 @@ end
 function s.crabcountcondition(e)
     local tp=e:GetHandlerPlayer()
     return Duel.GetMatchingGroupCount(s.crabfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+end
+--Critical Ability Function
+function s.crittg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_MACHINE) end
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
+end
+function s.critop(e,tp,eg,ep,ev,re,r,rp)
+    local bc=e:GetHandler():GetBattleTarget()
+    if bc:IsRelateToBattle() then
+        Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
+    end
 end

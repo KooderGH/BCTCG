@@ -26,22 +26,20 @@ function s.initial_effect(c)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_FZONE)
     e3:SetCountLimit(1)
-    e3:SetLabel(2)
+    e3:SetLabel(3)
     e3:SetCondition(s.crabcountcondition)
     e3:SetTarget(s.addtg)
     e3:SetOperation(s.addop)
     c:RegisterEffect(e3)
-    --Add Monster2
+    --Attack Directly
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetType(EFFECT_TYPE_FIELD)
+    e4:SetCode(EFFECT_DIRECT_ATTACK)
     e4:SetRange(LOCATION_FZONE)
-    e4:SetCountLimit(1)
-    e4:SetLabel(3)
+    e4:SetTargetRange(LOCATION_MZONE,0)
+    e4:SetLabel(6)
     e4:SetCondition(s.crabcountcondition)
-    e4:SetTarget(s.addtg2)
-    e4:SetOperation(s.addop2)
+    e4:SetTarget(s.dirtg)
     c:RegisterEffect(e4)
 end
 function s.crabfilter(c)
@@ -71,16 +69,7 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ConfirmCards(1-tp,g)
     end
 end
---Add function2
-function s.addtg2(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.crabfilteradd,tp,0,LOCATION_DECK,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
-end
-function s.addop2(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.crabfilteradd,tp,0,LOCATION_DECK,1,1,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
+--direct attack
+function s.dirtg(e,c)
+	return Duel.IsExistingMatchingCard(s.crabfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end

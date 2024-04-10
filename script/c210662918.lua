@@ -88,7 +88,7 @@ end
 --e3
 function s.sumcon(e,tp,c)
 	if c==nil then return true end
-	return tp==Duel.GetTurnPlayer() and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(tp,1000)
+	return tp==Duel.GetTurnPlayer() and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(tp,500)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
@@ -98,7 +98,7 @@ function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(tp,1000)
+        Duel.PayLPCost(tp,500)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
 end

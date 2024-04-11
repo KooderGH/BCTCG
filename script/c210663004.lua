@@ -47,6 +47,19 @@ function s.initial_effect(c)
     e5:SetTarget(s.addtg)
     e5:SetOperation(s.addop)
     c:RegisterEffect(e5)
+    --Place one counter
+    c:EnableCounterPermit(0x4001)
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,2))
+    e6:SetCategory(CATEGORY_COUNTER)
+    e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e6:SetType(EFFECT_TYPE_QUICK_O)
+    e6:SetCode(EVENT_FREE_CHAIN)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCountLimit(1)
+    e6:SetTarget(s.addct)
+    e6:SetOperation(s.addc)
+    c:RegisterEffect(e6)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -91,5 +104,16 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
 	if #g>0 then
 		Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
+	end
+end
+--addcounter
+s.counter_list={0x4001}
+function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x4001)
+end
+function s.addc(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+        e:GetHandler():AddCounter(0x4001,1)
 	end
 end

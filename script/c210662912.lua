@@ -27,7 +27,8 @@ function s.initial_effect(c)
     e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e3:SetRange(LOCATION_MZONE)
     e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.ldcon)
+    e3:SetLabel(2)
+    e3:SetCondition(s.crabcountcondition)
     e3:SetValue(1)
     c:RegisterEffect(e3)    
 end
@@ -63,7 +64,7 @@ end
 function s.crabfilter(c)
     return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
 end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.crabfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,2,nil)
+function s.crabcountcondition(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.crabfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end

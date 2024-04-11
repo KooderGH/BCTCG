@@ -87,7 +87,7 @@ function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.addop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_GRAVE,0,1,2,nil)
+	local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_GRAVE,0,1,1,nil)
 	if #g>0 then
 		Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)

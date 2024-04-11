@@ -28,6 +28,15 @@ function s.initial_effect(c)
     local e3=e2:Clone()
     e3:SetCode(EFFECT_CANNOT_REMOVE)
     c:RegisterEffect(e3)
+    --Can banish zombie monsters
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_REMOVE)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_BATTLE_START)
+    e4:SetTarget(s.bntg)
+    e4:SetOperation(s.bnop)
+    c:RegisterEffect(e4)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -45,4 +54,16 @@ function s.cfilter(c,tp)
 end
 function s.contactop(g,tp,c)
 	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
+end
+--Banish Zombies function
+function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_ZOMBIE) end
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,bc,1,0,0)
+end
+function s.bnop(e,tp,eg,ep,ev,re,r,rp)
+    local bc=e:GetHandler():GetBattleTarget()
+    if bc:IsRelateToBattle() then
+    Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
+    end
 end

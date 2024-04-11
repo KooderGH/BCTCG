@@ -1,5 +1,5 @@
--- Zrab Zat
---Scripted by ""
+-- Red Crab Cat
+--Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
     --Pay 150 LP based on how many you control
@@ -17,7 +17,7 @@ function s.crabfilter(c)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local d = Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*150
+    local d = Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*150
     if e:GetHandler():IsRelateToEffect(e) and d then
         Duel.Damage(1-tp,d,REASON_EFFECT)
     end

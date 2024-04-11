@@ -32,6 +32,7 @@ function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFieldCard(1-tp,LOCATION_MZONE,d1)
     if tc then
         local e1=Effect.CreateEffect(c)
+        e1:SetDescription(aux.Stringid(id,0))
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_CANNOT_ATTACK)
         e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)

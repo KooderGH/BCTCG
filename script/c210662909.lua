@@ -51,7 +51,7 @@ function s.crabcountcondition(e)
 end
 --Atk Def gain
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*50
+	return Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*100
 end
 --Add function
 function s.crabfilteradd(c)

@@ -26,7 +26,7 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
     local Zone=d1
     if tc then
         local seq=tc:GetSequence()
-        local nseq=4-seq
+        local nseq=seq
         Duel.Destroy(tc,REASON_EFFECT)
         local e1=Effect.CreateEffect(e:GetHandler())
         e1:SetType(EFFECT_TYPE_FIELD)
@@ -38,7 +38,7 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
         Duel.RegisterEffect(e1,tp)
     else
         local seq=Zone
-        local nseq=4-seq
+        local nseq=seq
         if Duel.CheckLocation(1-tp,LOCATION_MZONE,nseq) then
             local e1=Effect.CreateEffect(e:GetHandler())
             e1:SetType(EFFECT_TYPE_FIELD)

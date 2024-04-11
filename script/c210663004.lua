@@ -30,13 +30,23 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     --Can banish zombie monsters
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetDescription(aux.Stringid(id,0))
     e4:SetCategory(CATEGORY_REMOVE)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetCode(EVENT_BATTLE_START)
     e4:SetTarget(s.bntg)
     e4:SetOperation(s.bnop)
     c:RegisterEffect(e4)
+    --Once Destroyed add "Type-80T" to deck
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetCategory(CATEGORY_TODECK+CATEGORY_SEARCH)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e5:SetCode(EVENT_DESTROYED)
+    e5:SetTarget(s.addtg)
+    e5:SetOperation(s.addop)
+    c:RegisterEffect(e5)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -66,4 +76,20 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     if bc:IsRelateToBattle() then
     Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
+end
+--Destroy and add function
+function s.addfilter(c)
+	return c:IsCode(210663000) and c:IsAbleToDeck()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_GRAVE,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,nil,1,tp,LOCATION_GRAVE)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
+	local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_GRAVE,0,1,2,nil)
+	if #g>0 then
+		Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end

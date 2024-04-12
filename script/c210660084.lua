@@ -1,6 +1,6 @@
 --Megidora
 --Scripted by Konstak
---Effects:
+--Effect
 --(1) Any monster that is Normal Summoned, Flip Summoned, or Special Summoned is changed to Defense Position except Dragon type monsters.
 --(2) Once per turn (Igntion): You can target one monster on your side of the field except "Megidora" and one monster on your opponent side; Destroy both targets.
 --(3) When this card is in Defense Position; destroy it.

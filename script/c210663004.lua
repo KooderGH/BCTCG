@@ -156,7 +156,7 @@ function s.seqop(e,tp,eg,ep,ev,re,r,rp,chk)
         e1:SetRange(LOCATION_MZONE)
         e1:SetLabel(zones)
         e1:SetOperation(s.znop)
-        e1:SetReset(RESET_PHASE+PHASE_STANDBY,2)
+        e1:SetReset(RESET_PHASE+PHASE_STANDBY,4)
         Duel.RegisterEffect(e1,tp)
     end
 end

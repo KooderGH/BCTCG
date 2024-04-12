@@ -60,6 +60,15 @@ function s.initial_effect(c)
     e6:SetTarget(s.addct)
     e6:SetOperation(s.addc)
     c:RegisterEffect(e6)
+    --move
+    local e7=Effect.CreateEffect(c)
+    e7:SetDescription(aux.Stringid(id,3))
+    e7:SetType(EFFECT_TYPE_IGNITION)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetCountLimit(1)
+    e7:SetTarget(s.seqtg)
+    e7:SetOperation(s.seqop)
+    c:RegisterEffect(e7)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -116,4 +125,51 @@ function s.addc(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
         e:GetHandler():AddCounter(0x4001,1)
 	end
+end
+--Destroy
+function s.seqtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
+
+    -- Zones in the same column cannot be used
+    local e1=Effect.CreateEffect(e:GetHandler())
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_DISABLE_FIELD)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetOperation(s.znop)
+    e1:SetReset(RESET_PHASE+PHASE_STANDBY,2)
+    Duel.RegisterEffect(e1,tp)
+
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOZONE)
+    local seq=Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0)
+    Duel.Hint(HINT_ZONE,tp,seq)
+    e:SetLabel(math.log(seq,2))
+end
+function s.seqop(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    local seq2=e:GetLabel()
+    if not c:IsRelateToEffect(e) or c:IsControler(1-tp) or c:IsImmuneToEffect(e) or not Duel.CheckLocation(tp,LOCATION_MZONE,seq2) then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOZONE)
+    local seq1=c:GetSequence() --register the sequence it comes from
+    local dg=c:GetColumnGroup() --and the group of cards there
+    Duel.MoveSequence(c,seq2)
+    if c:GetSequence()==seq2 and seq1~=seq2 then
+        Duel.BreakEffect()
+        if #dg>0 then
+            Duel.BreakEffect()
+            Duel.Destroy(dg,REASON_EFFECT)
+		end
+	end
+end
+function s.znop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local zones=c:GetColumnZone(LOCATION_ONFIELD)
+    for tc in c:GetColumnGroup():Iter() do
+        local ctrl=tc:IsControler(tp)
+        local seq=tc:GetSequence()
+        zones=zones&~(ctrl and (1<<seq) or (1<<(16+seq)))
+        if tc:IsInExtraMZone() then
+            zones=zones&~(ctrl and (1<<(27-seq)) or (1<<(11-seq)))
+		end
+	end
+	return zones
 end

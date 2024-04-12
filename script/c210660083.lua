@@ -10,10 +10,10 @@
 --(7) Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.
 local s,id=GetID()
 function s.initial_effect(c)
-    --Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.(6)
-    local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_SINGLE)
-    e6:SetCode(EFFECT_DOUBLE_TRIBUTE)
-    e6:SetValue(function (e,c) return c:IsRace(RACE_DRAGON) end)
-    c:RegisterEffect(e6)
+    --Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.(7)
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_SINGLE)
+    e7:SetCode(EFFECT_DOUBLE_TRIBUTE)
+    e7:SetValue(function (e,c) return c:IsRace(RACE_DRAGON) end)
+    c:RegisterEffect(e7)
 end

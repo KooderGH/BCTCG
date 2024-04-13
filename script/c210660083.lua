@@ -41,9 +41,12 @@ function s.initial_effect(c)
     --Spell or Trap is destroyed while this card is face-up on the field (4)
     local e4=Effect.CreateEffect(c)
     e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e4:SetRange(LOCATION_MZONE)
+    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e4:SetCode(EVENT_DESTROYED)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetCondition(s.addgycon)
     e4:SetTarget(s.addgytg)
     e4:SetOperation(s.addgyop)
     c:RegisterEffect(e4)
@@ -109,13 +112,17 @@ function s.rtop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(tc,nil,REASON_EFFECT)
     end
 end
---Add from GY Function
+--Add from GY Function (4)
 function s.cfilter(c,tp)
-	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousPosition(POS_FACEUP)
+	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousPosition(POS_FACEUP)
 		and c:IsPreviousControler(tp) and c:IsType(TYPE_SPELL+TYPE_TRAP)
 end
+function s.addgycon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.cfilter,1,nil,tp)
+end
 function s.addgytg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return eg:IsExists(s.cfilter,1,nil,tp) and Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_GRAVE,0,1,nil) end
+	local c=e:GetHandler()
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_GRAVE,0,1,nil) end
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
 end
 function s.addgyop(e,tp,eg,ep,ev,re,r,rp)

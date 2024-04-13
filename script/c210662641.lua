@@ -1,8 +1,8 @@
--- Le'boin
+-- Elephantidae Papaou
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -14,25 +14,25 @@ function s.initial_effect(c)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
 end
-function s.traitlessfilter(c)
-	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_WARRIOR) and c:IsFaceup()
+function s.papaoufilter(c)
+    return c:IsFaceup() and c:IsCode(210662009)
 end
 function s.spcon(e,c)
-	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.traitlessfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    if c==nil then return true end
+    return Duel.CheckReleaseGroup(c:GetControler(),s.papaoufilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.traitlessfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
-	if g then
-		g:KeepAlive()
-		e:SetLabelObject(g)
-	return true
-	end
-	return false
+    local g=Duel.SelectReleaseGroup(tp,s.papaoufilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+    if g then
+        g:KeepAlive()
+        e:SetLabelObject(g)
+    return true
+    end
+    return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=e:GetLabelObject()
-	if not g then return end
-	Duel.Release(g,REASON_COST)
-	g:DeleteGroup()
+    local g=e:GetLabelObject()
+    if not g then return end
+    Duel.Release(g,REASON_COST)
+    g:DeleteGroup()
 end

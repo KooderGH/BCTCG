@@ -1,0 +1,47 @@
+-- Mini Angel Cyclone
+local s,id=GetID()
+function s.initial_effect(c)
+    --Battle RNG Warp Mechanic
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_REMOVE)
+    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e1:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e1:SetTarget(s.warptg)
+    e1:SetOperation(s.warpop)
+    c:RegisterEffect(e1)
+    --Attack all each time
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_ATTACK_ALL)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
+end
+function s.warptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
+end
+function s.warpop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+	if tc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
+		if Duel.Remove(tc,tc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+			e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
+			e1:SetLabel(Duel.GetTurnCount())
+			e1:SetReset(RESET_PHASE+PHASE_MAIN1,1)
+			e1:SetLabelObject(tc)
+			e1:SetCountLimit(1)
+			e1:SetOperation(s.returnop)
+			Duel.RegisterEffect(e1,tp)
+		end
+	end
+end
+function s.returnop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetTurnCount()~=e:GetLabel() then
+		Duel.Hint(HINT_CARD,0,id)
+		Duel.ReturnToField(e:GetLabelObject())
+	end
+end

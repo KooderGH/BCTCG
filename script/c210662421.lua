@@ -33,7 +33,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
 end
 function s.angelfilter(c)
-	return c:IsAttribute(ATTRIBUTE_LIGHT)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_WARRIOR)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

@@ -37,15 +37,15 @@ function s.initial_effect(c)
     e4:SetValue(1)
     c:RegisterEffect(e4)
 end
-function s.papaoufilter(c)
+function s.angelfilter(c)
     return c:IsFaceup() and c:IsCode(210662115)
 end
 function s.spcon(e,c)
     if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.papaoufilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.angelfilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectReleaseGroup(tp,s.papaoufilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+    local g=Duel.SelectReleaseGroup(tp,s.angelfilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
     if g then
         g:KeepAlive()
         e:SetLabelObject(g)

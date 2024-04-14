@@ -16,13 +16,13 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_ATTACK_ALL)
     e2:SetValue(1)
     c:RegisterEffect(e2)
-	--cannot be attacked
+	--Long Distance Ability
     local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
 	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.cbdcon)
+    e3:SetCondition(s.ldcon)
     e3:SetValue(1)
     c:RegisterEffect(e3)
 end
@@ -54,10 +54,11 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ReturnToField(e:GetLabelObject())
 	end
 end
+--Long Distance Function
 function s.alienfilter(c)
 	return c:IsAttribute(ATTRIBUTE_WATER) and not c:IsCode(id)
 end
-function s.cbdcon(e,c)
+function s.ldcon(e,c)
 	if c==nil then end
     return Duel.IsExistingMatchingCard(s.alienfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

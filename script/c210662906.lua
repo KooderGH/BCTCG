@@ -40,12 +40,11 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ConfirmCards(1-tp,g)
     end
 end
-
 --Long Distance Function
-function s.wizadronfilter(c)
+function s.ldfilter(c)
     return not c:IsCode(id)
 end
 function s.ldcon(e,c)
     if c==nil then end
-    return Duel.IsExistingMatchingCard(s.wizadronfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

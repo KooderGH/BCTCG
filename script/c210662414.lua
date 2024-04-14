@@ -43,10 +43,10 @@ function s.curseop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Long Distance Function
-function s.othomfilter(c)
+function s.ldfilter(c)
     return not c:IsCode(id)
 end
 function s.ldcon(e,c)
     if c==nil then end
-    return Duel.IsExistingMatchingCard(s.othomfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

@@ -1,8 +1,8 @@
--- Le'Saint
+-- Sunfish Jones
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -24,13 +24,20 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
     --Can banish zombie monsters
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_REMOVE)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e3:SetCode(EVENT_BATTLE_START)
     e3:SetTarget(s.bntg)
     e3:SetOperation(s.bnop)
     c:RegisterEffect(e3)
+    --Slow Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_BATTLE_START)
+    e4:SetCondition(s.slowcon)
+    e4:SetOperation(s.slowop)
+    c:RegisterEffect(e4)
 end
 function s.angelfilter(c)
 	return c:IsAttribute(ATTRIBUTE_LIGHT)
@@ -77,4 +84,31 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     if bc:IsRelateToBattle() then
     Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
+end
+--Slow Ability Function
+function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsRelateToBattle()
+end
+function s.slowop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_CANNOT_BP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        Duel.NegateAttack()
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end

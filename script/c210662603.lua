@@ -11,6 +11,14 @@ function s.initial_effect(c)
     e1:SetTarget(s.atktg)
     e1:SetOperation(s.atkop)
     c:RegisterEffect(e1)
+    --Immune to Wave, Surge, Single Attack
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
 end
 --during damage calculation function
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)

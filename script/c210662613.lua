@@ -28,7 +28,7 @@ function s.initial_effect(c)
     e3:SetTarget(s.wavetg)
     e3:SetOperation(s.waveop)
     c:RegisterEffect(e3)
-    --indestructable by effect
+    --Immune to Wave, Surge, Single Attack
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
     e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)

@@ -27,15 +27,15 @@ function s.initial_effect(c)
     e2:SetOperation(s.desop)
     c:RegisterEffect(e2)
     --Knockback ability
-    local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,3))
-    e2:SetCategory(CATEGORY_DISABLE)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e2:SetCondition(s.cattcon)
-    e2:SetTarget(s.catttg)
-    e2:SetOperation(s.cattop)
-    c:RegisterEffect(e2)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_DISABLE)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.knockbackcon)
+    e3:SetTarget(s.knockbacktg)
+    e3:SetOperation(s.knockbackop)
+    c:RegisterEffect(e3)
 end
 --e1
 function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -79,15 +79,15 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Knockback function
-function s.cattcon(e,tp,eg,ep,ev,re,r,rp)
+function s.knockbackcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetTurnPlayer()==tp
 end
-function s.catttg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
     if chk==0 then return bc and bc:IsFaceup() end
     Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
 end
-function s.cattop(e,tp,eg,ep,ev,re,r,rp)
+function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tc=e:GetHandler():GetBattleTarget()
     if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then

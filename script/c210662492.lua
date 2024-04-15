@@ -13,6 +13,37 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
+    --Strengthen Ability
+    local e2=Effect.CreateEffect(c)
+    e2:SetCode(EFFECT_DESTROY_REPLACE)
+    e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.desreptg)
+    c:RegisterEffect(e2)
+    --Immune to Wave, Surge, Single Attack
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
+    --Cannot be targeted
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
+    --Opponent No Battle Damage
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e5:SetValue(1)
+    c:RegisterEffect(e5)
 end
 function s.angelfilter(c)
 	return c:IsFaceup() and c:IsCode(210662114)
@@ -35,4 +66,16 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     if not g then return end
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
+end
+--Strengthen function
+function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return not c:IsReason(REASON_REPLACE) end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetValue(1000)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+    c:RegisterEffect(e1)
+    return true
 end

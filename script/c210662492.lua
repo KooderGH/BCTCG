@@ -44,16 +44,25 @@ function s.initial_effect(c)
     e5:SetCode(EFFECT_NO_BATTLE_DAMAGE)
     e5:SetValue(1)
     c:RegisterEffect(e5)
+    --Toxic Ability
+    local e6=Effect.CreateEffect(c)
+    e6:SetCategory(CATEGORY_ATKCHANGE)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e6:SetCondition(s.toxiccon)
+    e6:SetTarget(s.toxictg)
+    e6:SetOperation(s.toxicop)
+    c:RegisterEffect(e6)
 end
 function s.angelfilter(c)
 	return c:IsFaceup() and c:IsCode(210662114)
 end
 function s.spcon(e,c)
     if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.angelfilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.angelfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectReleaseGroup(tp,s.angelfilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
+    local g=Duel.SelectReleaseGroup(tp,s.angelfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
     if g then
         g:KeepAlive()
         e:SetLabelObject(g)
@@ -71,11 +80,41 @@ end
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return not c:IsReason(REASON_REPLACE) end
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetValue(1000)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-    c:RegisterEffect(e1)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(1000)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+        c:RegisterEffect(e1)
     return true
+end
+--Toxic on Battle function
+function s.filter(c)
+    return c:IsFaceup()
+end
+function s.toxiccon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
+end
+function s.toxictg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,0,LOCATION_MZONE,1,nil) end
+end
+function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
+    local sg=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE,nil)
+    local c=e:GetHandler()
+    local tc=sg:GetFirst()
+    for tc in aux.Next(sg) do
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+        e1:SetValue(-500)
+        tc:RegisterEffect(e1)
+        local e2=Effect.CreateEffect(c)
+        e2:SetType(EFFECT_TYPE_SINGLE)
+        e2:SetCode(EFFECT_UPDATE_DEFENSE)
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+        e2:SetValue(-500)
+        tc:RegisterEffect(e2)
+        Duel.NegateAttack()
+    end
 end

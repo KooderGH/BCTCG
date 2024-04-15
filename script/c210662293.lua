@@ -2,7 +2,7 @@
 --Scripted by Konstak.
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-	--Revive
+    --Revive
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
@@ -24,6 +24,16 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
+    --Knockback ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_DISABLE)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.knockbackcon)
+    e3:SetTarget(s.knockbacktg)
+    e3:SetOperation(s.knockbackop)
+    c:RegisterEffect(e3)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE)
@@ -62,4 +72,26 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.PayLPCost(tp,1000)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
+end
+--Knockback function
+function s.knockbackcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
+end
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        tc:RegisterEffect(e1)
+        Duel.NegateAttack()
+    end
 end

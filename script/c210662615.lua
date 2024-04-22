@@ -48,7 +48,7 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
         Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
 end
---Weaken
+--Weaken Function
 function s.weakentg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsFaceup() end
     if chk==0 then return true end

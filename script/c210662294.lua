@@ -25,6 +25,17 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_ATTACK_ALL)
     e3:SetValue(1)
     c:RegisterEffect(e3)
+    --Revive
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,0))
+    e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
+    e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e4:SetCode(EVENT_PHASE+PHASE_END)
+    e4:SetRange(LOCATION_GRAVE)
+    e4:SetCondition(s.sumcon)
+    e4:SetTarget(s.sumtg)
+    e4:SetOperation(s.sumop)
+    c:RegisterEffect(e4)
 end
 function s.angelfilter(c)
 	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
@@ -43,8 +54,24 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
 	return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=e:GetLabelObject()
-	if not g then return end
-	Duel.Release(g,REASON_COST)
-	g:DeleteGroup()
+    local g=e:GetLabelObject()
+    if not g then return end
+    Duel.Release(g,REASON_COST)
+    g:DeleteGroup()
+end
+function s.sumcon(e,tp,c)
+    if c==nil then return true end
+    return tp==Duel.GetTurnPlayer() and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(tp,1000)
+end
+function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+        and c:IsCanBeSpecialSummoned(e,0,tp,true,false) end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
+end
+function s.sumop(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+        Duel.PayLPCost(tp,1000)
+        Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
+	end
 end

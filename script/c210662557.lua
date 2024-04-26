@@ -24,7 +24,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.Akufilter(c)
-    return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_PSYCHIC)
+    return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_PSYCHIC) and c:IsFaceup()
 end
 function s.spcon(e,c)
     if c==nil then return true end

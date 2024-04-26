@@ -40,7 +40,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e4)
 end
 function s.angelfilter(c)
-	return c:IsAttribute(ATTRIBUTE_LIGHT)
+	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

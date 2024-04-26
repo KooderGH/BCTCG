@@ -27,7 +27,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.Relicfilter(c)
-    return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_PLANT)
+    return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_PLANT) and c:IsFaceup()
 end
 function s.spcon(e,c)
     if c==nil then return true end

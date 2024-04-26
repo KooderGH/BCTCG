@@ -1,4 +1,4 @@
--- Divine Cyclone
+-- Zyclone
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
@@ -27,7 +27,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
 end
 function s.angelfilter(c)
-	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsFaceup()
+	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

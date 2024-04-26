@@ -23,7 +23,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.firefilter(c)
-	return c:IsAttribute(ATTRIBUTE_FIRE)
+	return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

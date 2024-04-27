@@ -7,7 +7,7 @@ function s.initial_effect(c)
     c:SetUniqueOnField(1,0,id)
     --Link Summon
     c:EnableReviveLimit()
-    Link.AddProcedure(c,s.machinefilter,1,99,s.lcheck)
+    Link.AddProcedure(c,s.machinefilter,1,1,s.lcheck)
     --cannot link material
     local e0=Effect.CreateEffect(c)
     e0:SetType(EFFECT_TYPE_SINGLE)

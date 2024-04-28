@@ -8,6 +8,7 @@
 -- (4) If this card would be destroyed, It loses exactly 50 DEF instead. if this card's DEF is 0, Destroy this card.
 -- (5) This card cannot be targeted by card effects.
 -- (6) EARTH Machine monsters you control cannot be destroyed by card effects.
+-- (7) You can only control 1 "Metal Cat".
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one

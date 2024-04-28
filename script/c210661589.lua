@@ -88,7 +88,7 @@ function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
 end
 function s.roperation(e,tp,eg,ep,ev,re,r,rp)
-    local rt=Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,LOCATION_ONFIELD)*750
+    local rt=Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,LOCATION_ONFIELD)*500
     local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
     Duel.Recover(p,rt,REASON_EFFECT)
 end
@@ -99,7 +99,7 @@ function s.gravetarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
 end
 function s.graveoperation(e,tp,eg,ep,ev,re,r,rp)
-	local rt=Duel.GetFieldGroupCount(tp,LOCATION_GRAVE,LOCATION_GRAVE)*750
+	local rt=Duel.GetFieldGroupCount(tp,LOCATION_GRAVE,LOCATION_GRAVE)*500
 	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
 	Duel.Recover(p,rt,REASON_EFFECT)
 end

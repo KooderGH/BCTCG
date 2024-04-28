@@ -3,8 +3,6 @@
 --Effects:
 local s,id=GetID()
 function s.initial_effect(c)
-    --Can only control one
-    c:SetUniqueOnField(1,0,id)
     --fusion material
     c:EnableReviveLimit()
     Fusion.AddProcMixRep(c,true,true,s.fil,1,1)

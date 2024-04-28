@@ -23,6 +23,51 @@ function s.initial_effect(c)
     e1:SetTargetRange(0,LOCATION_MZONE)
     e1:SetValue(s.atlimit)
     c:RegisterEffect(e1)
+    --"Grandon Corps" gain 900 ATK
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_FIELD)
+    e2:SetCode(EFFECT_UPDATE_ATTACK)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetTargetRange(LOCATION_MZONE,0)
+    e2:SetLabel(1)
+    e2:SetCondition(s.cuttercon)
+    e2:SetTarget(s.grandfilter)
+    e2:SetValue(900)
+    c:RegisterEffect(e2)
+    --"Grandon Corps" cannot be targeted by card effects.
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_FIELD)
+    e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetTargetRange(LOCATION_MZONE,0)
+    e3:SetLabel(1)
+    e3:SetCondition(s.drillercon)
+    e3:SetTarget(s.grandfilter)
+    c:RegisterEffect(e3)
+    --Cannot be destroyed by battle.
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+    e4:SetLabel(1)
+    e4:SetValue(1)
+    e4:SetCondition(s.sawcon)
+    c:RegisterEffect(e4)
+    --No Battle damage
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e5:SetLabel(1)
+    e5:SetValue(1)
+    e5:SetCondition(s.piledrivercon)
+    c:RegisterEffect(e5)
+    --Pay 500 LP based on how many you control
+    local e6=Effect.CreateEffect(c)
+    e6:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCode(EVENT_PHASE+PHASE_END)
+    e6:SetCountLimit(1)
+    e6:SetOperation(s.lpop)
+    c:RegisterEffect(e6)
 end
 --lcheck
 function s.machinefilter(c,scard,sumtype,tp)
@@ -34,4 +79,51 @@ end
 --Only "Neo Backhoe Cat" can be attack target function
 function s.atlimit(e,c)
     return c:IsFacedown() or not c:IsCode(id)
+end
+--Grandons filter
+function s.grandfilter(e,c,tp,r)
+    return (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447)) and c:IsFaceup()
+end
+--Cutter Filter
+function s.cutterfilter(c)
+    return c:IsFaceup() and c:IsCode(210661445)
+end
+function s.cuttercon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.cutterfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+end
+--Driller Filter
+function s.drillerfilter(c)
+    return c:IsFaceup() and c:IsCode(210661443)
+end
+function s.drillercon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.drillerfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+end
+--Saw Filter
+function s.sawfilter(c)
+    return c:IsFaceup() and c:IsCode(210661447)
+end
+function s.sawcon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.sawfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+end
+--Piledriver Filter
+function s.piledriverfilter(c)
+    return c:IsFaceup() and c:IsCode(210661444)
+end
+function s.piledrivercon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.piledriverfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+end
+--Damage LP
+function s.lpfilter(c)
+    return c:IsFaceup() and (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447))
+end
+function s.lpop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local d = Duel.GetMatchingGroupCount(s.lpfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*500
+    if e:GetHandler():IsRelateToEffect(e) and d then
+        Duel.Damage(1-tp,d,REASON_EFFECT)
+    end
 end

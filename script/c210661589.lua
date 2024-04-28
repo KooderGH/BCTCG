@@ -26,7 +26,7 @@ function s.initial_effect(c)
     --While in card, reveal card, negate effect, destroy that monster
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
-    e3:SetCategory(CATEGORY_DISABLE+CATEGORY_DESTROY)
+    e3:SetCategory(CATEGORY_DISABLE)
     e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e3:SetType(EFFECT_TYPE_QUICK_O)
     e3:SetCode(EVENT_CHAINING)
@@ -77,9 +77,9 @@ function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
-	if Duel.NegateEffect(ev) and re:GetHandler():IsRelateToEffect(re) then
-		Duel.Destroy(eg,REASON_EFFECT)
-	end
+    if re:GetHandler():IsRelateToEffect(re) then
+        Duel.NegateEffect(ev)
+    end
 end
 --e3
 function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -94,12 +94,12 @@ function s.roperation(e,tp,eg,ep,ev,re,r,rp)
 end
 --Banish from GY
 function s.gravetarget(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetFieldGroup(tp,LOCATION_GRAVE,LOCATION_GRAVE):FilterCount(aux.TRUE,e:GetHandler())>0 end
-	Duel.SetTargetPlayer(tp)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
+    if chk==0 then return Duel.GetFieldGroup(tp,LOCATION_GRAVE,LOCATION_GRAVE):FilterCount(aux.TRUE,e:GetHandler())>0 end
+    Duel.SetTargetPlayer(tp)
+    Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
 end
 function s.graveoperation(e,tp,eg,ep,ev,re,r,rp)
-	local rt=Duel.GetFieldGroupCount(tp,LOCATION_GRAVE,LOCATION_GRAVE)*500
-	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
-	Duel.Recover(p,rt,REASON_EFFECT)
+    local rt=Duel.GetFieldGroupCount(tp,LOCATION_GRAVE,LOCATION_GRAVE)*300
+    local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
+    Duel.Recover(p,rt,REASON_EFFECT)
 end

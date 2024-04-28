@@ -1,6 +1,13 @@
 --Neo Cutter Cat
 --Scripted By Konstak
 --Effect:
+-- 2 EARTH Machine monsters with different names, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) You can only control one "Neo Cutter Cat".
+-- (3) This card cannot be destroyed by card effects.
+-- (4) If this card battles a FIRE type monster; that monster's ATK/DEF become halved until the end of the damage step.
+-- (5) Once while this card is face-up on the field: If it would be destroyed; It gains double of its ATK instead.
+-- (6) "Grandon Corps" monsters you control cannot be banished by card effects.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one

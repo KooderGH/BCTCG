@@ -1,6 +1,13 @@
 --Neo Saw Cat
 --Scripted By Konstak
 --Effect:
+-- 2 EARTH Machine monsters with different names, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) You can only control one "Neo Saw Cat".
+-- (3) If this card battles a WATER type monster; that monster's ATK/DEF become halved until the end of the damage step.
+-- (4) Once per turn, You can banish 1 monster except "Neo Saw Cat". During your opponent's next Main Phase 1, return them to the field.
+-- (5) "Grandon Corps" monsters you control cannot be returned to hand.
+-- (6) When this card is destroyed; You can add 2 Level 4 or lower Machine monsters from your GY to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one

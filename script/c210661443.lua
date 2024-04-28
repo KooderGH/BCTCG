@@ -1,6 +1,13 @@
 --Neo Driller Cat
 --Scripted By Konstak
 --Effect:
+-- 1 EARTH Machine monster, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) You can only control one "Neo Driller Cat".
+-- (3) You can Target 1 S/T on the field (Ignition); Destroy that target. You can only activate this effect once per turn.
+-- (4) When this card declares an attack on a monster: Negate the attack; Lower the attack target's ATK/DEF by a quarter of its original ATK/DEF.
+-- (5) This card can attack your opponent's monsters once each.
+-- (6) If you control another face-up "Grandon Corps" monster, this card cannot be attacked or targeted by card effects.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one

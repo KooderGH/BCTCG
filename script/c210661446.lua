@@ -1,6 +1,17 @@
 --Neo Backhoe Cat
 --Scripted By Konstak
 --Effect:
+-- 1 EARTH Machine monster, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) You can only control one "Neo Backhoe Cat".
+-- (3) Your opponent can only target "Neo Backhoe Cat" for attacks.
+-- (4) This card gains the following effect(s), based on the "Grandon Corps" Monster(s) you control except "Neo Backhoe Cat":
+-- * Neo Cutter Cat: "Grandon Corps" Monsters you control gain 900 ATK.
+-- * Neo Driller Cat: "Grandon Corps" Monsters you control cannot be targeted by card effects.
+-- * Neo Saw Cat: This card cannot be destroyed by battle.
+-- * Neo Piledriver Cat: You take no battle damage from attacks involving this card.
+-- (5) Your opponent takes damage based on the number of "Grandon Corps" Monsters you control x 500
+-- (6) "Grandon Corps" monsters you control cannot be tributed.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one

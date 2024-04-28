@@ -1,6 +1,13 @@
 --Neo Piledriver Cat
 --Scripted By Konstak
 --Effect:
+-- 2 EARTH Machine monsters with different names, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) You can only control one "Neo Piledriver Cat".
+-- (3) When your opponent activates a monster effect; Add 1 Spell Counter to this card
+-- (4) Cannot be destroyed by battle and cannot be targeted by card effects.
+-- (5) You can remove 2 Spell Counters from this card to add 1 EARTH Machine monster from your Deck or GY to your hand. (Quick)
+-- (6) When this card declares an attack on a monster: Negate the attack; The attack target cannot attack until the end of your next turn.
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableCounterPermit(COUNTER_SPELL)

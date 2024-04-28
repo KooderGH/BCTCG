@@ -52,6 +52,12 @@ function s.initial_effect(c)
     e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e7:SetOperation(s.gyop)
     c:RegisterEffect(e7)
+    --Summon cannot be negated
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
+    e8:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    c:RegisterEffect(e8)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)

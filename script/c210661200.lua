@@ -46,13 +46,13 @@ function s.initial_effect(c)
     e4:SetRange(LOCATION_MZONE)
     e4:SetTarget(s.desatktg)
     c:RegisterEffect(e4)
-    --self destroy
+    --self banish
     local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_SINGLE)
-    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e5:SetRange(LOCATION_MZONE)
-    e5:SetCode(EFFECT_SELF_DESTROY)
+    e5:SetCode(EVENT_ADJUST)
     e5:SetCondition(s.sdcon)
+    e5:SetOperation(s.sdop)
     c:RegisterEffect(e5)
     --Cannot be targeted
     local e6=Effect.CreateEffect(c)
@@ -108,6 +108,9 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
+end
+function s.sdop(e)
+    Duel.Remove(e:GetHandler(),POS_FACEUP,REASON_EFFECT)
 end
 --Earth Machine filter
 function s.earthmachinefilter(e,c,tp,r)

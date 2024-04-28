@@ -90,5 +90,5 @@ function s.atkval(e,c)
     end
 end
 function s.con(e)
-	return e:GetHandler():GetEquipCount()>0
+    return e:GetHandler():GetEquipCount()>0
 end

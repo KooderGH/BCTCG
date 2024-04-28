@@ -1,6 +1,13 @@
 --Boulder Cat
 --Scripted by Konstak.
 --Effects:
+-- 1 Monster (Fusion Monster)
+-- (1) Cannot be used as Fusion Material.
+-- (2) Must be Special Summoned only (from your Extra Deck) by sending 1 Monster from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
+-- (3) This card cannot be banished, tributed or returned.
+-- (4) If this card is face-up on the field, Destroy this card. 
+-- (5) If this card is sent to the GY: Send 1 card from your opponent's field to the GY.
+-- (6) After 3 turns have passed after this card is sent to the GY (counting the turn after you've Summoned this card), Return this card to your extra deck.
 local s,id=GetID()
 function s.initial_effect(c)
     --fusion material

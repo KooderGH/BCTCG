@@ -1,6 +1,13 @@
 --Metal Cat
 --Scripted by Konstak.
 --Effects:
+-- 2 Earth Machine Monsters (Fusion Monster)
+-- (1) Cannot be used as Fusion Material.
+-- (2) Must first be Special Summoned (from your Extra Deck) by sending the above cards from your field to the GY. (You do not use "Polymerization") This Card summon cannot be negated.
+-- (3) Your opponent can only target "Metal Cat" for attacks.
+-- (4) If this card would be destroyed, It loses exactly 50 DEF instead. if this card's DEF is 0, Destroy this card.
+-- (5) This card cannot be targeted by card effects.
+-- (6) EARTH Machine monsters you control cannot be destroyed by card effects.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only control one
@@ -54,6 +61,15 @@ function s.initial_effect(c)
     e6:SetRange(LOCATION_MZONE)
     e6:SetValue(1)
     c:RegisterEffect(e6)
+    --This card cannot be destroyed by card effects.
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_FIELD)
+    e7:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetTargetRange(LOCATION_MZONE,0)
+    e7:SetValue(1)
+    e7:SetTarget(s.earthmachinefilter)
+    c:RegisterEffect(e7)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -91,4 +107,8 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
+end
+--Earth Machine filter
+function s.earthmachinefilter(e,c,tp,r)
+    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE)
 end

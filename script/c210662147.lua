@@ -30,12 +30,12 @@ end
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsFaceup() end
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_UPDATE_DEFENSE)
-    e1:SetValue(-50)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-    c:RegisterEffect(e1)
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_DEFENSE)
+        e1:SetValue(-50)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+        c:RegisterEffect(e1)
     return true
 end
 function s.sdcon(e)

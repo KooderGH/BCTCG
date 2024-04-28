@@ -29,6 +29,15 @@ function s.initial_effect(c)
     e2:SetCondition(s.adcon)
     e2:SetValue(s.atkval)
     c:RegisterEffect(e2)
+    --cannot be battle target
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e3:SetCondition(s.con)
+    e3:SetValue(aux.imval1)
+    c:RegisterEffect(e3)
 end
 --lcheck
 function s.lcheck(g,lc,sumtype,tp)
@@ -79,4 +88,7 @@ function s.atkval(e,c)
     else
         return atk/2
     end
+end
+function s.con(e)
+	return e:GetHandler():GetEquipCount()>0
 end

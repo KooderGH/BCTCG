@@ -33,27 +33,25 @@ function s.initial_effect(c)
     e2:SetTarget(s.warptg)
     e2:SetOperation(s.warpop)
     c:RegisterEffect(e2)
-    --"Grandon Corps" monsters you control cannot be tributed.
+    --"Grandon Corps" monsters you control cannot be returned to hand.
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_FIELD)
     e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e3:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e3:SetCode(EFFECT_CANNOT_TO_HAND)
     e3:SetRange(LOCATION_MZONE)
     e3:SetTargetRange(1,1)
-    e3:SetTarget(s.trlimit)
+    e3:SetTarget(s.relimit)
     c:RegisterEffect(e3)
-    local e4=e3:Clone()
-    e4:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    --Destroy and draw lv4 or lower machine
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.drtg)
+    e4:SetOperation(s.drop)
     c:RegisterEffect(e4)
-    --"Grandon Corps" monsters you control cannot be returned to hand.
-    local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_FIELD)
-    e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e5:SetCode(EFFECT_CANNOT_TO_HAND)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetTargetRange(1,1)
-    e5:SetTarget(s.trlimit)
-    c:RegisterEffect(e5)
 end
 --lcheck
 function s.machinefilter(c,scard,sumtype,tp)
@@ -119,8 +117,24 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ReturnToField(e:GetLabelObject())
     end
 end
---Cannot tribute/return
-function s.trlimit(e,c,tp,r)
+--Cannot return
+function s.relimit(e,c,tp,r)
     return (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447)) and c:IsFaceup()
         and c:IsControler(e:GetHandlerPlayer()) and not c:IsImmuneToEffect(e) and r&REASON_EFFECT>0
+end
+--Destroy and draw function
+function s.dfilter(c)
+    return c:IsLevelBelow(4) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+end
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.dfilter,tp,LOCATION_GRAVE,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_GRAVE,0,2,2,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

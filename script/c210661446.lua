@@ -68,6 +68,18 @@ function s.initial_effect(c)
     e6:SetCountLimit(1)
     e6:SetOperation(s.lpop)
     c:RegisterEffect(e6)
+    --"Grandon Corps" monsters you control cannot be tributed.
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_FIELD)
+    e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e7:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetTargetRange(1,1)
+    e7:SetTarget(s.trlimit)
+    c:RegisterEffect(e7)
+    local e8=e7:Clone()
+    e8:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    c:RegisterEffect(e8)
 end
 --lcheck
 function s.machinefilter(c,scard,sumtype,tp)
@@ -126,4 +138,9 @@ function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) and d then
         Duel.Damage(1-tp,d,REASON_EFFECT)
     end
+end
+--Cannot tribute
+function s.trlimit(e,c,tp,r)
+    return (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447)) and c:IsFaceup()
+        and c:IsControler(e:GetHandlerPlayer()) and not c:IsImmuneToEffect(e) and r&REASON_EFFECT>0
 end

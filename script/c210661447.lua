@@ -40,7 +40,7 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_UNRELEASABLE_SUM)
     e3:SetRange(LOCATION_MZONE)
     e3:SetTargetRange(1,1)
-    e3:SetTarget(s.rmlimit)
+    e3:SetTarget(s.trlimit)
     c:RegisterEffect(e3)
     local e4=e3:Clone()
     e4:SetCode(EFFECT_UNRELEASABLE_NONSUM)
@@ -52,7 +52,7 @@ function s.initial_effect(c)
     e5:SetCode(EFFECT_CANNOT_TO_HAND)
     e5:SetRange(LOCATION_MZONE)
     e5:SetTargetRange(1,1)
-    e5:SetTarget(s.rmlimit)
+    e5:SetTarget(s.trlimit)
     c:RegisterEffect(e5)
 end
 --lcheck
@@ -120,7 +120,7 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Cannot tribute/return
-function s.rmlimit(e,c,tp,r)
+function s.trlimit(e,c,tp,r)
     return (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447)) and c:IsFaceup()
         and c:IsControler(e:GetHandlerPlayer()) and not c:IsImmuneToEffect(e) and r&REASON_EFFECT>0
 end

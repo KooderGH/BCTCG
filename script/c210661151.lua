@@ -52,7 +52,7 @@ end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
     if contact then sumtype=0 end
-    return c:IsFaceup() and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))
+    return c:IsFaceup() and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp)) and not c:IsType(TYPE_TOKEN,fc,sumtype,tp)
 end
 function s.splimit(e,se,sp,st)
     return e:GetHandler():GetLocation()~=LOCATION_EXTRA

@@ -45,14 +45,14 @@ function s.initial_effect(c)
     e3:SetValue(1)
     e3:SetTarget(s.monsterfilter)
     c:RegisterEffect(e3)
-    --Destruction per turn
+    --Once while this card is face-up on the field: If it would be destroyed; It isn't.
     local e4=Effect.CreateEffect(c)
     e4:SetCode(EFFECT_DESTROY_REPLACE)
     e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
     e4:SetRange(LOCATION_MZONE)
     e4:SetCountLimit(1)
-    e4:SetTarget(s.desatktg)
+    e4:SetTarget(s.desreptg)
     c:RegisterEffect(e4)
 end
 --lcheck
@@ -68,8 +68,8 @@ function s.monsterfilter(e,c,tp,r)
     return c:IsFaceup() and c:IsType(TYPE_MONSTER) and not c:IsCode(id)
 end
 --once per turn cannot be destroyed
-function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local c=e:GetHandler()
-    if chk==0 then return c:IsFaceup() end
-    return true
+function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return not c:IsReason(REASON_REPLACE) end
+	return true
 end

@@ -1,7 +1,10 @@
 --Necro-Dancer Cat
 --Scripted By Konstak.
 --Effect:
---2 monsters with different names, except tokens.
+-- 2 monsters with different names, except tokens.
+-- (1) You can target 1 face-up monster this card points to; equip that face-up monster to this card (max 1).
+-- (2) This card gains ATK equal to half the equipped monster's ATK.
+-- (3) While this card is equipped by a monster; your opponent cannot target this card for an attack.
 local s,id=GetID()
 function s.initial_effect(c)
     --Link Summon

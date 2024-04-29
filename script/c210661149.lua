@@ -1,8 +1,10 @@
 --Cameraman Cat
 --Scripted By Konstak
 --Link Monster (LD,RD)
---2 monsters with different names, except tokens.
---(1) Cannot be used as Link material.
+-- 2 monsters with different names, except tokens.
+-- (1) Cannot be used as Link material.
+-- (2) If this card battles a WIND type monster, double this card's ATK until the end of the damage step.
+-- (3) WIND monsters cannot target this card for an attack.
 local s,id=GetID()
 function s.initial_effect(c)
     --Link Summon
@@ -15,7 +17,7 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
     e1:SetValue(1)
     c:RegisterEffect(e1)
-    --during damage calculation gain 2900 atk
+    --during damage calculation gain double atk
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_REMOVE)
@@ -24,6 +26,14 @@ function s.initial_effect(c)
     e2:SetTarget(s.atktg)
     e2:SetOperation(s.atkop)
     c:RegisterEffect(e2)
+    --Cannot be selected as attack target
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetValue(function(e,c) return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND) end)
+    c:RegisterEffect(e3)
 end
 --lcheck
 function s.lcheck(g,lc,sumtype,tp)

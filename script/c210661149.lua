@@ -2,38 +2,22 @@
 --Scripted By Konstak
 --Link Monster (LD,RD)
 -- 2 monsters with different names, except tokens.
--- (1) Cannot be used as Link material.
--- (2) If this card battles a WIND type monster, double this card's ATK until the end of the damage step.
--- (3) WIND monsters cannot target this card for an attack.
+-- (1) If this card battles a WIND type monster, double this card's ATK until the end of the damage step.
+-- (2) If this card would be destroyed; Special Summon 1 EARTH Warrior monster from your GY instead. You can only use this effect of "Cameraman Cat" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --Link Summon
     c:EnableReviveLimit()
     Link.AddProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),2,2,s.lcheck)
-    --cannot link material
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-    e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
-    e1:SetValue(1)
-    c:RegisterEffect(e1)
     --during damage calculation gain double atk
-    local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,0))
-    e2:SetCategory(CATEGORY_REMOVE)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_BATTLE_START)
-    e2:SetTarget(s.atktg)
-    e2:SetOperation(s.atkop)
-    c:RegisterEffect(e2)
-    --Cannot be selected as attack target
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetValue(function(e,c) return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND) end)
-    c:RegisterEffect(e3)
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_REMOVE)
+    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e1:SetCode(EVENT_BATTLE_START)
+    e1:SetTarget(s.atktg)
+    e1:SetOperation(s.atkop)
+    c:RegisterEffect(e1)
 end
 --lcheck
 function s.lcheck(g,lc,sumtype,tp)

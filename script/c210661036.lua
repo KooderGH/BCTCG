@@ -30,24 +30,6 @@ function s.initial_effect(c)
     e2:SetCondition(s.poscon)
     e2:SetOperation(s.posop)
     c:RegisterEffect(e2)
-    --Cannot be attacked
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.cantcon)
-    e3:SetValue(1)
-    c:RegisterEffect(e3)
-    --Cannot be targeted by card effects
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetCondition(s.cantcon)
-    e4:SetValue(1)
-    c:RegisterEffect(e4)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -108,8 +90,4 @@ function s.posop(e,tp,eg,ep,ev,re,r,rp)
     e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_COPY_INHERIT)
     e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,3)
     c:RegisterEffect(e1)
-end
---Cannot be target for an attack function
-function s.cantcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPosition(POS_FACEUP_DEFENSE)
 end

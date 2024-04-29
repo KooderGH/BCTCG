@@ -78,13 +78,13 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Replace destroy function
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return not c:IsReason(REASON_REPLACE) end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetValue(500)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-	c:RegisterEffect(e1)
-	return true
+    local c=e:GetHandler()
+    if chk==0 then return not c:IsReason(REASON_REPLACE) end
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetValue(500)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+    c:RegisterEffect(e1)
+    return true
 end

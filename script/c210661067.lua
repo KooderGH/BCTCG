@@ -40,14 +40,6 @@ function s.initial_effect(c)
     e6:SetRange(LOCATION_MZONE)
     e6:SetValue(function(e,c) return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_DARK) end)
     c:RegisterEffect(e6)
-    --Li'l Gau gains 500 ATK
-    local e7=Effect.CreateEffect(c)
-    e7:SetType(EFFECT_TYPE_SINGLE)
-    e7:SetCode(EFFECT_UPDATE_ATTACK)
-    e7:SetRange(LOCATION_MZONE)
-    e7:SetTargetRange(LOCATION_MZONE,0)
-    e7:SetValue(s.adval)
-    c:RegisterEffect(e7)
 end
 --Special Summon Function
 function s.spcon(e,c)
@@ -78,11 +70,4 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
     end
-end
---Atk update function
-function s.atkfilter(c)
-    return c:IsFaceup() and c:IsCode(id)
-end
-function s.adval(e,c)
-    return Duel.GetMatchingGroupCount(s.atkfilter,c:GetControler(),LOCATION_MZONE,0,nil)*500
 end

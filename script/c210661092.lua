@@ -13,7 +13,7 @@ function s.initial_effect(c)
     c:SetUniqueOnField(1,0,id)
     --Link Summon
     c:EnableReviveLimit()
-    Link.AddProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),1,1,s.lcheck)
+    Link.AddProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),2,2,s.lcheck)
     --Only this monster can be attack target
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)

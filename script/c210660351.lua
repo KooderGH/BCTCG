@@ -1,5 +1,5 @@
 --Twinstars
---Scripted By Konstak
+--Scripted By Konstak, help from Snooze for the tribute effect
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableUnsummonable()

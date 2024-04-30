@@ -22,6 +22,18 @@ function s.initial_effect(c)
     e2:SetTarget(s.atktg)
     e2:SetOperation(s.atkop)
     c:RegisterEffect(e2)
+    --When this card destroys a monster by battle; add 1 LIGHT monster from GY to hand
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_NO_TURN_RESET)
+    e3:SetCode(EVENT_BATTLE_DESTROYING)
+    e3:SetCountLimit(1)
+    e3:SetCondition(s.atkcon2)
+    e3:SetTarget(s.atktg2)
+    e3:SetOperation(s.atkop2)
+    c:RegisterEffect(e3)
 end
 --e1
 function s.spfilter(c)
@@ -52,5 +64,26 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         c:RegisterEffect(e2)
+    end
+end
+--e3
+function s.filter2(c)
+    return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsAbleToHand()
+end
+function s.atkcon2(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local bc=c:GetBattleTarget()
+    return c:IsRelateToBattle() and bc:IsMonster()
+end
+function s.atktg2(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_GRAVE,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.atkop2(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_GRAVE,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

@@ -43,7 +43,7 @@ function s.initial_effect(c)
     e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e5:SetType(EFFECT_TYPE_IGNITION)
     e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1)
+    e5:SetCountLimit(2)
     e5:SetCost(s.srcost2)
     e5:SetTarget(s.crtg2)
     e5:SetOperation(s.crop2)
@@ -58,6 +58,24 @@ function s.initial_effect(c)
     e6:SetCountLimit(1)
     e6:SetOperation(s.coperation)
     c:RegisterEffect(e6)
+    --Cannot be attacked
+    local e7=Effect.CreateEffect(c)
+    e7:SetType(EFFECT_TYPE_SINGLE)
+    e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e7:SetRange(LOCATION_MZONE)
+    e7:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e7:SetCondition(s.cantcon)
+    e7:SetValue(1)
+    c:RegisterEffect(e7)
+    --Cannot be targeted by card effects
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_SINGLE)
+    e8:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e8:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e8:SetRange(LOCATION_MZONE)
+    e8:SetCondition(s.cantcon)
+    e8:SetValue(1)
+    c:RegisterEffect(e8)
 end
 --Special Summon Functions
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
@@ -89,45 +107,47 @@ function s.addc(e,tp,eg,ep,ev,re,r,rp)
 end
 --Counter for Defense
 function s.srcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4003,1,REASON_COST) end
-	e:GetHandler():RemoveCounter(tp,0x4003,1,REASON_COST)
+    if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4003,2,REASON_COST) end
+    e:GetHandler():RemoveCounter(tp,0x4003,2,REASON_COST)
 end
 function s.crtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,0,1,1,nil)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
+    if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
+    Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,0,1,1,nil)
 end
 function s.crop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_UPDATE_DEFENSE)
-		e1:SetValue(500)
-		tc:RegisterEffect(e1)
-	end
+    local tc=Duel.GetFirstTarget()
+    if tc:IsRelateToEffect(e) and tc:IsFaceup() then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_DEFENSE)
+        e1:SetReset(RESET_PHASE+PHASE_END)
+        e1:SetValue(500)
+        tc:RegisterEffect(e1)
+    end
 end
 --Counter for Attack
 function s.srcost2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4003,2,REASON_COST) end
-	e:GetHandler():RemoveCounter(tp,0x4003,1,REASON_COST)
+    if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4003,2,REASON_COST) end
+    e:GetHandler():RemoveCounter(tp,0x4003,2,REASON_COST)
 end
 function s.crtg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,0,1,1,nil)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
+    if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_MZONE,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
+    Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,0,1,1,nil)
 end
 function s.crop2(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_UPDATE_ATTACK)
-		e1:SetValue(500)
-		tc:RegisterEffect(e1)
-	end
+    local tc=Duel.GetFirstTarget()
+    if tc:IsRelateToEffect(e) and tc:IsFaceup() then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetReset(RESET_PHASE+PHASE_END)
+        e1:SetValue(500)
+        tc:RegisterEffect(e1)
+    end
 end
 --Add counter to everyone
 function s.coperation(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -137,4 +157,8 @@ function s.coperation(e,tp,eg,ep,ev,re,r,rp,chk)
     if e:GetHandler():IsRelateToEffect(e) then
         e:GetHandler():AddCounter(0x4003,g)
     end
+end
+--Cannot be target for an attack function
+function s.cantcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsPosition(POS_FACEUP_DEFENSE)
 end

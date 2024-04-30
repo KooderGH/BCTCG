@@ -100,8 +100,29 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		Duel.Destroy(tc,REASON_EFFECT)
-	end
+    local c=e:GetHandler()
+    local tc=Duel.GetFirstTarget()
+    if tc:IsRelateToEffect(e) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetCode(EFFECT_DISABLE)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+        tc:RegisterEffect(e1)
+        local e2=Effect.CreateEffect(c)
+        e2:SetType(EFFECT_TYPE_SINGLE)
+        e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e2:SetCode(EFFECT_DISABLE_EFFECT)
+        e2:SetValue(RESET_TURN_SET)
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+        tc:RegisterEffect(e2)
+        if tc:IsType(TYPE_TRAPMONSTER) then
+            local e3=Effect.CreateEffect(c)
+            e3:SetType(EFFECT_TYPE_SINGLE)
+            e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+            e3:SetCode(EFFECT_DISABLE_TRAPMONSTER)
+            e3:SetReset(RESET_EVENT+RESETS_STANDARD)
+            tc:RegisterEffect(e3)
+        end
+    end
 end

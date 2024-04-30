@@ -12,7 +12,7 @@ function s.initial_effect(c)
     e1:SetCountLimit(1)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
-    --FIRE monsters player controls gain 200 ATK
+    --Twinstars gain 200 ATK for each
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetCode(EFFECT_UPDATE_ATTACK)

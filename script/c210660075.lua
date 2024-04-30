@@ -34,6 +34,16 @@ function s.initial_effect(c)
     e3:SetTarget(s.atktg2)
     e3:SetOperation(s.atkop2)
     c:RegisterEffect(e3)
+    --tohand
+    local e4=Effect.CreateEffect(c)
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetCode(EVENT_RELEASE)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY+EFFECT_FLAG_NO_TURN_RESET)
+    e4:SetCountLimit(1)
+    e4:SetTarget(s.thtg)
+    e4:SetOperation(s.thop)
+    c:RegisterEffect(e4)
 end
 --e1
 function s.spfilter(c)
@@ -86,4 +96,20 @@ function s.atkop2(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
+end
+--e4
+function s.thfilter(c)
+	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_SPELLCASTER) and c:IsMonster() and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end

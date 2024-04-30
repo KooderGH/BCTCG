@@ -104,7 +104,7 @@ end
 function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     local bc=e:GetHandler():GetBattleTarget()
     if bc:IsRelateToBattle() then
-    Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
+        Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
 end
 --all monsters you control gain 400 for 3 Earth machines function

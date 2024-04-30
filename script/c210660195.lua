@@ -30,7 +30,7 @@ function s.initial_effect(c)
 	e2:SetCondition(s.thcon)
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
-	e1:SetCountLimit(1,id)
+	e2:SetCountLimit(1,id)
 	c:RegisterEffect(e2)
 end
 --Union filter

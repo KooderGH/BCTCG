@@ -24,7 +24,7 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e3)
-    --add one wind monster from your deck or GY to hand
+    --Counter remove add monster
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,1))
     e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -44,7 +44,7 @@ function s.initial_effect(c)
     e5:SetRange(LOCATION_MZONE)
     e5:SetCode(EVENT_PHASE+PHASE_END)
     e5:SetCountLimit(1)
-    e5:SetOperation(s.fcoperation)
+    e5:SetOperation(s.coperation)
     c:RegisterEffect(e5)
 end
 --Special Summon Functions
@@ -96,14 +96,11 @@ function s.srop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Add counter to everyone
-function s.levelfilter(c)
-	return c:IsFaceup()
-end
-function s.fcoperation(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
-	local g=Duel.GetMatchingGroup(s.levelfilter,tp,LOCATION_MZONE,0,nil)
-	local tc=g:GetFirst()
-	for tc in aux.Next(g) do
-		tc:AddCounter(0x4003,1)
-	end
+function s.coperation(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if not e:GetHandler():IsRelateToEffect(e) then return end
+    local g=Duel.GetMatchingGroupCount(Card.IsFaceup,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+    if e:GetHandler():IsRelateToEffect(e) then
+        e:GetHandler():AddCounter(0x4003,g)
+    end
 end

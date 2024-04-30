@@ -37,7 +37,7 @@ function s.initial_effect(c)
     --tohand
     local e4=Effect.CreateEffect(c)
     e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetCode(EVENT_RELEASE)
     e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY+EFFECT_FLAG_NO_TURN_RESET)
     e4:SetCountLimit(1)

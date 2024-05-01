@@ -115,6 +115,5 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetReset(RESET_EVENT+RESETS_STANDARD)
         e2:SetValue(-500)
         tc:RegisterEffect(e2)
-        Duel.NegateAttack()
     end
 end

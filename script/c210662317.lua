@@ -47,6 +47,12 @@ function s.initial_effect(c)
     e5:SetCondition(s.slowcon)
     e5:SetOperation(s.slowop)
     c:RegisterEffect(e5)
+    --Opponent No Battle Damage
+    local e6=Effect.CreateEffect(c)
+    e6:SetType(EFFECT_TYPE_SINGLE)
+    e6:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e6:SetValue(1)
+    c:RegisterEffect(e6)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()

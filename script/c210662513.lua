@@ -92,7 +92,7 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetRange(LOCATION_SZONE)
         e1:SetLabel(nseq+16)
         e1:SetOperation(s.disop)
-        e1:SetReset(RESET_PHASE+PHASE_STANDBY,1)
+        e1:SetReset(RESET_PHASE+PHASE_STANDBY,3)
         Duel.RegisterEffect(e1,tp)
     else
         local seq=Zone
@@ -104,7 +104,7 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetRange(LOCATION_SZONE)
             e1:SetLabel(nseq+16)
             e1:SetOperation(s.disop)
-            e1:SetReset(RESET_PHASE+PHASE_STANDBY,1)
+            e1:SetReset(RESET_PHASE+PHASE_STANDBY,3)
             Duel.RegisterEffect(e1,tp)
         end
     end

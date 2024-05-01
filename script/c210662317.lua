@@ -24,22 +24,45 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
+    --Immune to Wave, Surge, Single Attack
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
+    --Cannot be targeted
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
+    --Slow Ability
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e5:SetCondition(s.slowcon)
+    e5:SetOperation(s.slowop)
+    c:RegisterEffect(e5)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
-	return true
-	end
-	return false
+    return true
+    end
+    return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     local g=e:GetLabelObject()
@@ -62,4 +85,31 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.PayLPCost(tp,2000)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
+end
+--Slow Ability Function
+function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsRelateToBattle() and Duel.GetTurnPlayer()==tp
+end
+function s.slowop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_CANNOT_BP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        Duel.NegateAttack()
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end

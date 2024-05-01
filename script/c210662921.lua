@@ -21,6 +21,12 @@ function s.initial_effect(c)
     e2:SetTarget(s.surgetg)
     e2:SetOperation(s.surgeop)
     c:RegisterEffect(e2)
+    --Attack all each time
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_ATTACK_ALL)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
 end
 function s.sumcon(e,tp,c)
     if c==nil then return true end

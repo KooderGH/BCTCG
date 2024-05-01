@@ -36,23 +36,30 @@ function s.warpop(e,tp,eg,ep,ev,re,r,rp)
     local tc=e:GetHandler():GetBattleTarget()
 	if tc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
 		if Duel.Remove(tc,tc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
-			local e1=Effect.CreateEffect(e:GetHandler())
-			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-			e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
-			e1:SetLabel(Duel.GetTurnCount())
-			e1:SetReset(RESET_PHASE+PHASE_MAIN1,1)
-			e1:SetLabelObject(tc)
-			e1:SetCountLimit(1)
-			e1:SetOperation(s.returnop)
-			Duel.RegisterEffect(e1,tp)
+            local e1=Effect.CreateEffect(e:GetHandler())
+            e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+            e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
+            e1:SetLabelObject(tc)
+            e1:SetCountLimit(1)
+            e1:SetOperation(s.returnop)
+            Duel.RegisterEffect(e1,tp)
+            Duel.NegateAttack()
 		end
 	end
 end
 function s.returnop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetTurnCount()~=e:GetLabel() then
-		Duel.Hint(HINT_CARD,0,id)
-		Duel.ReturnToField(e:GetLabelObject())
-	end
+    local c=e:GetHandler()
+    local ct=c:GetTurnCounter()
+    ct=ct+1
+    c:SetTurnCounter(ct)
+    if ct==1 then
+        ct=0
+        c:SetTurnCounter(ct)
+        Duel.Hint(HINT_CARD,0,id)
+        Duel.ReturnToField(e:GetLabelObject())
+    end
 end
 --Long Distance Function
 function s.alienfilter(c)

@@ -39,7 +39,13 @@ function s.warpop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 function s.returnop(e,tp,eg,ep,ev,re,r,rp)
-    if Duel.GetTurnCount()~=e:GetLabel() then
+    local c=e:GetHandler()
+    local ct=c:GetTurnCounter()
+    ct=ct+1
+    c:SetTurnCounter(ct)
+    if ct==2 then
+        ct=0
+        c:SetTurnCounter(ct)
         Duel.Hint(HINT_CARD,0,id)
         Duel.ReturnToField(e:GetLabelObject())
     end

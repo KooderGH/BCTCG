@@ -24,6 +24,22 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
+    --Long Distance Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e3:SetCondition(s.ldcon)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
+    --Freeze Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e4:SetCondition(s.freezecon)
+    e4:SetOperation(s.freezeop)
+    c:RegisterEffect(e4)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
@@ -67,4 +83,39 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.PayLPCost(tp,1000)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
+end
+--Long Distance Function
+function s.ldfilter(c)
+    return not c:IsCode(id)
+end
+function s.ldcon(e,c)
+    if c==nil then end
+    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+--Freeze Function
+function s.freezecon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsRelateToBattle() and Duel.GetTurnPlayer()==tp
+end
+function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_SKIP_DP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        Duel.NegateAttack()
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end

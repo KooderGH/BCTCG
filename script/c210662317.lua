@@ -55,7 +55,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e6)
 end
 function s.zombiefilter(c)
-	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
+	return c:IsFaceup() and c:IsCode(210662284)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

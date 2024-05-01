@@ -2,7 +2,7 @@
 --Scripted by Konstak.
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-	--Revive
+    --Revive
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
@@ -24,6 +24,15 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
+    --Base Destroyer Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DESTROY)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BATTLE_CONFIRM)
+    e3:SetCondition(function() return Duel.GetAttackTarget()==nil end)
+    e3:SetOperation(s.desop)
+    c:RegisterEffect(e3)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
@@ -62,4 +71,17 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.PayLPCost(tp,1000)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
+end
+--Base Destroyer Function
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if not c:IsRelateToEffect(e) then return end
+    if c:IsFaceup() then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetValue(c:GetAttack())
+        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
+        c:RegisterEffect(e1)
+    end
 end

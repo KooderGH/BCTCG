@@ -67,12 +67,12 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Control Function
-function s.crabfilter(c)
+function s.kaifilter(c)
     return c:IsFaceup() and c:IsLevelAbove(7) and c:IsMonster() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_SPELLCASTER) and not c:IsCode(id)
 end
 function s.ctcon(e)
     local tp=e:GetHandlerPlayer()
-    return Duel.GetMatchingGroupCount(s.crabfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
+    return Duel.GetMatchingGroupCount(s.kaifilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end
 function s.cttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsControlerCanBeChanged() end

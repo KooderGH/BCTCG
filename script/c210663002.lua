@@ -3,7 +3,7 @@
 --Effects:
 --2 "Mighty Aethur Ltd." (Fusion Monster)
 --(1) Cannot be used as Fusion Material.
---(2) Must be Special Summoned only (from your Extra Deck) in Defense Position by sending 2 "Mighty Aethur Ltd." from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
+--(2) Can be Special Summoned (from your Extra Deck) in Defense Position by sending 2 "Mighty Aethur Ltd." from your field to the GY. (You do not use "Polymerization") This Card Summon cannot be negated.
 --(3) Cannot be returned to hand or Tributed.
 --(4) This card's Position cannot be changed.
 --(5) Once per turn (Igntion): You can Special Summon up to 2 "Piledriver K41 Token" (Machine/DARK/Level 2/ATK 1000/DEF 1500).
@@ -23,7 +23,7 @@ function s.initial_effect(c)
     --fusion material
     c:EnableReviveLimit()
     Fusion.AddProcMixRep(c,true,true,s.fil,2,2)
-    Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)
+    Fusion.AddContactProc(c,s.contactfil,s.contactop)
     --cannot be fusion material (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -150,9 +150,6 @@ end
 function s.fil(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end
 	return c:IsType(ATTRIBUTE_EARTH,fc,sumtype,tp) and c:IsFaceup() and c:IsCode(210660594) and c:IsRace(RACE_MACHINE,fc,sumtype,tp) and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))
-end
-function s.splimit(e,se,sp,st)
-	return e:GetHandler():GetLocation()~=LOCATION_EXTRA
 end
 function s.contactfil(tp)
 	return Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_ONFIELD,0,nil,tp)

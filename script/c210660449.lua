@@ -83,6 +83,24 @@ function s.initial_effect(c)
     e11:SetTarget(s.cttg)
     e11:SetOperation(s.ctop)
     c:RegisterEffect(e11)
+    --Win Condition
+    local e12=Effect.CreateEffect(c)
+    e12:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+    e12:SetProperty(EFFECT_FLAG_DELAY)
+    e12:SetCode(EVENT_ADJUST)
+    e12:SetRange(LOCATION_MZONE)
+    e12:SetCondition(s.wincon)
+    e12:SetOperation(s.winop)
+    c:RegisterEffect(e12)
+    --Add 1000 LP based on how many you control
+    local e13=Effect.CreateEffect(c)
+    e13:SetDescription(aux.Stringid(id,3))
+    e13:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e13:SetRange(LOCATION_MZONE)
+    e13:SetCode(EVENT_PHASE+PHASE_END)
+    e13:SetCountLimit(1)
+    e13:SetOperation(s.lpop)
+    c:RegisterEffect(e13)
 end
 function s.spfilter(e,c)
     return not c:IsAttribute(ATTRIBUTE_LIGHT) or not c:IsRace(RACE_SPELLCASTER)
@@ -158,5 +176,22 @@ end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
         e:GetHandler():AddCounter(0x4004,1)
+    end
+end
+--Win Condition
+function s.wincon(e)
+    return e:GetHandler():GetCounter(0x4004)>=10
+end
+function s.winop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Win(tp,0x63)
+end
+function s.ggfilter(c)
+    return c:IsFaceup() and c:IsLevelAbove(7)
+end
+function s.lpop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local d = Duel.GetMatchingGroupCount(s.ggfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*1000
+    if e:GetHandler():IsRelateToEffect(e) and d then
+        Duel.Recover(tp,d,REASON_EFFECT)
     end
 end

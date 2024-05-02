@@ -101,6 +101,17 @@ function s.initial_effect(c)
     e13:SetCountLimit(1)
     e13:SetOperation(s.lpop)
     c:RegisterEffect(e13)
+    --Special summon itself from GY
+    local e14=Effect.CreateEffect(c)
+    e14:SetDescription(aux.Stringid(id,4))
+    e14:SetCategory(CATEGORY_TOHAND)
+    e14:SetType(EFFECT_TYPE_IGNITION)
+    e14:SetRange(LOCATION_GRAVE)
+    e14:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e14:SetCost(s.gycost)
+    e14:SetTarget(s.gytg)
+    e14:SetOperation(s.gyop)
+    c:RegisterEffect(e14)
 end
 function s.spfilter(e,c)
     return not c:IsAttribute(ATTRIBUTE_LIGHT) or not c:IsRace(RACE_SPELLCASTER)
@@ -194,4 +205,25 @@ function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) and d then
         Duel.Recover(tp,d,REASON_EFFECT)
     end
+end
+--Add to hand
+function s.ggfilter2(c,tp)
+    return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsFaceup()
+end
+function s.gycost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.ggfilter2,1,false,nil,nil,tp) end
+    local g=Duel.SelectReleaseGroupCost(tp,s.ggfilter2,1,1,false,nil,nil,tp)
+    Duel.Release(g,tp,REASON_COST)
+end
+function s.gytg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return c:IsAbleToHand() end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,c,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_LEAVE_GRAVE,c,1,0,0)
+end
+function s.gyop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+		Duel.SendtoHand(c,nil,REASON_EFFECT)
+	end
 end

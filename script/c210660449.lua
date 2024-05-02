@@ -56,6 +56,33 @@ function s.initial_effect(c)
     e9:SetTarget(s.sstg)
     e9:SetOperation(s.ssop)
     c:RegisterEffect(e9)
+    --Tribute 1 Spellcaster monster, tribute 1 card.
+    local e10=Effect.CreateEffect(c)
+    e10:SetDescription(aux.Stringid(id,1))
+    e10:SetCategory(CATEGORY_RELEASE)
+    e10:SetType(EFFECT_TYPE_QUICK_O)
+    e10:SetCode(EVENT_FREE_CHAIN)
+    e10:SetRange(LOCATION_MZONE)
+    e10:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e10:SetCountLimit(1)
+    e10:SetCost(s.trcost)
+    e10:SetTarget(s.trtg)
+    e10:SetOperation(s.trop)
+    c:RegisterEffect(e10)
+    --Add counter if a spellcaster monster is Tributed
+    c:EnableCounterPermit(0x4004)
+    local e11=Effect.CreateEffect(c)
+    e11:SetDescription(aux.Stringid(id,2))
+    e11:SetCategory(CATEGORY_COUNTER)
+    e11:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e11:SetProperty(EFFECT_FLAG_DELAY,EFFECT_FLAG2_CHECK_SIMULTANEOUS)
+    e11:SetCode(EVENT_RELEASE)
+    e11:SetRange(LOCATION_MZONE)
+    e11:SetLabel(0)
+    e11:SetCondition(s.ctcon)
+    e11:SetTarget(s.cttg)
+    e11:SetOperation(s.ctop)
+    c:RegisterEffect(e11)
 end
 function s.spfilter(e,c)
     return not c:IsAttribute(ATTRIBUTE_LIGHT) or not c:IsRace(RACE_SPELLCASTER)
@@ -87,5 +114,49 @@ function s.ssop(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+    end
+end
+--Send to Gy
+function s.trfilter(c)
+	return c:IsFaceup() and c:IsRace(RACE_SPELLCASTER)
+end
+function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.trfilter,1,false,nil,nil) end
+    local g=Duel.SelectReleaseGroupCost(tp,s.trfilter,1,1,false,nil,nil)
+    Duel.Release(g,REASON_COST)
+end
+function s.trtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsReleasableByEffect() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsReleasableByEffect,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+	local g=Duel.SelectTarget(tp,Card.IsReleasableByEffect,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_RELEASE,g,1,0,0)
+end
+function s.trop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.Release(tc,REASON_EFFECT)
+	end
+end
+--Tribute condition
+function s.cfilter(c,label)
+	if label==1 and c:IsFacedown() then return false end
+	if c:IsPreviousLocation(LOCATION_MZONE) then
+		return c:GetPreviousRaceOnField()&RACE_SPELLCASTER>0
+	else
+		return c:IsMonster() and c:IsOriginalRace(RACE_SPELLCASTER)
+	end
+end
+function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.cfilter,1,nil,e:GetLabel())
+end
+s.counter_list={0x4004}
+function s.cttg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x4004)
+end
+function s.ctop(e,tp,eg,ep,ev,re,r,rp)
+    if e:GetHandler():IsRelateToEffect(e) then
+        e:GetHandler():AddCounter(0x4004,1)
     end
 end

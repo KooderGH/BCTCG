@@ -1,9 +1,10 @@
 --Mighty Carrowsell
 --Scripted by Gideon
 -- (1) You can Special Summon this card from the GY by banishing one other card from your GY.
--- (2) If you control 3 or more EARTH Machine monsters (Quick): You can target one card on the field; Return it to the owners hand.
--- (3) When this card battles, before damage calculation: Equip this card to the opposing monster. On next Standby Phase: Destroy the monster this card is equipped to, and if you do, gain LP equal to the ATK the destroyed monster had on the field.
--- (4) When this equipped card is destroyed; Add this card to your hand.
+-- (2) Cannot be used as Fusion Material and cannot be used as Link Material.
+-- (3) If you control 3 or more EARTH Machine monsters (Quick): You can target one card on the field; Return it to the owners hand.
+-- (4) When this card battles, before damage calculation: Equip this card to the opposing monster. On next Standby Phase: Destroy the monster this card is equipped to, and if you do, gain LP equal to the ATK the destroyed monster had on the field.
+-- (5) When this equipped card is destroyed; Add this card to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
 local e1=Effect.CreateEffect(c)
@@ -16,38 +17,52 @@ local e1=Effect.CreateEffect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Return Quick
+    --cannot be fusion material
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,0))
-    e2:SetCategory(CATEGORY_TOHAND)
-    e2:SetType(EFFECT_TYPE_QUICK_O)
-    e2:SetCode(EVENT_FREE_CHAIN)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e2:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
-    e2:SetCondition(s.recon)
-    e2:SetTarget(s.retg)
-    e2:SetOperation(s.reop)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e2:SetCode(EFFECT_CANNOT_BE_FUSION_MATERIAL)
+    e2:SetValue(1)
     c:RegisterEffect(e2)
-    --battle equip
+    --cannot link material
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
-    e3:SetCategory(CATEGORY_EQUIP)
-    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_CONFIRM)
-    e3:SetCondition(s.eqcon)
-    e3:SetOperation(s.eqop)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+    e3:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+    e3:SetValue(1)
     c:RegisterEffect(e3)
-    --Add itself to the hand
+    --Return Quick
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,2))
+    e4:SetDescription(aux.Stringid(id,0))
     e4:SetCategory(CATEGORY_TOHAND)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_DESTROYED)
-    e4:SetRange(LOCATION_SZONE)
-    e4:SetTarget(s.thtg)
-    e4:SetOperation(s.thop)
+    e4:SetType(EFFECT_TYPE_QUICK_O)
+    e4:SetCode(EVENT_FREE_CHAIN)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e4:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+    e4:SetCondition(s.recon)
+    e4:SetTarget(s.retg)
+    e4:SetOperation(s.reop)
     c:RegisterEffect(e4)
+    --battle equip
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetCategory(CATEGORY_EQUIP)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e5:SetCode(EVENT_BATTLE_CONFIRM)
+    e5:SetCondition(s.eqcon)
+    e5:SetOperation(s.eqop)
+    c:RegisterEffect(e5)
+    --Add itself to the hand
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,2))
+    e6:SetCategory(CATEGORY_TOHAND)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e6:SetCode(EVENT_DESTROYED)
+    e6:SetRange(LOCATION_SZONE)
+    e6:SetTarget(s.thtg)
+    e6:SetOperation(s.thop)
+    c:RegisterEffect(e6)
 end
 --e1
 function s.costfilter(c)

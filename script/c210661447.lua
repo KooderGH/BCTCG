@@ -46,7 +46,7 @@ function s.initial_effect(c)
     e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e3:SetCode(EFFECT_CANNOT_TO_HAND)
     e3:SetRange(LOCATION_MZONE)
-    e3:SetTargetRange(1,1)
+    e3:SetTargetRange(1,0)
     e3:SetTarget(s.relimit)
     c:RegisterEffect(e3)
     --Destroy and draw lv4 or lower machine
@@ -127,7 +127,6 @@ end
 --Cannot return
 function s.relimit(e,c,tp,r)
     return (c:IsCode(210661443) or c:IsCode(210661444) or c:IsCode(210661445) or c:IsCode(210661446) or c:IsCode(210661447)) and c:IsFaceup()
-        and c:IsControler(e:GetHandlerPlayer()) and not c:IsImmuneToEffect(e) and r&REASON_EFFECT>0
 end
 --Destroy and draw function
 function s.dfilter(c)

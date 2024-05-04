@@ -62,7 +62,7 @@ function s.initial_effect(c)
     e6:SetCountLimit(1,id)
     e6:SetTarget(s.sstg)
     e6:SetOperation(s.ssop)
-    c:RegisterEffect(e4)
+    c:RegisterEffect(e6)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -117,7 +117,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         tc:RegisterEffect(e1)
     end
 end
---Once destroyed function
+--Once sent to GY function
 function s.specialfilter(c,e,tp)
     return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end

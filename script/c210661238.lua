@@ -67,7 +67,7 @@ end
 --Control Changed
 function s.ccop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
-        Duel.Damage(tp,12000,REASON_EFFECT)
+        Duel.Damage(tp,4000,REASON_EFFECT)
     end
 end
 --Recover

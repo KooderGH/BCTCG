@@ -57,7 +57,7 @@ function s.initial_effect(c)
     e6:SetDescription(aux.Stringid(id,1))
     e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e6:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e6:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
     e6:SetCode(EVENT_TO_GRAVE)
     e6:SetCountLimit(1,id)
     e6:SetTarget(s.sstg)
@@ -127,7 +127,6 @@ function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 function s.ssop(e,tp,eg,ep,ev,re,r,rp)
-    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_DECK,0,2,2,nil,e,tp)
     if #g>0 then

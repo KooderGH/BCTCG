@@ -1,6 +1,8 @@
 --By Tungnon
 --Deep-Diver Kanna
 --Scripted by senorpizza
+--You can target 1 LIGHT or DARK monster in either GY; banish it, and if you do, Special Summon this card from your hand. 
+--This is a Quick Effect if your opponent controls a monster. You can only activate this effect of "Deep-Diver Kanna" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Special Summon itself from the hand (Ignition)

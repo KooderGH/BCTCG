@@ -6,7 +6,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--During your opponent's turn (Quick Effect): You can Tribute this card from your hand or face-up field; neither player can banish cards for the rest of this turn.
-    local e1=Effect.CreateEffect(c)
+    	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetType(EFFECT_TYPE_QUICK_O)
 	e1:SetCode(EVENT_FREE_CHAIN)

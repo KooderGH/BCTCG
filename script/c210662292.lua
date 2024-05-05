@@ -2,7 +2,7 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Burrow DOWN ability
+    --Burrow down
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.burrowdowntg)
     e1:SetOperation(s.burrowdownop)
     c:RegisterEffect(e1)
-    --Burrow UP ability
+    --Burrow up
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
@@ -42,7 +42,7 @@ function s.initial_effect(c)
     e4:SetOperation(s.desop)
     c:RegisterEffect(e4)
 end
---Burrow DOWN ability
+--burrow down function
 function s.burrowdowntg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
 end
@@ -58,19 +58,19 @@ function s.burrowdownop(e,tp,eg,ep,ev,re,r,rp)
     e1:SetValue(TYPE_SPELL+TYPE_CONTINUOUS)
     c:RegisterEffect(e1)
 end
---Burrow UP ability
+--burrow up function
 function s.burrowupcon(e,tp,eg,ep,ev,re,r,rp)
     return tp==Duel.GetTurnPlayer() and e:GetHandler():IsContinuousSpell()
 end
-function s.desfilter(c,atk)
+function s.burrowupfilter(c,atk)
     return c:IsFaceup()
 end
 function s.burrowuptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     local c=e:GetHandler()
-    if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.desfilter(chkc,c:GetAttack()) end
-    if chk==0 then return Duel.IsExistingTarget(s.desfilter,tp,0,LOCATION_MZONE,1,nil,c:GetAttack()) end
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) end
+    if chk==0 then return Duel.IsExistingTarget(s.burrowupfilter,tp,0,LOCATION_MZONE,1,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-    local g=Duel.SelectTarget(tp,s.desfilter,tp,0,LOCATION_MZONE,1,1,nil,c:GetAttack())
+    local g=Duel.SelectTarget(tp,s.burrowupfilter,tp,0,LOCATION_MZONE,1,1,nil)
     Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_SZONE)
 end

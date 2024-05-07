@@ -13,6 +13,18 @@ function s.initial_effect(c)
     e0:SetTarget(s.sptg)
     e0:SetOperation(s.spop)
     c:RegisterEffect(e0)
+    --Can make a second attack
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_EXTRA_ATTACK)
+    e1:SetValue(1)
+    c:RegisterEffect(e1)
+    --Opponent No Battle Damage
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
     --Metal Mechanic
     local e3=Effect.CreateEffect(c)
     e3:SetCode(EFFECT_DESTROY_REPLACE)

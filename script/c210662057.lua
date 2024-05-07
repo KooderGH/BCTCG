@@ -13,17 +13,20 @@ function s.initial_effect(c)
     e0:SetTarget(s.sptg)
     e0:SetOperation(s.spop)
     c:RegisterEffect(e0)
-    --Opponent No Battle Damage
+    --Cannot Attack
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetCode(EFFECT_NO_BATTLE_DAMAGE)
-    e1:SetValue(1)
+    e1:SetCode(EFFECT_CANNOT_ATTACK)
     c:RegisterEffect(e1)
-    --Attack all each time
+    --Single Attack
     local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetCode(EFFECT_ATTACK_ALL)
-    e2:SetValue(1)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetCategory(CATEGORY_DESTROY)
+    e2:SetType(EFFECT_TYPE_IGNITION)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.singletg)
+    e2:SetOperation(s.singleop)
     c:RegisterEffect(e2)
     --Metal Mechanic
     local e3=Effect.CreateEffect(c)
@@ -63,6 +66,20 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     if not g then return end
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
+end
+--Single Attack Function
+function s.singletg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() end
+    if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function s.singleop(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if tc:IsRelateToEffect(e) then
+        Duel.Destroy(tc,REASON_EFFECT)
+    end
 end
 --Metal Ability Function
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)

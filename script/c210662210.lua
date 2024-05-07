@@ -26,9 +26,9 @@ function s.initial_effect(c)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_DISABLE)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e2:SetCondition(s.knockbackcon)
+    e2:SetType(EFFECT_TYPE_IGNITION)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
     e2:SetTarget(s.knockbacktg)
     e2:SetOperation(s.knockbackop)
     c:RegisterEffect(e2)
@@ -79,24 +79,23 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Knockback function
-function s.knockbackcon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp
-end
-function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() end
-    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsFaceup() end
+    if chk==0 then return true end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_APPLYTO)
+    local g=Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
 end
 function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local tc=e:GetHandler():GetBattleTarget()
-    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+    local tc=Duel.GetFirstTarget()
+    if c:IsRelateToEffect(e) and tc and tc:IsFaceup() and tc:IsRelateToEffect(e) and not tc:IsImmuneToEffect(e) then
+        c:SetCardTarget(tc)
         local e1=Effect.CreateEffect(c)
+        e1:SetDescription(3206)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_CANNOT_ATTACK)
         e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
-        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,3)
         tc:RegisterEffect(e1)
-        Duel.NegateAttack()
     end
 end

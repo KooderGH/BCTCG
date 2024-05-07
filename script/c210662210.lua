@@ -21,6 +21,16 @@ function s.initial_effect(c)
     e1:SetTarget(s.strongtg)
     e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
+    --Knockback ability
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetCategory(CATEGORY_DISABLE)
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e2:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e2:SetCondition(s.knockbackcon)
+    e2:SetTarget(s.knockbacktg)
+    e2:SetOperation(s.knockbackop)
+    c:RegisterEffect(e2)
 end
 function s.alienfilter(c)
 	return c:IsAttribute(ATTRIBUTE_WATER) and c:IsFaceup()
@@ -65,5 +75,27 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetValue(-bc:GetDefense()/2)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         bc:RegisterEffect(e2)
+    end
+end
+--Knockback function
+function s.knockbackcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
+end
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local bc=e:GetHandler():GetBattleTarget()
+    if chk==0 then return bc and bc:IsFaceup() end
+    Duel.SetOperationInfo(0,CATEGORY_DISABLE,bc,1,0,0)
+end
+function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=e:GetHandler():GetBattleTarget()
+    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        tc:RegisterEffect(e1)
+        Duel.NegateAttack()
     end
 end

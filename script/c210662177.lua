@@ -89,7 +89,6 @@ function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tc=Duel.GetFirstTarget()
     if c:IsRelateToEffect(e) and tc and tc:IsFaceup() and tc:IsRelateToEffect(e) and not tc:IsImmuneToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
-        c:SetCardTarget(tc)
         local e1=Effect.CreateEffect(c)
         e1:SetDescription(3206)
         e1:SetType(EFFECT_TYPE_SINGLE)

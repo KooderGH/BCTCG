@@ -1,4 +1,5 @@
 -- Shibalien Elite
+--Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
     --Targetable Warp Mechanic

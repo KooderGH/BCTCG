@@ -1,4 +1,5 @@
 -- Kroxo
+--Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
     --during damage calculation FIRE lose half of their ATK/DEF

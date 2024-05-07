@@ -1,31 +1,31 @@
 -- Helmut Krabbe
 local s,id=GetID()
 function s.initial_effect(c)
-    --during damage calculation FIRE lose half of their ATK/DEF (1)
+    --Strong Against
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_REMOVE)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetCode(EVENT_BATTLE_START)
-    e1:SetTarget(s.atktg)
-    e1:SetOperation(s.atkop)
+    e1:SetTarget(s.strongtg)
+    e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
-    --Once while this card is face-up on the field: If it would be destroyed; It isn't.
+    --Survive
     local e2=Effect.CreateEffect(c)
     e2:SetCode(EFFECT_DESTROY_REPLACE)
     e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
     e2:SetRange(LOCATION_MZONE)
     e2:SetCountLimit(1)
-    e2:SetTarget(s.desreptg)
+    e2:SetTarget(s.survivetg)
     c:RegisterEffect(e2)
 end
---during damage calculation function
-function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
+--Strong function
+function s.strongtg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
     if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE)) end
 end
-function s.atkop(e,tp,eg,ep,ev,re,r,rp)
+function s.strongop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=e:GetHandler():GetBattleTarget()
     if c:IsRelateToBattle() then
@@ -43,9 +43,9 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         bc:RegisterEffect(e2)
     end
 end
---e2
-function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return not c:IsReason(REASON_REPLACE) end
-	return true
+--Survive Function
+function s.survivetg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then return not c:IsReason(REASON_REPLACE) end
+    return true
 end

@@ -2,14 +2,14 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --during damage calculation FIRE lose half of their ATK/DEF (1)
+    --Strong Against
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_REMOVE)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetCode(EVENT_BATTLE_START)
-    e1:SetTarget(s.atktg)
-    e1:SetOperation(s.atkop)
+    e1:SetTarget(s.strongtg)
+    e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
     --Change battle damage
     local e2=Effect.CreateEffect(c)
@@ -21,12 +21,12 @@ function s.initial_effect(c)
     e2:SetValue(200)
     c:RegisterEffect(e2)
 end
---during damage calculation function
-function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
+--Strong function
+function s.strongtg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
     if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE)) end
 end
-function s.atkop(e,tp,eg,ep,ev,re,r,rp)
+function s.strongop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=e:GetHandler():GetBattleTarget()
     if c:IsRelateToBattle() then

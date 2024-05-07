@@ -1,10 +1,10 @@
 --Princess Cat
 --Scripted by Gideon
 -- (1) You can Special Summon this card by discarding 1 monster from your hand that is level 7 or higher.
--- (2) While this card is face-up on the field; Your opponent cannot attack with level 6 or lower monsters. This effect becomes negated if your opponent controls 5 or more monsters.
+-- (2) While this card is face-up on the field; Your opponent cannot attack with level 6 or lower monsters.
 -- (3) During your opponent's turn, when a Spell Card is activated: You can negate the activation, and if you do, destroy it, then, draw 1 card. You can only use this effect of "Princess Cat" once per turn.
 -- (4) If you activate a Trap Card (except during the Damage Step): You can target 1 monster in your GY; Special Summon that target. You can only use this effect of "Princess Cat" once per turn.
--- (5) If you control 5 or more monsters: This card become uneffected by other monster effects.
+-- (5) Unaffected by other cards' effects.
 -- (6) If this card would leave the field; Banish it 
 local s,id=GetID()
 function s.initial_effect(c)
@@ -26,6 +26,10 @@ function s.initial_effect(c)
 	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
 	e2:SetTarget(s.atktarget)
 	c:RegisterEffect(e2)
+	--Disable
+	local e0=e2:Clone()
+	e0:SetCode(EFFECT_DISABLE)
+	c:RegisterEffect(e0)
 	--Opp turn spell negate draw
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
@@ -60,13 +64,12 @@ function s.initial_effect(c)
 	e5:SetOperation(s.traprebornopp)
 	e5:SetCountLimit(1,{id,1})
 	c:RegisterEffect(e5)
-	--If you control 5 or more monsters: This card become uneffected by other monster effects.
+    --Unaffected by other cards' effects.
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_SINGLE)
 	e6:SetCode(EFFECT_IMMUNE_EFFECT)
 	e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e6:SetRange(LOCATION_MZONE)
-	e6:SetValue(s.immval)
 	c:RegisterEffect(e6)
 	--Banish on remove field
 	local e7=Effect.CreateEffect(c)
@@ -89,7 +92,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --e2
 function s.atktarget(e,c)
-	return c:GetLevel()<=6 and not Duel.GetFieldGroupCount(e:GetHandlerPlayer(),0,LOCATION_MZONE)>=5
+	return c:GetLevel()<=6
 end
 --e3
 function s.scondition(e,tp,eg,ep,ev,re,r,rp)
@@ -131,8 +134,4 @@ function s.traprebornopp(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) then
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 	end
-end
---e6
-function s.immval(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsType,MONSTER),tp,LOCATION_MZONE,0,5,nil)
 end

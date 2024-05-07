@@ -22,6 +22,15 @@ function s.initial_effect(c)
     e1:SetTarget(s.strongtg)
     e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
+    --Targetable Warp Mechanic
+    local e3=Effect.CreateEffect(c)
+    e3:SetCategory(CATEGORY_REMOVE)
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
+    e3:SetTarget(s.warptg)
+    e3:SetOperation(s.warpop)
+    c:RegisterEffect(e3)
 end
 function s.alienfilter(c)
 	return c:IsAttribute(ATTRIBUTE_WATER) and c:IsFaceup()
@@ -66,5 +75,45 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetValue(-bc:GetDefense()/2)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         bc:RegisterEffect(e2)
+    end
+end
+--Warp Mechanic
+function s.warpfilter(c)
+	return c:IsAbleToRemove() and c:IsMonster() and not c:IsCode(id)
+end
+function s.warptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+    local g=Duel.GetMatchingGroup(s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+end
+function s.warpop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+    local g=Duel.SelectMatchingCard(tp,s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    local tc=g:GetFirst()
+    if tc then
+        Duel.HintSelection(g)
+        if Duel.Remove(tc,tc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
+            local e1=Effect.CreateEffect(e:GetHandler())
+            e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+            e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetReset(RESET_PHASE+PHASE_MAIN1,3)
+            e1:SetLabelObject(tc)
+            e1:SetCountLimit(1)
+            e1:SetOperation(s.returnop)
+            Duel.RegisterEffect(e1,tp)
+        end
+    end
+end
+function s.returnop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local ct=c:GetTurnCounter()
+    ct=ct+1
+    c:SetTurnCounter(ct)
+    if ct==2 then
+        ct=0
+        c:SetTurnCounter(ct)
+        Duel.Hint(HINT_CARD,0,id)
+        Duel.ReturnToField(e:GetLabelObject())
     end
 end

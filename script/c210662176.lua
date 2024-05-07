@@ -32,6 +32,14 @@ function s.initial_effect(c)
     e3:SetTarget(s.addtg)
     e3:SetOperation(s.addop)
     c:RegisterEffect(e3)
+    --Weaken Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetCategory(CATEGORY_ATKCHANGE)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e4:SetCondition(s.weakencon)
+    e4:SetOperation(s.weakenop)
+    c:RegisterEffect(e4)
 end
 function s.angelfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WATER)
@@ -78,4 +86,28 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
+end
+--Weaken Ability Function
+function s.weakencon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp
+end
+function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
+        e1:SetRange(LOCATION_MZONE)
+        e1:SetTargetRange(0,LOCATION_MZONE)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,1)
+        e1:SetValue(s.atkval)
+        c:RegisterEffect(e1,tp)
+        local e2=e1:Clone()
+        e2:SetCode(EFFECT_UPDATE_DEFENSE)
+        c:RegisterEffect(e2,tp)
+        Duel.NegateAttack()
+    end
+end
+function s.atkval(e,c)
+    return -c:GetBaseAttack()/4
 end

@@ -11,14 +11,14 @@ function s.initial_effect(c)
     e1:SetTarget(s.strongtg)
     e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
-    --Change battle damage
+    --Change effect damage
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_FIELD)
-    e2:SetCode(EFFECT_CHANGE_BATTLE_DAMAGE)
+    e2:SetCode(EFFECT_CHANGE_DAMAGE)
     e2:SetRange(LOCATION_MZONE)
     e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e2:SetTargetRange(1,1)
-    e2:SetValue(200)
+    e2:SetTargetRange(1,0)
+    e2:SetValue(s.damval)
     c:RegisterEffect(e2)
 end
 --Strong function
@@ -43,4 +43,10 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         bc:RegisterEffect(e2)
     end
+end
+--Effect Damage Function
+function s.damval(e,re,val,r,rp,rc)
+    local damage = 200
+    if (r&REASON_EFFECT)~=0 then return damage
+    else return val end
 end

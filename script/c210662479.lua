@@ -22,6 +22,29 @@ function s.initial_effect(c)
     e1:SetTarget(s.strongtg)
     e1:SetOperation(s.strongop)
     c:RegisterEffect(e1)
+    --Opponent No Battle Damage
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
+    --Rebound Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_BATTLE_START)
+    e3:SetCondition(s.reboundcon)
+    e3:SetOperation(s.reboundop)
+    c:RegisterEffect(e3)
+    --Knockback ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_DISABLE)
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetTarget(s.knockbacktg)
+    e4:SetOperation(s.knockbackop)
+    c:RegisterEffect(e4)
 end
 function s.alienfilter(c)
 	return c:IsAttribute(ATTRIBUTE_WATER) and c:IsFaceup()
@@ -66,5 +89,34 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetValue(-bc:GetDefense()/2)
         e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         bc:RegisterEffect(e2)
+    end
+end
+--Rebound Ability Function
+function s.reboundcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsRelateToBattle()
+end
+function s.reboundop(e,tp,eg,ep,ev,re,r,rp)
+    if e:GetHandler():IsRelateToBattle(e) then
+        Duel.Damage(1-tp,2000,REASON_EFFECT)
+    end
+end
+--Knockback function
+function s.knockbacktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsFaceup() end
+    if chk==0 then return true end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_APPLYTO)
+    local g=Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+end
+function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=Duel.GetFirstTarget()
+    if c:IsRelateToEffect(e) and tc and tc:IsFaceup() and tc:IsRelateToEffect(e) and not tc:IsImmuneToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(c)
+        e1:SetDescription(3206)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CANNOT_ATTACK)
+        e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,3)
+        tc:RegisterEffect(e1)
     end
 end

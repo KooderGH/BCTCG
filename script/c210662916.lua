@@ -54,7 +54,7 @@ function s.sdcon(e)
     return c:GetDefense()<=0
 end
 function s.crabfilter(c)
-    return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
+    return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662606) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
 end
 function s.crabcountcondition(e)
     local tp=e:GetHandlerPlayer()

@@ -46,7 +46,7 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Add function
 function s.crabfilteradd(c)
-    return (c:IsCode(210662173) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918)) and c:IsAbleToHand()
+    return (c:IsCode(210662173) or c:IsCode(210662606) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918)) and c:IsAbleToHand()
 end
 function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.crabfilteradd,tp,LOCATION_GRAVE,0,1,nil) end
@@ -62,7 +62,7 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Long Distance Function
 function s.crabfilter(c)
-    return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
+    return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662606) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
 end
 function s.ldcon(e)
     local tp=e:GetHandlerPlayer()

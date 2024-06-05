@@ -106,6 +106,7 @@ function s.initial_effect(c)
 	Duel.RegisterEffect(e12)
 	--(4)end
 	--(5)Start
+	--You can target 1 Equip spell card in your GY
 	local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,0))
     e13:SetCategory(CATEGORY_TOHAND)
@@ -118,8 +119,9 @@ function s.initial_effect(c)
     c:RegisterEffect(e13)
 	--(5)end
 	--(6)Start
+	--If this card is in your GY: You can banish 2 equip cards from your GY;
 	local e14=Effect.CreateEffect(c)
-	e14:SetDescription(aux.Stringid(id,0))
+	e14:SetDescription(aux.Stringid(id,1))
 	e14:SetCategory(CATEGORY_TOHAND)
 	e14:SetType(EFFECT_TYPE_IGNITION)
 	e14:SetCode(EVENT_FREE_CHAIN)
@@ -131,24 +133,41 @@ function s.initial_effect(c)
 	e14:SetOperation(s.recoverselfop)
 	c:RegisterEffect(e14)
 	--(6)end
+	--(7)Start
+	--Your opponent cannot effects during the battle phase. (1+)
+	local e2=Effect.CreateEffect(c)
+	e15:SetType(EFFECT_TYPE_FIELD)
+	e15:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e15:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e15:SetRange(LOCATION_ONFIELD)
+	e15:SetTargetRange(0,1)
+	e15:SetCondition(s.effectactcond)
+	e15:SetValue(s.effectactlimit)
+	c15:RegisterEffect(e15)
 end
 --e1 (1)
 function s.FIREfilter(c)
     return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_WARRIOR)
 end
+function s.EQUIPfilter(c)
+	return c:IsFaceup() and c:IsEquipSpell() and c:IsAbleToGraveAsCost()
+end
 function s.ssummoncon(e,c)
     if c==nil then return true end
     local tp=c:GetControler()
-    local g=Duel.GetMatchingGroup(s.FIREfilter,tp,LOCATION_MZONE,0,nil)
     return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1))
         and Duel.IsExistingMatchingCard(s.FIREfilter,tp,LOCATION_MZONE,0,1,nil)
+		and Duel.IsExistingMatchingCard(s.EQUIPfilter,tp,LOCATION_SZONE,0,3,nil)
 end
 function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tp=c:GetControler()
+	local g=Duel.GetMatchingGroup(s.EQUIPFilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
     if (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1)) then
+		local sg=aux.SelectUnselectGroup(g,e,tp,3,3,aux.ChkfMMZ(1),1,tp,HINTMSG_TOGRAVE,nil,nil,true)
+		Duel.SendtoGrave(sg,REASON_COST)
         local lftezm=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,5) and 0x20 or 0
         local rgtemz=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,6) and 0x40 or 0
         Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
@@ -268,4 +287,14 @@ function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,e:GetHandler())
 	end
+end
+--(7) Start
+--(+1) Effect 
+function s.effectactcond(e)
+	local c=e:GetHandler()
+	return Duel.IsBattlePhase() and c:GetEquipCount()>=1
+end
+function s.effectactlimit(e)
+	local ph=Duel.GetCurrentPhase()
+	return ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE
 end

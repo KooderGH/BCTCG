@@ -144,6 +144,36 @@ function s.initial_effect(c)
 	e15:SetCondition(s.effectactcond)
 	e15:SetValue(s.effectactlimit)
 	c15:RegisterEffect(e15)
+	--2+: Once per turn (Ignition): You can target 1 monster in your opponent's GY; Special Summon it in ATK position.
+	local e16=Effect.CreateEffect(c)
+	e16:SetDescription(aux.Stringid(id,2))
+	e16:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e16:SetType(EFFECT_TYPE_IGNITION)
+	e16:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e16:SetCode(EVENT_FREE_CHAIN)
+	e16:SetCondition(s.sseactcond)
+	e16:SetTarget(s.sptg)
+	e16:SetOperation(s.spop)
+	c:RegisterEffect(e16)
+	--3+: At the end of the damage step: If a Monster you control battles an opponent's monster, but the opponent's monster was not destroyed by the battle; banish that opponent's monster.
+	local e17=Effect.CreateEffect(c)
+	e17:SetType(EFFECT_TYPE_FIELD)
+	e17:SetCode(EVENT_DAMAGE_STEP_END)
+	e17:SetCondition(s.battlecondition)
+	e17:SetTarget(s.battletarget)
+	e17:SetOperation(s.battleop)
+	c:RegisterEffect(e17)
+	--4+: Monster's you control cannot be targeted by card effects, except during your Main Phase 2.
+	local e18=Effect.CreateEffect(c)
+	e18:SetType(EFFECT_TYPE_FIELD)
+	e18:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e18:SetRange(LOCATION_MZONE)
+	e18:SetTargetRange(LOCATION_MZONE,0)
+	e18:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e18:SetCondition(s.tgcon)
+	e18:SetValue(aux.tgoval)
+	c:RegisterEffect(e18)
+	--5+: You can tribute 1 monster you control and send 2 face-up equip spells to activate this effect; Shuffle your banish and GY zones to your deck, then, draw 5 cards.
 end
 --e1 (1)
 function s.FIREfilter(c)
@@ -298,3 +328,51 @@ function s.effectactlimit(e)
 	local ph=Duel.GetCurrentPhase()
 	return ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE
 end
+--(+2) Effect 
+function s.sseactcond(e)
+	local c=e:GetHandler()
+	return c:GetEquipCount()>=2
+end
+function s.spfilter(c,e,tp)
+	return c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,1-tp)
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_GRAVE) and s.spfilter(chkc,e,tp) end
+	if chk==0 then return Duel.GetLocationCount(1-tp,LOCATION_MZONE)>0
+		and Duel.IsExistingTarget(s.spfilter,tp,0,LOCATION_GRAVE,1,nil,e,tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectTarget(tp,s.spfilter,tp,0,LOCATION_GRAVE,1,1,nil,e,tp)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.SpecialSummon(tc,0,1-tp,1-tp,false,false,POS_FACEUP_ATTACK)
+	end
+end
+--(+3) effect
+function s.battlecondition(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local at=Duel.GetAttackTarget()
+	if not at then return false end
+	if at:IsControler(tp) then at=Duel.GetAttacker() end
+	return at and at:IsRelateToBattle() and not at:IsStatus(STATUS_BATTLE_DESTROYED) and c:GetEquipCount()>=3
+end
+function s.battletarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	local at=Duel.GetAttackTarget()
+	if at:IsControler(tp) then at=Duel.GetAttacker() end
+	if chk==0 then return at:IsAbleToRemove() end
+	Duel.SetTargetCard(at)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,at,1,0,0)
+end
+function s.battleop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToBattle() then
+		Duel.Remove(tc,REASON_EFFECT)
+	end
+end
+--(+4) Effect
+function s.tgcon(e)
+	return Duel.GetTurnPlayer()~=e:GetHandlerPlayer() or Duel.GetCurrentPhase()~=PHASE_MAIN2 and and c:GetEquipCount()>=4
+end
+--(+5) Effect

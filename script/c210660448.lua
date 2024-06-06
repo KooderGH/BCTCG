@@ -174,6 +174,15 @@ function s.initial_effect(c)
 	e18:SetValue(aux.tgoval)
 	c:RegisterEffect(e18)
 	--5+: You can tribute 1 monster you control and send 2 face-up equip spells to activate this effect; Shuffle your banish and GY zones to your deck, then, draw 5 cards.
+	local e19=Effect.CreateEffect(c)
+	e19:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
+	e19:SetType(EFFECT_TYPE_QUICK_O)
+	e19:SetCode(EVENT_FREE_CHAIN)
+	e19:SetCondition(s.tributerecoverycondition)
+	e19:SetCost(s.tributerecoverycost)
+	e19:SetTarget(s.tributerecoverytarget)
+	e19:SetOperation(s.tributerecoveryoperation)
+	c:RegisterEffect(e19)
 end
 --e1 (1)
 function s.FIREfilter(c)
@@ -376,3 +385,31 @@ function s.tgcon(e)
 	return Duel.GetTurnPlayer()~=e:GetHandlerPlayer() or Duel.GetCurrentPhase()~=PHASE_MAIN2 and and c:GetEquipCount()>=4
 end
 --(+5) Effect
+function s.tributerecoverycondition(e)
+	local c=e:GetHandler()
+	return c:GetEquipCount()>=5
+end
+function s.tricfilter(c,tp)
+    return Duel.IsExistingMatchingCard(s.tributespellfilter,tp,LOCATION_SZONE,0,2,c:GetEquipGroup())
+end
+function s.tributespellfilter(c)
+    return c:IsFaceup() and c:IsEquipSpell() and c:IsAbleToGraveAsCost()
+end
+function s.tributerecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tricfilter,1,false,nil,nil,tp) end
+    local g=Duel.SelectReleaseGroupCost(tp,s.tricfilter,1,1,false,nil,nil,tp)
+    Duel.Release(g,REASON_COST)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+    local sg=Duel.SelectMatchingCard(s.tributespellfilter,tp,LOCATION_SZONE,0,2,2,nil)
+    Duel.SendtoGrave(sg,REASON_COST)
+end
+function s.tributerecoverytarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_REMOVED+LOCATION_GRAVE,0)>0 end
+	local g=Duel.GetFieldGroup(tp,LOCATION_REMOVED+LOCATION_GRAVE,0)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,#g,0,0)
+end
+function s.tributerecoveryoperation(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetFieldGroup(tp,LOCATION_REMOVED+LOCATION_GRAVE,0)
+	Duel.SendtoDeck(g,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)
+	Duel.Draw(tp,5,REASON_EFFECT)
+end

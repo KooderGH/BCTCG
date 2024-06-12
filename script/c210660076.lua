@@ -116,3 +116,4 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end
+--E6isunfinished. Missing (EFFECT_UPDATE_LEVEL) function

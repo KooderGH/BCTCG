@@ -1,5 +1,5 @@
 --Urashima Taru
---Scripted by Konstak
+--Scripted by Konstak, fix by Gid
 --Effect
 -- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
 -- (2) If you control 3 or more WIND monsters, you can Special Summon this card from your hand.
@@ -18,13 +18,13 @@ function s.initial_effect(c)
     e1:SetCondition(s.sdcon)
     c:RegisterEffect(e1)
     --Special Summon this card (2)
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_FIELD)
-    e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-    e2:SetCode(EFFECT_SPSUMMON_PROC)
-    e2:SetRange(LOCATION_HAND)
-    e2:SetCondition(s.spcon)
-    c:RegisterEffect(e2)
+    local e0=Effect.CreateEffect(c)
+    e0:SetType(EFFECT_TYPE_FIELD)
+    e0:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e0:SetCode(EFFECT_SPSUMMON_PROC)
+    e0:SetRange(LOCATION_HAND)
+    e0:SetCondition(s.spcon)
+    c:RegisterEffect(e0)
     --to defense (3)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))

@@ -68,8 +68,8 @@ function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_MZONE,1,1,nil)
-	local atk=g:GetAttack()
-	local def=g:GetDefense()
+	local atk=g:GetFirst():GetAttack()
+	local def=g:GetFirst():GetDefense()
 	local lpgain=atk+def
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,lpgain)
@@ -78,8 +78,8 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc and tc:IsRelateToEffect(e) then
 		Duel.Destroy(tc,REASON_EFFECT)
-		local atk=tc:GetPreviousAttackOnField()
-		local def=tc:GetPreviousDefenseOnField()
+		local atk=tc:GetAttack()
+		local def=tc:GetDefense()
 		local lpgain=atk+def
 		Duel.Recover(tp,lpgain,REASON_EFFECT)
 	end

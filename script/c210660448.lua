@@ -143,7 +143,7 @@ function s.initial_effect(c)
 	e15:SetTargetRange(0,1)
 	e15:SetCondition(s.effectactcond)
 	e15:SetValue(s.effectactlimit)
-	c15:RegisterEffect(e15)
+	c:RegisterEffect(e15)
 	--2+: Once per turn (Ignition): You can target 1 monster in your opponent's GY; Special Summon it in ATK position.
 	local e16=Effect.CreateEffect(c)
 	e16:SetDescription(aux.Stringid(id,2))

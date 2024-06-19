@@ -317,11 +317,11 @@ function s.recoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=Duel.SelectMatchingCard(tp,s.rcfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,1,1,c)
 	Duel.Remove(g,POS_FACEUP,REASON_COST)
 end
-function s.graverecoverytg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.recoverselftarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
-function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
+function s.recoverselfop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
 		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,e:GetHandler())

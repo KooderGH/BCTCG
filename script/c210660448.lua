@@ -135,7 +135,7 @@ function s.initial_effect(c)
 	--(6)end
 	--(7)Start
 	--Your opponent cannot effects during the battle phase. (1+)
-	local e2=Effect.CreateEffect(c)
+	local e15=Effect.CreateEffect(c)
 	e15:SetType(EFFECT_TYPE_FIELD)
 	e15:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e15:SetCode(EFFECT_CANNOT_ACTIVATE)

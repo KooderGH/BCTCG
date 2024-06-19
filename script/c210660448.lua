@@ -97,7 +97,7 @@ function s.initial_effect(c)
 	--(3)end
 	--(4)Start
 	--Cannot attack directly
-	local e12=Effect.CreateEffect(e:GetHandler())
+	local e12=Effect.CreateEffect(c)
 	e12:SetType(EFFECT_TYPE_FIELD)
 	e12:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
 	e12:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)

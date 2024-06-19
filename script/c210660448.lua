@@ -382,7 +382,7 @@ function s.battleop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(+4) Effect
 function s.tgcon(e)
-	return Duel.GetTurnPlayer()~=e:GetHandlerPlayer() or Duel.GetCurrentPhase()~=PHASE_MAIN2 and and c:GetEquipCount()>=4
+	return Duel.GetTurnPlayer()~=e:GetHandlerPlayer() or Duel.GetCurrentPhase()~=PHASE_MAIN2 and c:GetEquipCount()>=4
 end
 --(+5) Effect
 function s.tributerecoverycondition(e)

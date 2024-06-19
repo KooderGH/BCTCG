@@ -103,7 +103,7 @@ function s.initial_effect(c)
 	e12:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
 	e12:SetRange(LOCATION_MZONE)
 	e12:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	Duel.RegisterEffect(e12)
+	c:RegisterEffect(e12)
 	--(4)end
 	--(5)Start
 	--You can target 1 Equip spell card in your GY

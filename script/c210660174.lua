@@ -8,12 +8,12 @@ function s.initial_effect(c)
     e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
     e1:SetValue(1)
     c:RegisterEffect(e1)
-    --Cannot be destroyed by card effects
+    --Cannot be targeted by card effects
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e2:SetRange(LOCATION_MZONE)
-    e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
     e2:SetValue(1)
     c:RegisterEffect(e2)
     --When Special Summoned

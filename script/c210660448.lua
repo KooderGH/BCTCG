@@ -24,14 +24,16 @@ function s.initial_effect(c)
     e0:SetCode(EFFECT_SPSUMMON_CONDITION)
     e0:SetValue(aux.FALSE)
     c:RegisterEffect(e0)
-    --SS from Hand / GY
+    --SS from Hand
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-    e1:SetRange(LOCATION_HAND+LOCATION_GRAVE)
-    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCountLimit(1,id)
     e1:SetCondition(s.ssummoncon)
+    e1:SetTarget(s.ssummontarget)
+    e1:SetOperation(s.ssummonop)
     c:RegisterEffect(e1)
     --Move to EMZ
     local e2=Effect.CreateEffect(c)
@@ -106,7 +108,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e12)
 	--(4)end
 	--(5)Start
-	--You can target 1 Equip spell card in your GY
+	--You can target 1 Equip spell card in your GY (bugged atm)
 	local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,0))
     e13:SetCategory(CATEGORY_TOHAND)
@@ -198,15 +200,30 @@ function s.ssummoncon(e,c)
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1))
         and Duel.IsExistingMatchingCard(s.FIREfilter,tp,LOCATION_MZONE,0,1,nil)
-		and Duel.IsExistingMatchingCard(s.EQUIPfilter,tp,LOCATION_SZONE,0,3,nil)
+		and Duel.IsExistingMatchingCard(s.EQUIPfilter,tp,LOCATION_SZONE,LOCATION_SZONE,3,nil)
 end
+function s.ssummontarget(e,tp,eg,ep,ev,re,r,rp,c)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+	local rg=Duel.GetMatchingGroup(s.EQUIPfilter,tp,LOCATION_SZONE,LOCATION_SZONE,e:GetHandler())
+	local g=aux.SelectUnselectGroup(rg,e,tp,3,3,aux.ChkfMMZ(1),1,tp,HINTMSG_SELECT,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
+end
+function s.ssummonop(e,tp,eg,ep,ev,re,r,rp,c)
+	local g=e:GetLabelObject()
+	if not g then return end
+	Duel.SendtoGrave(g,REASON_COST)
+	g:DeleteGroup()
+end
+--e2
 function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tp=c:GetControler()
-	local g=Duel.GetMatchingGroup(s.EQUIPFilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
     if (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1)) then
-		local sg=aux.SelectUnselectGroup(g,e,tp,3,3,aux.ChkfMMZ(1),1,tp,HINTMSG_TOGRAVE,nil,nil,true)
-		Duel.SendtoGrave(sg,REASON_COST)
         local lftezm=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,5) and 0x20 or 0
         local rgtemz=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,6) and 0x40 or 0
         Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
@@ -304,7 +321,7 @@ function s.recequipop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.aclimit(e,re,tp)
-	return re:GetHandler():IsCode(e:GetLabel()) and re:IsActiveType(TYPE_MONSTER)
+	return re:GetHandler():IsCode(e:GetLabel()) and re:IsActiveType(TYPE_SPELL)
 end
 --e14(6)
 function s.rcfilter(c)
@@ -382,6 +399,7 @@ function s.battleop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(+4) Effect
 function s.tgcon(e)
+    local c=e:GetHandler()
 	return Duel.GetTurnPlayer()~=e:GetHandlerPlayer() or Duel.GetCurrentPhase()~=PHASE_MAIN2 and c:GetEquipCount()>=4
 end
 --(+5) Effect

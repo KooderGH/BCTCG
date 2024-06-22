@@ -108,7 +108,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e12)
 	--(4)end
 	--(5)Start
-	--You can target 1 Equip spell card in your GY (bugged atm)
+	--You can target 1 Equip spell card in your GY
 	local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,0))
     e13:SetCategory(CATEGORY_TOHAND)
@@ -314,7 +314,7 @@ function s.recequipop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetCode(EFFECT_CANNOT_ACTIVATE)
 		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 		e1:SetTargetRange(1,0)
-		e1:SetTarget(s.aclimt)
+		e1:SetTarget(s.aclimit)
 		e1:SetLabel(tc:GetCode())
 		e1:SetReset(RESET_PHASE+PHASE_END)
 		Duel.RegisterEffect(e1,tp)

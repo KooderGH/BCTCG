@@ -46,9 +46,6 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
         c:AddCounter(COUNTER_CAULDRON,1)
     end
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp
-end
 function s.dmgtg(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:GetCounter(COUNTER_CAULDRON)>0 end

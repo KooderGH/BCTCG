@@ -35,6 +35,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
         local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetDescription(aux.Stringid(id,0))
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_OATH+EFFECT_FLAG_CLIENT_HINT)
         e1:SetCode(EFFECT_CANNOT_ATTACK)

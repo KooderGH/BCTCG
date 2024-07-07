@@ -64,7 +64,7 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
     e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e2:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
     e2:SetLabel(Duel.GetTurnCount())
-    e2:SetReset(RESET_PHASE+PHASE_MAIN1,5)
+    e2:SetReset(RESET_PHASE+PHASE_MAIN1,9)
     e2:SetRange(LOCATION_MZONE)
     e2:SetLabelObject(c)
     e2:SetCountLimit(1)
@@ -79,7 +79,7 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
 	local ct=c:GetTurnCounter()
 	ct=ct+1
 	c:SetTurnCounter(ct)
-    if ct==4 then
+    if ct==8 then
         ct=0
         c:SetTurnCounter(ct)
         Duel.Hint(HINT_CARD,0,id)

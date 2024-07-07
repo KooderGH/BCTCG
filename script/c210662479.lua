@@ -3,7 +3,6 @@
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableUnsummonable()
-    c:EnableCounterPermit(COUNTER_CAULDRON)
     --special summon tribute
     local e0=Effect.CreateEffect(c)
     e0:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -29,7 +28,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
     --Knockback ability
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_DISABLE)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
@@ -37,27 +36,16 @@ function s.initial_effect(c)
     e3:SetTarget(s.knockbacktg)
     e3:SetOperation(s.knockbackop)
     c:RegisterEffect(e3)
-    --counter
-    local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,0))
-    e4:SetCategory(CATEGORY_COUNTER)
-    e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetCode(EVENT_PHASE+PHASE_END)
-    e4:SetCountLimit(1)
-    e4:SetOperation(s.getcounterop)
-    c:RegisterEffect(e4)
     --Inflict Damage
-    local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,1))
-    e5:SetCategory(CATEGORY_DAMAGE)
-    e5:SetType(EFFECT_TYPE_IGNITION)
-    e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1)
-    e5:SetTarget(s.dmgtg)
-    e5:SetOperation(s.dmgop)
-    c:RegisterEffect(e5)
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_DAMAGE)
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(3)
+    e4:SetOperation(s.dmgop)
+    c:RegisterEffect(e4)
 end
 function s.alienfilter(c)
 	return c:IsFaceup() and c:IsCode(210662167)
@@ -110,23 +98,9 @@ function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
         tc:RegisterEffect(e1)
     end
 end
---Cauldron Effect
-function s.getcounterop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        c:AddCounter(COUNTER_CAULDRON,1)
-    end
-end
-function s.dmgtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local c=e:GetHandler()
-    if chk==0 then return c:GetCounter(COUNTER_CAULDRON)>0 end
-    local dam=c:GetCounter(COUNTER_CAULDRON)*200
-    Duel.SetTargetPlayer(1-tp)
-    Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
-end
+--Inflict Damage effect
 function s.dmgop(e,tp,eg,ep,ev,re,r,rp)
     if not e:GetHandler():IsRelateToEffect(e) then return end
-    local d=e:GetHandler():GetCounter(COUNTER_CAULDRON)*200
     local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
-    Duel.Damage(p,d,REASON_EFFECT)
+    Duel.Damage(p,200,REASON_EFFECT)
 end

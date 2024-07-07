@@ -100,7 +100,7 @@ function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Inflict Damage effect
 function s.dmgop(e,tp,eg,ep,ev,re,r,rp)
-    if not e:GetHandler():IsRelateToEffect(e) then return end
-    local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
-    Duel.Damage(p,200,REASON_EFFECT)
+    if e:GetHandler():IsRelateToEffect(e) then
+        Duel.Damage(1-tp,200,REASON_EFFECT)
+    end
 end

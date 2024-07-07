@@ -14,9 +14,18 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetCode(EVENT_ATTACK_ANNOUNCE)
     e2:SetCondition(s.wavecon)
-	e2:SetTarget(s.wavetg)
-	e2:SetOperation(s.waveop)
+    e2:SetTarget(s.wavetg)
+    e2:SetOperation(s.waveop)
     c:RegisterEffect(e2)
+    --Damage Control
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_DESTROY)
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
+    e3:SetOperation(s.dcop)
+    c:RegisterEffect(e3)
 end
 --Wave on Battle Function
 function s.wavecon(e,tp,eg,ep,ev,re,r,rp)
@@ -37,4 +46,8 @@ function s.waveop(e,tp,eg,ep,ev,re,r,rp)
     if tc then
         Duel.Destroy(tc,REASON_EFFECT)
     end
+end
+--Damage Control effect
+function s.dcop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Destroy(e:GetHandler(),REASON_EFFECT)
 end

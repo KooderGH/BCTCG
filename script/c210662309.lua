@@ -24,6 +24,15 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
     e3:SetValue(1)
     c:RegisterEffect(e3)
+    --Damage Control
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_DESTROY)
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetOperation(s.dcop)
+    c:RegisterEffect(e4)
 end
 function s.sumcon(e,tp,c)
     if c==nil then return true end
@@ -40,4 +49,8 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.PayLPCost(tp,250)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
+end
+--Damage Control effect
+function s.dcop(e,tp,eg,ep,ev,re,r,rp)
+        Duel.Destroy(e:GetHandler(),REASON_EFFECT)
 end

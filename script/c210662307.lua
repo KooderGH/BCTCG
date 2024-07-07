@@ -19,8 +19,21 @@ function s.initial_effect(c)
     local e3=e2:Clone()
     e3:SetCode(EFFECT_NO_EFFECT_DAMAGE)
     c:RegisterEffect(e3)
+    --Damage Control
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,0))
+    e4:SetCategory(CATEGORY_DESTROY)
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetOperation(s.dcop)
+    c:RegisterEffect(e4)
 end
 function s.damval(e,re,val,r,rp,rc)
     if (r&REASON_EFFECT)~=0 then return 0
     else return val end
+end
+--Damage Control effect
+function s.dcop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Destroy(e:GetHandler(),REASON_EFFECT)
 end

@@ -60,6 +60,7 @@ end
 function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not e:GetHandler():IsRelateToEffect(e) then return end
+    Duel.NegateAttack()
     local d1=6
     while d1>3 do
         d1=Duel.TossDice(tp,1)
@@ -78,7 +79,6 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetOperation(s.disop)
         e1:SetReset(RESET_PHASE+PHASE_STANDBY,1)
         Duel.RegisterEffect(e1,tp)
-        Duel.NegateAttack()
     else
         local seq=Zone
         local nseq=seq
@@ -91,7 +91,6 @@ function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetOperation(s.disop)
             e1:SetReset(RESET_PHASE+PHASE_STANDBY,1)
             Duel.RegisterEffect(e1,tp)
-            Duel.NegateAttack()
         end
     end
 end

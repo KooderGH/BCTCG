@@ -44,7 +44,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e4)
 end
 function s.alienfilter(c)
-	return c:IsAttribute(ATTRIBUTE_WATER) and c:IsFaceup()
+	return c:IsFaceup() and c:IsCode(210662173)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

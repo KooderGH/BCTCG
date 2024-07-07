@@ -1,7 +1,7 @@
 -- Coffin Zoge
 local s,id=GetID()
 function s.initial_effect(c)
-	--Revive
+    --Revive
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
@@ -12,6 +12,18 @@ function s.initial_effect(c)
     e1:SetTarget(s.sumtg)
     e1:SetOperation(s.sumop)
     c:RegisterEffect(e1)
+    --Opponent No Battle Damage
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e2:SetValue(1)
+    c:RegisterEffect(e2)
+    --Avoid Battle damage
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
 end
 function s.sumcon(e,tp,c)
     if c==nil then return true end

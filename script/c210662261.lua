@@ -81,6 +81,7 @@ function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local tc=e:GetHandler():GetBattleTarget()
     if tc:IsRelateToBattle() and tc and tc:IsFaceup() and Duel.TossCoin(tp,1)==COIN_HEADS and not tc:IsImmuneToEffect(e) then
         local e1=Effect.CreateEffect(c)
+        e1:SetDescription(3206)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_CANNOT_ATTACK)
         e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)

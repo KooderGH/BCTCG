@@ -13,32 +13,23 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Once while this card is face-up on the field: If it would be destroyed; gain 500 ATK instead.
+    --Long Distance Ability
     local e2=Effect.CreateEffect(c)
-    e2:SetCode(EFFECT_DESTROY_REPLACE)
-    e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_NO_TURN_RESET)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e2:SetRange(LOCATION_MZONE)
-    e2:SetCountLimit(1)
-    e2:SetTarget(s.desreptg)
+    e2:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e2:SetCondition(s.ldcon)
+    e2:SetValue(1)
     c:RegisterEffect(e2)
-    --Can banish zombie monsters
-    local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,0))
-    e3:SetCategory(CATEGORY_REMOVE)
-    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_START)
-    e3:SetTarget(s.bntg)
-    e3:SetOperation(s.bnop)
-    c:RegisterEffect(e3)
     --Slow Ability
-    local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetType(EFFECT_TYPE_IGNITION)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetCountLimit(1)
-    e4:SetOperation(s.slowop)
-    c:RegisterEffect(e4)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
+    e3:SetOperation(s.slowop)
+    c:RegisterEffect(e3)
 end
 function s.angelfilter(c)
 	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsFaceup()
@@ -61,18 +52,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	if not g then return end
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
-end
---Replace destroy function
-function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return c:IsReason(REASON_BATTLE) and not c:IsReason(REASON_REPLACE) end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetValue(500)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
-	c:RegisterEffect(e1)
-	return true
 end
 --Banish Zombies function
 function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -108,4 +87,12 @@ function s.slowop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.skipcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
+end
+--Long Distance Function
+function s.ldfilter(c)
+    return not c:IsCode(id)
+end
+function s.ldcon(e,c)
+    if c==nil then end
+    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

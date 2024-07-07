@@ -33,9 +33,10 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     --Slow Ability
     local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_BATTLE_START)
-    e4:SetCondition(s.slowcon)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
     e4:SetOperation(s.slowop)
     c:RegisterEffect(e4)
 end
@@ -86,9 +87,6 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Slow Ability Function
-function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle()
-end
 function s.slowop(e,tp,eg,ep,ev,re,r,rp)
     local effp=e:GetHandler():GetControler()
     local c=e:GetHandler()
@@ -106,7 +104,6 @@ function s.slowop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
         end
         Duel.RegisterEffect(e1,effp)
-        Duel.NegateAttack()
     end
 end
 function s.skipcon(e)

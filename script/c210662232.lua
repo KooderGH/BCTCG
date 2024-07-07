@@ -35,7 +35,7 @@ function s.initial_effect(c)
     --Slow Ability
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_BATTLE_START)
+    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
     e4:SetCondition(s.slowcon)
     e4:SetOperation(s.slowop)
     c:RegisterEffect(e4)

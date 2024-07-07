@@ -22,14 +22,15 @@ function s.initial_effect(c)
     e2:SetTarget(s.bntg)
     e2:SetOperation(s.bnop)
     c:RegisterEffect(e2)
-    --Surge Attack on Battle
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e4:SetCondition(s.surgecon)
-    e4:SetTarget(s.surgetg)
-    e4:SetOperation(s.surgeop)
-    c:RegisterEffect(e4)
+    --Surge Attack (Ignition)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
+    e3:SetTarget(s.surgetg)
+    e3:SetOperation(s.surgeop)
+    c:RegisterEffect(e3)
 end
 function s.angelfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_WARRIOR)
@@ -66,9 +67,6 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Surge on Battle Function
-function s.surgecon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp
-end
 function s.surgetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)

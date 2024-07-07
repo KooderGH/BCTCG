@@ -16,6 +16,7 @@ function s.initial_effect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetType(EFFECT_TYPE_IGNITION)
     e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1)
     e2:SetOperation(s.freezeop)
     c:RegisterEffect(e2)
     --Also treated as a WIND monster on the field

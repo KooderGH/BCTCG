@@ -25,7 +25,7 @@ function s.initial_effect(c)
     --Slow Ability
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCode(EVENT_BATTLE_START)
     e3:SetCondition(s.slowcon)
     e3:SetOperation(s.slowop)
     c:RegisterEffect(e3)
@@ -85,7 +85,6 @@ function s.slowop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
         end
         Duel.RegisterEffect(e1,effp)
-        Duel.NegateAttack()
     end
 end
 function s.skipcon(e)

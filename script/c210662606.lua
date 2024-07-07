@@ -39,6 +39,7 @@ function s.initial_effect(c)
     e4:SetDescription(aux.Stringid(id,1))
     e4:SetType(EFFECT_TYPE_IGNITION)
     e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
     e4:SetOperation(s.slowop)
     c:RegisterEffect(e4)
 end

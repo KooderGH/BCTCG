@@ -43,6 +43,12 @@ function s.initial_effect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
     e4:SetCode(EFFECT_NO_BATTLE_DAMAGE)
     c:RegisterEffect(e4)
+    --Avoid Battle damage
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e5:SetValue(1)
+    c:RegisterEffect(e5)
 end
 function s.cffilter(c)
     return c:IsFaceup() and c:IsCode(210662497)

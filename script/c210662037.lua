@@ -16,15 +16,21 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
     c:RegisterEffect(e2)
-	--Long Distance Ability
+    --Long Distance Ability
     local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
     e3:SetCondition(s.ldcon)
     e3:SetValue(1)
     c:RegisterEffect(e3)
+    --Avoid Battle damage
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e4:SetValue(1)
+    c:RegisterEffect(e4)
 end
 function s.spcon(e,c)
 	if c==nil then return true end

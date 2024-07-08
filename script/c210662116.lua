@@ -8,33 +8,32 @@ function s.initial_effect(c)
     e0:SetCode(EVENT_FREE_CHAIN)
 	e0:SetHintTiming(0,TIMING_END_PHASE)
     c:RegisterEffect(e0)
-    --Normal summon count limit
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_FIELD)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetCode(EFFECT_CANNOT_SUMMON)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetTargetRange(1,1)
-    e1:SetTarget(s.limittg)
-    c:RegisterEffect(e1)
-    local e2=e1:Clone()
-    e2:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
-    c:RegisterEffect(e2)
-    --counter
-    local et=Effect.CreateEffect(c)
-    et:SetType(EFFECT_TYPE_FIELD)
-    et:SetCode(EFFECT_LEFT_SPSUMMON_COUNT)
-    et:SetRange(LOCATION_MZONE)
-    et:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    et:SetTargetRange(1,1)
-    et:SetValue(s.countval)
-    c:RegisterEffect(et)
+	--Destroy
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_SZONE)
+	e1:SetCountLimit(1)
+	e1:SetTarget(s.sptg)
+	e1:SetOperation(s.spop)
+	c:RegisterEffect(e1)
 end
-function s.limittg(e,c,tp)
-	local t1,t2=Duel.GetActivityCount(tp,ACTIVITY_SUMMON,ACTIVITY_FLIPSUMMON)
-	return t1+t2>=1
+function s.spfilter(c,e,tp)
+	return c:IsMonster() and c:IsLevelBelow(3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
-function s.countval(e,re,tp)
-	local t1,t2=Duel.GetActivityCount(tp,ACTIVITY_SUMMON,ACTIVITY_FLIPSUMMON)
-	if t1+t2>=1 then return 0 else return 1-t1-t2 end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_GRAVE) and s.spfilter(chkc,e,tp) end
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingTarget(s.spfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectTarget(tp,s.spfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
+	end
 end

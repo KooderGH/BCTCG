@@ -6,6 +6,7 @@ function s.initial_effect(c)
     local e0=Effect.CreateEffect(c)
     e0:SetType(EFFECT_TYPE_ACTIVATE)
     e0:SetCode(EVENT_FREE_CHAIN)
+	e0:SetHintTiming(0,TIMING_END_PHASE)
     c:RegisterEffect(e0)
     --Normal summon count limit
     local e1=Effect.CreateEffect(c)

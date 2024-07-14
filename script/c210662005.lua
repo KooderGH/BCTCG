@@ -15,7 +15,7 @@ end
 --during damage calculation function
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE) or bc:IsAttribute(ATTRIBUTE_DARK)) end
+    if chk==0 then return bc and bc:IsFaceup() and bc:IsAttribute(ATTRIBUTE_FIRE) end
 end
 function s.atkop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

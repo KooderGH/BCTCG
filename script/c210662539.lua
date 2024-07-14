@@ -26,6 +26,14 @@ function s.initial_effect(c)
     e3:SetCountLimit(1)
     e3:SetOperation(s.dcop)
     c:RegisterEffect(e3)
+    --This card's Position cannot be changed.
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_SET_POSITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(POS_FACEUP_ATTACK)
+    e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    c:RegisterEffect(e4)
 end
 --Wave on Battle Function
 function s.wavecon(e,tp,eg,ep,ev,re,r,rp)

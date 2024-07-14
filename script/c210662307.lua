@@ -28,6 +28,14 @@ function s.initial_effect(c)
     e4:SetCountLimit(1)
     e4:SetOperation(s.dcop)
     c:RegisterEffect(e4)
+    --This card's Position cannot be changed.
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetCode(EFFECT_SET_POSITION)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetValue(POS_FACEUP_ATTACK)
+    e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+    c:RegisterEffect(e5)
 end
 function s.damval(e,re,val,r,rp,rc)
     if (r&REASON_EFFECT)~=0 then return 0

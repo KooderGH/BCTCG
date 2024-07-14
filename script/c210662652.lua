@@ -61,6 +61,7 @@ end
 function s.surgeop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not e:GetHandler():IsRelateToEffect(e) then return end
+    Duel.NegateAttack()
     local d1=6
     while d1>3 do
         d1=Duel.TossDice(tp,1)

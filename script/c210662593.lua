@@ -64,10 +64,10 @@ function s.angelfilter(c)
 end
 function s.spcon(e,c)
     if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.angelfilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.angelfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectReleaseGroup(tp,s.angelfilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
+    local g=Duel.SelectReleaseGroup(tp,s.angelfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
     if g then
         g:KeepAlive()
         e:SetLabelObject(g)
@@ -144,14 +144,14 @@ function s.exielop(e,tp,eg,ep,ev,re,r,rp)
             local e1=Effect.CreateEffect(e:GetHandler())
             e1:SetType(EFFECT_TYPE_SINGLE)
             e1:SetCode(EFFECT_UPDATE_ATTACK)
-            e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,8)
-            e1:SetValue(-tc:GetAttack()/4)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,4)
+            e1:SetValue(-tc:GetAttack()/2)
             tc:RegisterEffect(e1)
 			local e2=Effect.CreateEffect(e:GetHandler())
 			e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 			e2:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
 			e2:SetLabel(Duel.GetTurnCount())
-			e2:SetReset(RESET_PHASE+PHASE_MAIN1,4)
+			e2:SetReset(RESET_PHASE+PHASE_MAIN1,2)
 			e2:SetLabelObject(tc)
 			e2:SetCountLimit(1)
 			e2:SetOperation(s.returnop)
@@ -164,7 +164,7 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
     local ct=c:GetTurnCounter()
     ct=ct+1
     c:SetTurnCounter(ct)
-    if ct==4 then
+    if ct==2 then
         ct=0
         c:SetTurnCounter(ct)
         Duel.Hint(HINT_CARD,0,id)

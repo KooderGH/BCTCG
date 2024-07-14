@@ -60,8 +60,8 @@ end
 function s.warpop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local bc=e:GetHandler():GetBattleTarget()
-    if bc:IsRelateToBattle() then
-        if Duel.Remove(bc,bc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 and Duel.TossCoin(tp,1)==COIN_HEADS then
+    if bc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
+        if Duel.Remove(bc,bc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
             local e1=Effect.CreateEffect(e:GetHandler())
             e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
             e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)

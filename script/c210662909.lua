@@ -26,7 +26,7 @@ function s.initial_effect(c)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_FZONE)
     e3:SetCountLimit(1)
-    e3:SetLabel(3)
+    e3:SetLabel(4)
     e3:SetCondition(s.crabcountcondition)
     e3:SetTarget(s.addtg)
     e3:SetOperation(s.addop)
@@ -51,7 +51,7 @@ function s.crabcountcondition(e)
 end
 --Atk Def gain
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*100
+	return Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*50
 end
 --Add function
 function s.crabfilteradd(c)

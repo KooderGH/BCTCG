@@ -36,26 +36,16 @@ function s.initial_effect(c)
     e3:SetTarget(s.knockbacktg)
     e3:SetOperation(s.knockbackop)
     c:RegisterEffect(e3)
-    --Inflict Damage
-    local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetCategory(CATEGORY_DAMAGE)
-    e4:SetType(EFFECT_TYPE_IGNITION)
-    e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetCountLimit(3)
-    e4:SetOperation(s.dmgop)
-    c:RegisterEffect(e4)
 end
 function s.alienfilter(c)
 	return c:IsFaceup() and c:IsCode(210662167)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -96,11 +86,5 @@ function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CLIENT_HINT)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,3)
         tc:RegisterEffect(e1)
-    end
-end
---Inflict Damage effect
-function s.dmgop(e,tp,eg,ep,ev,re,r,rp)
-    if e:GetHandler():IsRelateToEffect(e) then
-        Duel.Damage(1-tp,200,REASON_EFFECT)
     end
 end

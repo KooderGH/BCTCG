@@ -29,14 +29,6 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Lost 1000 LP
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetCode(EVENT_PHASE+PHASE_END)
-    e4:SetCountLimit(1)
-    e4:SetOperation(s.lpop)
-    c:RegisterEffect(e4)
 end
 function s.smsfilter(c)
     return c:IsFaceup() and c:IsCode(210662358)
@@ -74,10 +66,4 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
-end
---Lose LP function
-function s.lpop(e,tp,eg,ep,ev,re,r,rp)
-    if e:GetHandler():IsRelateToEffect(e) then
-        Duel.Damage(1-tp,500,REASON_EFFECT)
-    end
 end

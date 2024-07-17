@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Pay 1000 LP
+    --LP Drain Ability
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
     e2:SetRange(LOCATION_MZONE)
@@ -44,6 +44,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
 end
+--LP Drain Function
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
         Duel.Damage(1-tp,1000,REASON_EFFECT)

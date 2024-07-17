@@ -17,7 +17,7 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e3)
-    --Pay 500 LP
+    --LP Drain Ability
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
     e4:SetRange(LOCATION_MZONE)
@@ -37,7 +37,7 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
     end
 end
---e2
+--LP Drain Function
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
         Duel.Damage(1-tp,500,REASON_EFFECT)

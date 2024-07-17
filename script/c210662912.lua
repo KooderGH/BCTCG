@@ -21,16 +21,6 @@ function s.initial_effect(c)
     e2:SetTarget(s.addtg)
     e2:SetOperation(s.addop)
     c:RegisterEffect(e2)
-    --Long Distance Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetLabel(2)
-    e3:SetCondition(s.ldcon)
-    e3:SetValue(1)
-    c:RegisterEffect(e3)    
 end
 --Banish Zombies function
 function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -59,12 +49,4 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
-end
---Long Distance Function
-function s.crabfilter(c)
-    return c:IsFaceup() and (c:IsCode(210662173) or c:IsCode(210662606) or c:IsCode(210662910) or c:IsCode(210662911) or c:IsCode(210662912) or c:IsCode(210662913) or c:IsCode(210662914) or c:IsCode(210662915) or c:IsCode(210662916) or c:IsCode(210662917) or c:IsCode(210662918))
-end
-function s.ldcon(e)
-    local tp=e:GetHandlerPlayer()
-    return Duel.GetMatchingGroupCount(s.crabfilter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end

@@ -11,6 +11,7 @@ function s.initial_effect(c)
     e1:SetOperation(s.surgeop)
     c:RegisterEffect(e1)
 end
+--Death Surge Function
 function s.surgetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)

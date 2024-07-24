@@ -33,7 +33,7 @@ function s.initial_effect(c)
     e5:SetType(EFFECT_TYPE_SINGLE)
     e5:SetCode(EFFECT_SET_POSITION)
     e5:SetRange(LOCATION_MZONE)
-    e5:SetValue(POS_ATTACK)
+    e5:SetValue(POS_FACEUP_ATTACK)
     e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     c:RegisterEffect(e5)
 end

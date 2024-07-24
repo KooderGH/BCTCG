@@ -2,6 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
+    aux.AddNormalSetProcedure(c)
     --Cannot be destroyed by battle
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

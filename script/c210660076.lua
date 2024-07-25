@@ -7,7 +7,7 @@
 -- (5) You can only use each effect of "Thundia" once per turn and used only once while it is face-up on the field.
 local s,id=GetID()
 function s.initial_effect(c)
-	--(1)
+	--(1) SS from hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)

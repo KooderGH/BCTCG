@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	local e3=e1:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	c:Registerffect(e3)
+	c:RegisterEffect(e3)
     --(2)
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,1))
@@ -80,7 +80,7 @@ function s.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,2,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
 end
-function s.op(e,tp,eg,ep,ev,re,r,rp)
+function s.op(e,tp,tc,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,2,2,nil)
 	if #g>0 then

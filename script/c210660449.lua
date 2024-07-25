@@ -1,11 +1,11 @@
 --Headmistress Jeanne
---Scripted by Konstak
+--Scripted by Konstak, Fixed by Gideon
 --Effect:
 local s,id=GetID()
 function s.initial_effect(c)
     --summon with 3 tribute
-    local e1=aux.AddNormalSummonProcedure(c,true,false,1,3)
-    local e2=aux.AddNormalSetProcedure(c,true,false,1,3)
+    local e1=aux.AddNormalSummonProcedure(c,true,false,3,3)
+    local e2=aux.AddNormalSetProcedure(c,true,false,3,3)
     --cannot special summon
     local e3=Effect.CreateEffect(c)
     e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)

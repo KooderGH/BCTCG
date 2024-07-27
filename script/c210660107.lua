@@ -90,7 +90,7 @@ function s.op(e,tp,tc,eg,ep,ev,re,r,rp)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_LEVEL)
 		e1:SetValue(2)
-		tc:RegisterEffect(e1)
+		g:RegisterEffect(e1)
 	end
 end
 --e5
@@ -146,12 +146,12 @@ end
 function s.sgfilter(c,e,tp)
 	return c:IsRace(RACE_SPELLCASTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.ssptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsExistingMatchingCard(s.sgfilter,tp,LOCATION_HAND,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
 end
-function s.spop(e,tp,eg,ep,ev,re,r,rp)
+function s.sspop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,s.sgfilter,tp,LOCATION_HAND,0,1,1,nil,e,tp)

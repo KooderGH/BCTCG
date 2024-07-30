@@ -80,17 +80,20 @@ function s.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,2,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
 end
-function s.op(e,tp,tc,eg,ep,ev,re,r,rp)
+function s.op(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,2,2,nil)
 	if #g>0 then
+        for g in aux.Next(g) do
+            local e1=Effect.CreateEffect(e:GetHandler())
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LEVEL)
+            e1:SetValue(2)
+            g:RegisterEffect(e1)
+        end
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
-        local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetValue(2)
-		g:RegisterEffect(e1)
+
 	end
 end
 --e5
@@ -139,7 +142,7 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_DAMAGE_CAL)
         e1:SetValue(atk)
-        c:RegisterEffect(e1)
+        tc:RegisterEffect(e1)
 	end
 end
 --e7

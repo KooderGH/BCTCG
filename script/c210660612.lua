@@ -82,7 +82,7 @@ end
 --E1
 function s.spcon(e,c)
 	if c==nil then return true end
-	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)==0 and
+	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)>0 and
 		Duel.IsExistingMatchingCard(Card.IsLevelAbove,c:GetControler(),LOCATION_HAND,0,1,c,7)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
@@ -98,6 +98,7 @@ end
 function s.scondition(e,tp,eg,ep,ev,re,r,rp)
 	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and ep~=tp
 		and re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:IsActiveType(TYPE_SPELL) and Duel.IsChainNegatable(ev)
+        and Duel.IsTurnPlayer(1-tp)
 end
 function s.starget(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end

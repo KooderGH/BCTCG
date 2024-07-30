@@ -92,15 +92,9 @@ end
 function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 	local phase=Duel.GetCurrentPhase()
 	if (phase==PHASE_DAMAGE and not Duel.IsDamageCalculated()) or phase==PHASE_DAMAGE_CAL then return end
-	local c1=Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,0)
 	local c2=Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)
-	if c1>4 or c2>4 then
+	if c2>4 then
 		local g=Group.CreateGroup()
-		if c1>4 then
-			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-			local g1=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_ONFIELD,0,c1-4,c1-4,nil)
-			g:Merge(g1)
-		end
 		if c2>4 then
 			Duel.Hint(HINT_SELECTMSG,1-tp,HINTMSG_TOGRAVE)
 			local g2=Duel.SelectMatchingCard(1-tp,nil,1-tp,LOCATION_ONFIELD,0,c2-4,c2-4,nil)
@@ -111,22 +105,22 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.mvalue(e,fp,rp,r)
-	return 4-Duel.GetFieldGroupCount(fp,LOCATION_SZONE,0)
+	return 4-Duel.GetFieldGroupCount(fp,0,LOCATION_SZONE)
 end
 function s.svalue(e,fp,rp,r)
-	return 4-Duel.GetFieldGroupCount(fp,LOCATION_MZONE|LOCATION_FZONE,0)
+	return 4-Duel.GetFieldGroupCount(fp,0,LOCATION_MZONE|LOCATION_FZONE)
 end
 function s.aclimit(e,re,tp)
 	if not re:IsHasType(EFFECT_TYPE_ACTIVATE) then return false end
 	if re:IsActiveType(TYPE_FIELD) then
-		return not Duel.GetFieldCard(tp,LOCATION_FZONE,0) and Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,0)>3
+		return not Duel.GetFieldCard(tp,0,LOCATION_FZONE) and Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
 	elseif re:IsActiveType(TYPE_PENDULUM) then
-		return Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,0)>3
+		return Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
 	end
 	return false
 end
 function s.setlimit(e,c,tp)
-	return c:IsFieldSpell() and not Duel.GetFieldCard(tp,LOCATION_FZONE,0) and Duel.GetFieldGroupCount(tp,LOCATION_ONFIELD,0)>3
+	return c:IsFieldSpell() and not Duel.GetFieldCard(tp,0,LOCATION_FZONE) and Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
 end
 --e7
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)

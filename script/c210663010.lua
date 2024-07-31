@@ -87,10 +87,10 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Target 1 card on the field; disable that target.
 function s.desfilter(c)
-    return c:IsMonster() and c:IsAttributeExcept(ATTRIBUTE_WIND)
+    return c:IsMonster() and not c:IsAttributeExcept(ATTRIBUTE_WIND)
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
-    return not Duel.IsExistingMatchingCard(s.desfilter,tp,LOCATION_MZONE,0,1,nil)
+    return Duel.IsExistingMatchingCard(s.desfilter,tp,LOCATION_MZONE,0,1,nil)
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() and chkc:IsNegatable() end

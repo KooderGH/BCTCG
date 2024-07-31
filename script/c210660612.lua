@@ -70,6 +70,7 @@ function s.initial_effect(c)
 	e6:SetCode(EFFECT_IMMUNE_EFFECT)
 	e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e6:SetRange(LOCATION_MZONE)
+    e6:SetValue(1)
 	c:RegisterEffect(e6)
 	--Banish on remove field
 	local e7=Effect.CreateEffect(c)

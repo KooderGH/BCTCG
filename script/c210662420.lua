@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Curse Ability
+    --Target 1 S/T; negate its effects (Long Distance Curse)
     local e1=Effect.CreateEffect(c)
     e1:SetCategory(CATEGORY_DISABLE)
     e1:SetType(EFFECT_TYPE_IGNITION)

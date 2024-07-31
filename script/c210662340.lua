@@ -17,7 +17,7 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
     e2:SetValue(1)
     c:RegisterEffect(e2)
-    --Can target 1 card on the field. destroy that target (Ignition)
+    --Can target 1 S/T (Long Distance Attack)
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_DESTROY)
@@ -33,7 +33,7 @@ function s.spcon(e,c)
     local tp=e:GetHandlerPlayer()
     return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_LIGHT),c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
---Destroy That Target Function
+--Can target 1 S/T (Long Distance Attack) Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end
     if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_SZONE+LOCATION_FZONE,LOCATION_SZONE+LOCATION_FZONE,1,nil) end

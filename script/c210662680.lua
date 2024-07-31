@@ -7,7 +7,7 @@ function s.initial_effect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_CANNOT_ATTACK)
     c:RegisterEffect(e1)
-    --Can target 1 S/T on the field. destroy that target (Ignition)
+    --Can target 1 S/T (Long Distance Attack)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_DESTROY)
@@ -27,6 +27,7 @@ function s.initial_effect(c)
     e3:SetValue(1)
     c:RegisterEffect(e3)
 end
+--Can target 1 S/T (Long Distance Attack) Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end
     if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_SZONE+LOCATION_FZONE,LOCATION_SZONE+LOCATION_FZONE,1,nil) end

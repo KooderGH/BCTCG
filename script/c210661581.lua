@@ -86,7 +86,7 @@ end
 --GY send function
 function s.gyop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-    local g=Duel.SelectMatchingCard(tp,aux.TRUE,tp,0,LOCATION_MZONE,1,1,nil)
+    local g=Duel.SelectMatchingCard(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,1,nil)
     if #g>0 then
         Duel.HintSelection(g)
         Duel.SendtoGrave(g,REASON_EFFECT)

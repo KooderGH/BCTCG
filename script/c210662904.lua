@@ -55,7 +55,7 @@ function s.dmgtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.dmgop(e,tp,eg,ep,ev,re,r,rp)
     if not e:GetHandler():IsRelateToEffect(e) then return end
-    local d=e:GetHandler():GetCounter(COUNTER_CAULDRON)*200
+    local d=e:GetHandler():GetCounter(COUNTER_CAULDRON)*250
     local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
     Duel.Damage(p,d,REASON_EFFECT)
 end

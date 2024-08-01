@@ -8,6 +8,7 @@ function s.initial_effect(c)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetCode(EVENT_TO_GRAVE)
     e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetCountLimit(1,id)
     e1:SetOperation(s.drop)
     c:RegisterEffect(e1)
 end

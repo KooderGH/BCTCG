@@ -17,6 +17,14 @@ function s.initial_effect(c)
     e2:SetTarget(s.destg)
     e2:SetOperation(s.desop)
     c:RegisterEffect(e2)
+    --LP Drain Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EVENT_PHASE+PHASE_END)
+    e3:SetCountLimit(1)
+    e3:SetOperation(s.lpop)
+    c:RegisterEffect(e3)
 end
 --Destroy That Target Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -30,5 +38,11 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFirstTarget()
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
+    end
+end
+--LP Drain Function
+function s.lpop(e,tp,eg,ep,ev,re,r,rp)
+    if e:GetHandler():IsRelateToEffect(e) then
+        Duel.Damage(1-tp,500,REASON_EFFECT)
     end
 end

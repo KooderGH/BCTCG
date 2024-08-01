@@ -43,7 +43,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Long Distance Function
 function s.ldfilter(c)
-    return not c:IsCode(id)
+    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and not c:IsCode(id)
 end
 function s.ldcon(e,c)
     if c==nil then end

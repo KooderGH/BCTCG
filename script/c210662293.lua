@@ -74,7 +74,7 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
         ct=ct+1
         c:SetTurnCounter(ct)
-        Duel.PayLPCost(tp,1000)
+        Duel.PayLPCost(tp,500)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
 end

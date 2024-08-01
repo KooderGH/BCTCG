@@ -11,11 +11,12 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_MZONE)
     e1:SetTarget(s.desatktg)
     c:RegisterEffect(e1)
-    --Death Disable Field
+    --Surge Attack (Ignition)
     local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_TO_GRAVE)
-    e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e2:SetDescription(aux.Stringid(id,0))
+    e2:SetType(EFFECT_TYPE_IGNITION)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(1,id)
     e2:SetTarget(s.surgetg)
     e2:SetOperation(s.surgeop)
     c:RegisterEffect(e2)
@@ -26,7 +27,7 @@ function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return c:IsReason(REASON_BATTLE) and c:IsFaceup() end
     return true
 end
---Death Surge Mechanic
+--Surge Attack Function
 function s.surgetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)

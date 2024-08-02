@@ -66,7 +66,7 @@ function s.warpop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
             e1:SetCode(EVENT_PHASE_START+PHASE_MAIN1)
             e1:SetLabel(Duel.GetTurnCount())
-            e1:SetReset(RESET_PHASE+PHASE_MAIN1,4)
+            e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
             e1:SetLabelObject(bc)
             e1:SetCountLimit(1)
             e1:SetOperation(s.returnop)
@@ -80,7 +80,7 @@ function s.returnop(e,tp,eg,ep,ev,re,r,rp)
     local ct=c:GetTurnCounter()
     ct=ct+1
     c:SetTurnCounter(ct)
-    if ct==3 then
+    if ct==1 then
         ct=0
         c:SetTurnCounter(ct)
         Duel.Hint(HINT_CARD,0,id)

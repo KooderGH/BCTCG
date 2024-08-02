@@ -39,6 +39,7 @@ function s.initial_effect(c)
     e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e5:SetCode(EVENT_PHASE+PHASE_END)
     e5:SetRange(LOCATION_GRAVE)
+    e5:SetCost(s.sumcost)
     e5:SetCondition(s.sumcon)
     e5:SetTarget(s.sumtg)
     e5:SetOperation(s.sumop)
@@ -86,9 +87,13 @@ function s.burrowupop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Revive Function
+function s.sumcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckLPCost(tp,500) end
+    Duel.PayLPCost(tp,500)
+end
 function s.sumcon(e,tp,c)
 	if c==nil then return true end
-	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(tp,500)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
@@ -98,7 +103,6 @@ function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(tp,500)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
 end

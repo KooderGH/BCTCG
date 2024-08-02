@@ -20,6 +20,7 @@ function s.initial_effect(c)
     e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e2:SetCode(EVENT_PHASE+PHASE_END)
     e2:SetRange(LOCATION_GRAVE)
+    e2:SetCost(s.sumcost)
     e2:SetCondition(s.sumcon)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
@@ -88,9 +89,14 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
+--Revive
+function s.sumcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckLPCost(tp,2000) end
+    Duel.PayLPCost(tp,2000)
+end
 function s.sumcon(e,tp,c)
 	if c==nil then return true end
-	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.CheckLPCost(tp,1000)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
@@ -99,10 +105,9 @@ function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
 end
 function s.sumop(e,tp,eg,ep,ev,re,r,rp)
-    if e:GetHandler():IsRelateToEffect(e) then
-        Duel.PayLPCost(tp,1000)
+	if e:GetHandler():IsRelateToEffect(e) then
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
-    end
+	end
 end
 --Colossal Mechanic Functions
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)

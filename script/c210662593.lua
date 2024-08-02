@@ -157,7 +157,6 @@ function s.exielop(e,tp,eg,ep,ev,re,r,rp)
 			e2:SetCountLimit(1)
 			e2:SetOperation(s.returnop)
 			Duel.RegisterEffect(e2,tp)
-            Duel.NegateAttack()
 		end
 	end
 end

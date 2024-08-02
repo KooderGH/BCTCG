@@ -25,6 +25,7 @@ function s.initial_effect(c)
     --Targetable Warp Mechanic
     local e3=Effect.CreateEffect(c)
     e3:SetCategory(CATEGORY_REMOVE)
+    e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
     e3:SetCountLimit(1)

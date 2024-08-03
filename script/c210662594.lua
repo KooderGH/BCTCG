@@ -91,8 +91,8 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --Revive
 function s.sumcost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.CheckLPCost(tp,2000) end
-    Duel.PayLPCost(tp,2000)
+    if chk==0 then return Duel.CheckLPCost(tp,1000) end
+    Duel.PayLPCost(tp,1000)
 end
 function s.sumcon(e,tp,c)
 	if c==nil then return true end
@@ -158,6 +158,5 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetReset(RESET_EVENT+RESETS_STANDARD)
         e2:SetValue(-500)
         tc:RegisterEffect(e2)
-        Duel.NegateAttack()
     end
 end

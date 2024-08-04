@@ -45,7 +45,7 @@ function s.initial_effect(c)
 	e5:SetCondition(s.descon)
 	c:RegisterEffect(e5)
     --destroyed by a card effect, target 1 Dragon monster in your GY except "Megidora"; Special Summon it
-    local e1=Effect.CreateEffect(c)
+    local e6=Effect.CreateEffect(c)
 	e6:SetDescription(aux.Stringid(id,2))
 	e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e6:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)

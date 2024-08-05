@@ -55,7 +55,7 @@ function s.burrowdownop(e,tp,eg,ep,ev,re,r,rp)
 end
 --burrow up function
 function s.burrowupcon(e,tp,eg,ep,ev,re,r,rp)
-    return tp==Duel.GetTurnPlayer() and e:GetHandler():IsContinuousSpell()
+    return tp==Duel.GetTurnPlayer()
 end
 function s.burrowupfilter(c,atk)
     return c:IsFaceup()

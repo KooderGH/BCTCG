@@ -21,6 +21,14 @@ function s.initial_effect(c)
     e2:SetTarget(s.weakentg)
     e2:SetOperation(s.weakenop)
     c:RegisterEffect(e2)
+    --Also treated as a WIND monster on the field
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetCode(EFFECT_ADD_ATTRIBUTE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetValue(ATTRIBUTE_WIND)
+    c:RegisterEffect(e3)
 end
 --Strong function
 function s.strongtg(e,tp,eg,ep,ev,re,r,rp,chk)

@@ -26,6 +26,18 @@ function s.initial_effect(c)
     e2:SetTarget(s.burrowuptg)
     e2:SetOperation(s.burrowupop)
     c:RegisterEffect(e2)
+    --Revive
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
+    e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e3:SetCode(EVENT_PHASE+PHASE_END)
+    e3:SetRange(LOCATION_GRAVE)
+    e3:SetCost(s.sumcost)
+    e3:SetCondition(s.sumcon)
+    e3:SetTarget(s.sumtg)
+    e3:SetOperation(s.sumop)
+    c:RegisterEffect(e3)
 end
 --burrow down function
 function s.burrowdowntg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -67,4 +79,24 @@ function s.burrowupop(e,tp,eg,ep,ev,re,r,rp)
             Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
         end
     end
+end
+--Zombie Revive Function
+function s.sumcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckLPCost(tp,500) end
+    Duel.PayLPCost(tp,500)
+end
+function s.sumcon(e,tp,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+end
+function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and c:IsCanBeSpecialSummoned(e,0,tp,true,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
+end
+function s.sumop(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+        Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
+	end
 end

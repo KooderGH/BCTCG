@@ -28,6 +28,7 @@ function s.initial_effect(c)
     e3:SetCategory(CATEGORY_DISABLE)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
     e3:SetTarget(s.wavetg)
     e3:SetOperation(s.waveop)
     c:RegisterEffect(e3)
@@ -89,7 +90,6 @@ function s.waveop(e,tp,eg,ep,ev,re,r,rp)
         d1=Duel.TossDice(tp,1)
     end
     local tc=Duel.GetFieldCard(1-tp,LOCATION_MZONE,d1)
-    Duel.NegateAttack()
     if tc then
         Duel.Destroy(tc,REASON_EFFECT)
     end

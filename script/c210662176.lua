@@ -93,9 +93,6 @@ function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,1)
         e1:SetValue(s.atkval)
         c:RegisterEffect(e1,tp)
-        local e2=e1:Clone()
-        e2:SetCode(EFFECT_UPDATE_DEFENSE)
-        c:RegisterEffect(e2,tp)
         Duel.NegateAttack()
     end
 end

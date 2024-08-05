@@ -26,6 +26,16 @@ function s.initial_effect(c)
     e2:SetTarget(s.burrowuptg)
     e2:SetOperation(s.burrowupop)
     c:RegisterEffect(e2)
+    --Add Monster
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,2))
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e3:SetCode(EVENT_DESTROYED)
+    e3:SetTarget(s.addtg)
+    e3:SetOperation(s.addop)
+    c:RegisterEffect(e3)
 end
 --burrow down function
 function s.burrowdowntg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -66,5 +76,21 @@ function s.burrowupop(e,tp,eg,ep,ev,re,r,rp)
         if c:IsRelateToEffect(e) then
             Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
         end
+    end
+end
+--Destroy and add function
+function s.addfilter(c)
+    return c:IsLevelAbove(6) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

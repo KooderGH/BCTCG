@@ -52,11 +52,5 @@ function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
         e1:SetValue(-tc:GetDefense()/4)
         tc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetCode(EFFECT_UPDATE_ATTACK)
-        e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
-        e2:SetValue(-tc:GetAttack()/4)
-        tc:RegisterEffect(e2)
     end
 end

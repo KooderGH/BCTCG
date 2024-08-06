@@ -25,31 +25,41 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
-    --Colossal Mechanic
+    --Add Monster
     local e3=Effect.CreateEffect(c)
-    e3:SetCode(EFFECT_DESTROY_REPLACE)
-    e3:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
-    e3:SetTarget(s.desatktg)
+    e3:SetCountLimit(1)
+    e3:SetTarget(s.addtg)
+    e3:SetOperation(s.addop)
     c:RegisterEffect(e3)
-    --self destroy Colossal Mechanic
+    --Colossal Mechanic
     local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_DESTROY_REPLACE)
+    e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
     e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e4:SetRange(LOCATION_MZONE)
-    e4:SetCode(EFFECT_SELF_DESTROY)
-    e4:SetCondition(s.sdcon)
+    e4:SetTarget(s.desatktg)
     c:RegisterEffect(e4)
-    --Toxic Ability
+    --self destroy Colossal Mechanic
     local e5=Effect.CreateEffect(c)
-    e5:SetCategory(CATEGORY_ATKCHANGE)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e5:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e5:SetCondition(s.toxiccon)
-    e5:SetTarget(s.toxictg)
-    e5:SetOperation(s.toxicop)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetCode(EFFECT_SELF_DESTROY)
+    e5:SetCondition(s.sdcon)
     c:RegisterEffect(e5)
+    --Toxic Ability
+    local e6=Effect.CreateEffect(c)
+    e6:SetCategory(CATEGORY_ATKCHANGE)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e6:SetCondition(s.toxiccon)
+    e6:SetTarget(s.toxictg)
+    e6:SetOperation(s.toxicop)
+    c:RegisterEffect(e6)
 end
 function s.zombiefilter(c)
 	return c:IsFaceup() and c:IsCode(210662469)
@@ -92,6 +102,22 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
+end
+--Add function
+function s.addfilter(c)
+    return c:IsLevel(4) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end
 --Colossal Mechanic Functions
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)

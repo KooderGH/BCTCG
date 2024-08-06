@@ -39,7 +39,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e4)
 end
 function s.angelfilter(c)
-	return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
+	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

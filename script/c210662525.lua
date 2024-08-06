@@ -39,25 +39,33 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Slow Ability
+    --Unnafected by other cards' effects
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_IMMUNE_EFFECT)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e4:SetRange(LOCATION_MZONE)
-    e4:SetCountLimit(1)
-    e4:SetOperation(s.slowop)
+    e4:SetValue(s.immunefilter)
     c:RegisterEffect(e4)
-    --Knockback ability
+    --Slow Ability
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,0))
-    e5:SetCategory(CATEGORY_DISABLE)
-    e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e5:SetDescription(aux.Stringid(id,1))
     e5:SetType(EFFECT_TYPE_IGNITION)
     e5:SetRange(LOCATION_MZONE)
     e5:SetCountLimit(1)
-    e5:SetTarget(s.knockbacktg)
-    e5:SetOperation(s.knockbackop)
+    e5:SetOperation(s.slowop)
     c:RegisterEffect(e5)
+    --Knockback ability
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,0))
+    e6:SetCategory(CATEGORY_DISABLE)
+    e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e6:SetType(EFFECT_TYPE_IGNITION)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCountLimit(1)
+    e6:SetTarget(s.knockbacktg)
+    e6:SetOperation(s.knockbackop)
+    c:RegisterEffect(e6)
 end
 function s.alienfilter(c)
 	return c:IsFaceup() and c:IsCode(210662169)
@@ -118,6 +126,9 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
+end
+function s.immunefilter(e,te)
+    return te:GetOwner()~=e:GetOwner()
 end
 --Slow Ability Function
 function s.slowop(e,tp,eg,ep,ev,re,r,rp)

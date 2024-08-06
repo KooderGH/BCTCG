@@ -51,15 +51,23 @@ function s.initial_effect(c)
     e5:SetCode(EFFECT_SELF_DESTROY)
     e5:SetCondition(s.sdcon)
     c:RegisterEffect(e5)
-    --Toxic Ability
+    --Unnafected by other cards' effects
     local e6=Effect.CreateEffect(c)
-    e6:SetCategory(CATEGORY_ATKCHANGE)
-    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e6:SetCondition(s.toxiccon)
-    e6:SetTarget(s.toxictg)
-    e6:SetOperation(s.toxicop)
+    e6:SetType(EFFECT_TYPE_SINGLE)
+    e6:SetCode(EFFECT_IMMUNE_EFFECT)
+    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetValue(s.immunefilter)
     c:RegisterEffect(e6)
+    --Toxic Ability
+    local e7=Effect.CreateEffect(c)
+    e7:SetCategory(CATEGORY_ATKCHANGE)
+    e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e7:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e7:SetCondition(s.toxiccon)
+    e7:SetTarget(s.toxictg)
+    e7:SetOperation(s.toxicop)
+    c:RegisterEffect(e7)
 end
 function s.zombiefilter(c)
 	return c:IsFaceup() and c:IsCode(210662469)
@@ -140,6 +148,9 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
+end
+function s.immunefilter(e,te)
+    return te:GetOwner()~=e:GetOwner()
 end
 --Toxic on Battle function
 function s.filter(c)

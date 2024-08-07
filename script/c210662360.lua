@@ -14,7 +14,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
 end
 function s.warpfilter(c)
-	return c:IsAbleToRemove() and c:IsMonster() and not c:IsCode(id)
+	return c:IsAbleToRemove() and c:IsMonster() and c:IsCanBeEffectTarget() and not c:IsCode(id)
 end
 function s.warptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end

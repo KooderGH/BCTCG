@@ -70,19 +70,24 @@ function s.sumcost(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.PayLPCost(tp,1000)
 end
 function s.sumcon(e,tp,c)
-	if c==nil then return true end
-	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+    if c==nil then return true end
+    return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and c:IsCanBeSpecialSummoned(e,0,tp,true,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
+    local c=e:GetHandler()
+    local ct=c:GetTurnCounter()
+    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+        and c:IsCanBeSpecialSummoned(e,0,tp,true,false) and ct<1 end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
 end
 function s.sumop(e,tp,eg,ep,ev,re,r,rp)
-	if e:GetHandler():IsRelateToEffect(e) then
+    local c=e:GetHandler()
+    local ct=c:GetTurnCounter()
+    if e:GetHandler():IsRelateToEffect(e) then
+        ct=ct+1
+        c:SetTurnCounter(ct)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
-	end
+    end
 end
 --Long Distance Function
 function s.ldfilter(c)

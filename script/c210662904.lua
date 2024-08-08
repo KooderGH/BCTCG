@@ -1,7 +1,7 @@
 -- Red Bot
 --Scripted By Konstak
 local s,id=GetID()
-local COUNTER_CAULDRON=0x14e
+local COUNTER_CAULDRON=0x4005
 function s.initial_effect(c)
     c:EnableCounterPermit(COUNTER_CAULDRON)
     --activate

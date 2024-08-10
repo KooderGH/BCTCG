@@ -70,14 +70,13 @@ function s.hwwop(e,tp,eg,ep,ev,re,r,rp)
         end
         Duel.RegisterEffect(e1,effp)
         local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetCategory(CATEGORY_DRAW)
         e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
         e2:SetCode(EVENT_PHASE+PHASE_END)
         if Duel.GetTurnPlayer()==effp then
             e2:SetLabel(Duel.GetTurnCount())
             e2:SetCondition(s.skipcon)
-            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
-        else
-            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+            e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
         end
         e2:SetCountLimit(1)
         e2:SetOperation(s.droperation)

@@ -8,7 +8,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(s.warcon)
+	e1:SetCondition(s.warpcon)
 	e1:SetOperation(s.warpop)
 	c:RegisterEffect(e1)
     --Attack all each time
@@ -27,7 +27,7 @@ function s.initial_effect(c)
     e3:SetValue(1)
     c:RegisterEffect(e3)
 end
-function s.warcon(e,tp,eg,ep,ev,re,r,rp)
+function s.warpcon(e,tp,eg,ep,ev,re,r,rp)
 	return (e:GetHandler()==Duel.GetAttacker() and Duel.GetAttackTarget()~=nil) or e:GetHandler()==Duel.GetAttackTarget()
 end
 function s.warpop(e,tp,eg,ep,ev,re,r,rp)

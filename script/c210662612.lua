@@ -56,7 +56,7 @@ function s.hwwop(e,tp,eg,ep,ev,re,r,rp)
         Duel.NegateAttack()
     end
     if c:IsFaceup() and c:IsRelateToEffect(e) and d1==1 then
-        local e1=Effect.CreateEffect(c)
+        local e1=Effect.CreateEffect(e:GetHandler())
         e1:SetType(EFFECT_TYPE_FIELD)
         e1:SetCode(EFFECT_SKIP_DP)
         e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -69,9 +69,26 @@ function s.hwwop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
         end
         Duel.RegisterEffect(e1,effp)
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        e2:SetCode(EVENT_PHASE+PHASE_END)
+        if Duel.GetTurnPlayer()==effp then
+            e2:SetLabel(Duel.GetTurnCount())
+            e2:SetCondition(s.skipcon)
+            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        e2:SetCountLimit(1)
+        e2:SetOperation(s.droperation)
+        Duel.RegisterEffect(e2,effp)
         Duel.NegateAttack()
     end
 end
 function s.skipcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
+end
+function s.droperation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_CARD,0,id)
+	Duel.Draw(1-tp,1,REASON_EFFECT)
 end

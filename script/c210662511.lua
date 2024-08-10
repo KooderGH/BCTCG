@@ -99,7 +99,7 @@ function s.ldcon(e,c)
 end
 --Freeze Function
 function s.freezecon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle() and Duel.GetTurnPlayer()==tp
+	return e:GetHandler():IsRelateToBattle() and Duel.GetTurnPlayer()==tp
 end
 function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
     local effp=e:GetHandler():GetControler()
@@ -118,9 +118,26 @@ function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
             e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
         end
         Duel.RegisterEffect(e1,effp)
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        e2:SetCode(EVENT_PHASE+PHASE_END)
+        if Duel.GetTurnPlayer()==effp then
+            e2:SetLabel(Duel.GetTurnCount())
+            e2:SetCondition(s.skipcon)
+            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e2:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        e2:SetCountLimit(1)
+        e2:SetOperation(s.droperation)
+        Duel.RegisterEffect(e2,effp)
         Duel.NegateAttack()
     end
 end
 function s.skipcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
+end
+function s.droperation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_CARD,0,id)
+	Duel.Draw(1-tp,1,REASON_EFFECT)
 end

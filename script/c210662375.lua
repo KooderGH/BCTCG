@@ -30,7 +30,7 @@ function s.initial_effect(c)
 end
 --Wave on Battle Function
 function s.wavecon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==tp
+    return Duel.GetTurnPlayer()==tp and e:GetHandler():GetBattleTarget()~=nil
 end
 function s.wavetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end

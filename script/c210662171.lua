@@ -1,5 +1,5 @@
 -- Maawth
---Scripted By Konstak
+--Scripted By Konstak, fix by Gid
 local s,id=GetID()
 function s.initial_effect(c)
     --Strong Against
@@ -73,11 +73,9 @@ function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetCategory(CATEGORY_DRAW)
         e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
         e2:SetCode(EVENT_PHASE+PHASE_END)
-        if Duel.GetTurnPlayer()==effp then
-            e2:SetLabel(Duel.GetTurnCount())
-            e2:SetCondition(s.skipcon)
-            e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-        end
+        e2:SetCondition(s.retcon)
+        e2:SetLabel(Duel.GetTurnCount())
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
         e2:SetCountLimit(1)
         e2:SetOperation(s.droperation)
         Duel.RegisterEffect(e2,effp)
@@ -85,6 +83,9 @@ function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.skipcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
+end
+function s.retcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()~=tp
 end
 function s.droperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)

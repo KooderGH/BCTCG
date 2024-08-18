@@ -21,7 +21,7 @@ function s.initial_effect(c)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e2)
-    --Tribute
+    --Tribute (2)
     local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
@@ -33,6 +33,32 @@ function s.initial_effect(c)
 	e3:SetOperation(s.relop)
 	e3:SetLabel(1)
 	c:RegisterEffect(e3)
+    --Tribute draw (3)
+    local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
+	e4:SetCategory(CATEGORY_DRAW)
+	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e4:SetCode(EVENT_RELEASE)
+	e4:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_NO_TURN_RESET)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1,{id,2})
+	e4:SetCondition(s.drawcon)
+	e4:SetTarget(s.drawtg)
+	e4:SetOperation(s.drawpop)
+	c:RegisterEffect(e4)
+    --When a monster your opponent control's is Tribute summoned: You can reduce it's level to 1; Add the difference to this card.
+    local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,3))
+    e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+    e5:SetCode(EVENT_SUMMON_SUCCESS)
+    e5:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_NO_TURN_RESET)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetCountLimit(1,{id,3})
+    e5:SetCondition(s.levelcon)
+    e5:SetTarget(s.leveltarget)
+    e5:SetOperation(s.levelop)
+    c:RegisterEffect(e5)
+    --SS from GY once per duel.
 end
 --e1
 function s.filter(c,e,tp)
@@ -95,5 +121,45 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
 			tc:RegisterEffect(e3)
 		end
 		tc=tg:GetNext()
+	end
+end
+--e4
+function s.spcfilter(c,tp)
+	return c:GetPreviousRaceOnField()&RACE_SPELLCASTER==RACE_SPELLCASTER and not c:IsCode(id)
+end
+function s.drawcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.spcfilter,1,nil,tp)
+end
+function s.drawtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(1)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
+end
+function s.drawpop(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Draw(p,d,REASON_EFFECT)
+end
+--e5
+function s.levelcon(e,tp,eg,ep,ev,re,r,rp)
+	local tc:IsSummonType(SUMMON_TYPE_TRIBUTE)
+end
+function s.leveltarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return c:HasLevel() end
+	local lv=c:GetLevel()
+	local opt
+	e:SetLabel(opt)
+end
+function s.levelop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local lv=e:GetLabelObject():GetLevel()
+	if c:IsRelateToEffect(e) and c:IsFaceup() then
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_LEVEL)
+		e1:SetValue(lv)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+		c:RegisterEffect(e1)
 	end
 end

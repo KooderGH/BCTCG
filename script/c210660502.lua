@@ -49,6 +49,7 @@ function s.initial_effect(c)
     --When a monster your opponent control's is Tribute summoned: You can reduce it's level to 1; Add the difference to this card.
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,3))
+    e5:SetCategory(CATEGORY_LVCHANGE)
     e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e5:SetCode(EVENT_SUMMON_SUCCESS)
     e5:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_NO_TURN_RESET)
@@ -59,6 +60,16 @@ function s.initial_effect(c)
     e5:SetOperation(s.levelop)
     c:RegisterEffect(e5)
     --SS from GY once per duel.
+    local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,4))
+	e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e6:SetType(EFFECT_TYPE_QUICK_O)
+	e6:SetRange(LOCATION_GRAVE)
+    e6:SetCountLimit(1,{id,3},EFFECT_COUNT_CODE_DUEL)
+	e6:SetCost(s.gravecost)
+	e6:SetTarget(s.spgravetg)
+	e6:SetOperation(s.sgravepop)
+	c:RegisterEffect(e6)
 end
 --e1
 function s.filter(c,e,tp)
@@ -142,27 +153,56 @@ function s.drawpop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e5
 function s.tribfilter(c,tp)
-    return c:IsSummonType(SUMMON_TYPE_TRIBUTE) and c:IsSummonPlayer(tp)
+    return c:IsSummonType(SUMMON_TYPE_TRIBUTE) and c:IsSummonPlayer(tp) and c:IsLevelAbove(1)
 end
 function s.levelcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(s.tribfilter,nil,1,1-tp)
 end
-function s.leveltarget(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return eg:IsExists(aux.AND(Card.HasLevel,Card.IsLevelAbove,2)) end
-	local lv=c:GetLevel()
-	local opt
-	e:SetLabel(opt)
+function s.leveltarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chk==0 then return eg:IsExists(s.tribfilter,1,nil,1-tp) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
+    local g=eg:FilterSelect(tp,s.tribfilter,1,1,nil,1-tp)
+    Duel.SetTargetCard(g)
+    Duel.SetOperationInfo(0,CATEGORY_LVCHANGE,nil,2,0,0)
 end
 function s.levelop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=Duel.GetFirstTarget()
+    local lv=1
+    if tc and tc:IsRelateToEffect(e) and tc:IsFaceup() then
+        lv=tc:GetLevel()
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_CHANGE_LEVEL)
+        e1:SetValue(1)
+        e1:SetReset(RESET_EVENT|RESETS_STANDARD)
+        tc:RegisterEffect(e1)
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetType(EFFECT_TYPE_SINGLE)
+        e2:SetCode(EFFECT_UPDATE_LEVEL)
+        e2:SetValue(lv-1)
+        e2:SetReset(RESET_EVENT|RESETS_STANDARD)
+        c:RegisterEffect(e2)
+    end
+end
+--e6
+function s.costfilter(c,tp)
+	return c:IsSpell() and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c) 
+		and (Duel.GetLocationCount(tp,LOCATION_MZONE)>0 or (c:IsLocation(LOCATION_MZONE) and c:GetSequence()<5))
+end
+function s.gravecost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.costfilter,tp,LOCATION_GRAVE,0,3,e:GetHandler(),tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,s.costfilter,tp,LOCATION_GRAVE,0,3,3,e:GetHandler(),tp)
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
+end
+function s.spgravetg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.sgravepop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local lv=e:GetLabelObject():GetLevel()
-	if c:IsRelateToEffect(e) and c:IsFaceup() then
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetValue(lv)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
-		c:RegisterEffect(e1)
-	end
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+	end()
 end

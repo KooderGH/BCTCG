@@ -141,12 +141,15 @@ function s.drawpop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Draw(p,d,REASON_EFFECT)
 end
 --e5
+function s.tribfilter(c,tp)
+    return c:IsSummonType(SUMMON_TYPE_TRIBUTE) and c:IsSummonPlayer(tp)
+end
 function s.levelcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc:IsSummonType(SUMMON_TYPE_TRIBUTE)
+    return eg:IsExists(s.tribfilter,nil,1,1-tp)
 end
 function s.leveltarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return c:HasLevel() end
+	if chk==0 then return eg:IsExists(aux.AND(Card.HasLevel,Card.IsLevelAbove,2)) end
 	local lv=c:GetLevel()
 	local opt
 	e:SetLabel(opt)

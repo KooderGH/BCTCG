@@ -155,9 +155,6 @@ end
 function s.tribfilter(c,tp)
     return c:IsSummonType(SUMMON_TYPE_TRIBUTE) and c:IsSummonPlayer(tp) and c:IsLevelAbove(1)
 end
-function s.levelcon(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(s.tribfilter,nil,1,1-tp)
-end
 function s.leveltarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chk==0 then return eg:IsExists(s.tribfilter,1,nil,1-tp) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
@@ -204,5 +201,5 @@ function s.sgravepop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
-	end()
+	end
 end

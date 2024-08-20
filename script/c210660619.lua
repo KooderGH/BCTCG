@@ -20,15 +20,42 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_UPDATE_DEFENSE)
     c:RegisterEffect(e2)
     --When tribute Summoned; Add levels
-    local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e1:SetCode(EVENT_SUMMON_SUCCESS)
-    e1:SetTarget(s.destg)
-    e1:SetOperation(s.desop)
-    c:RegisterEffect(e1)
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_SUMMON_SUCCESS)
+    e3:SetCountLimit(1,id)
+    e3:SetCondition(s.thcon)
+    e3:SetTarget(s.leveltg)
+    e3:SetOperation(s.levelop)
+    c:RegisterEffect(e3)
     --When tributed, destroy all monsters opponent controls
+    local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,1))
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetCategory(CATEGORY_DESTROY)
+	e4:SetCode(EVENT_RELEASE)
+	e4:SetCountLimit(1,{id,1})
+    e4.SetCondition(s.tcondition)
+	e4:SetTarget(s.reltg)
+	e4:SetOperation(s.relop)
+	c:RegisterEffect(e4)
+    --Tribute 1 LIGHT Spellcaster you control except "Lilin"; Add up to 2 Level 4 or lower Spellcaster's
+    local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetType(EFFECT_TYPE_QUICK_O)
+	e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e5:SetCode(EVENT_FREE_CHAIN)
+	e5:SetCountLimit(1,{id,2})
+	e5:SetCost(s.cost)
+	e5:SetTarget(s.ttarget)
+	e5:SetOperation(s.topp)
+	c:RegisterEffect(e5)
+    --Piercing
+    local e6=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetCode(EFFECT_PIERCE)
+	c:RegisterEffect(e6)
 end
 --e1
 function s.cfilter(c)
@@ -36,4 +63,65 @@ function s.cfilter(c)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.cfilter,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*500
+end
+--e3
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
+end
+function s.filter(c)
+	return c:IsFaceup() and c:HasLevel()
+end
+function s.leveltg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) end
+end
+function s.levelop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)
+	local tc=g:GetFirst()
+	for tc in aux.Next(g) do
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_LEVEL)
+		e1:SetValue(3)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		tc:RegisterEffect(e1)
+	end
+end
+--e4
+function s.tcondition(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetActivityCount(tp,ACTIVITY_ATTACK)==0 end
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
+	e1:SetTargetRange(1,0)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+end
+function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end
+	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
+end
+function s.relop(e,tp,eg,ep,ev,re,r,rp)
+	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+	Duel.Destroy(sg,REASON_EFFECT)
+end
+--e5
+function s.filter1(c)
+	return c:IsRace(RACE_SPELLCASTER) and c:IsLevelBelow(4) and c:IsAbleToHand()
+end
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,Card.IsRace,1,false,nil,nil,RACE_SPELLCASTER) and Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK,0,1,nil) and not c:IsCode(id) end
+	Duel.Release(sg,REASON_COST)
+end
+function s.ttarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK,0,2,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
+end
+function s.topp(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.filter1,tp,LOCATION_DECK,0,2,2,nil)
+	Duel.SendtoHand(g,nil,REASON_EFFECT)
+	Duel.ConfirmCards(1-tp,g)
 end

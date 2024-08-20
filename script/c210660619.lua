@@ -96,13 +96,17 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Destroy(sg,REASON_EFFECT)
 end
 --e5
-function s.filter1(c)
+function s.sfilter(c)
 	return c:IsRace(RACE_SPELLCASTER) and c:IsLevelBelow(4) and c:IsAbleToHand()
+end
+function s.tributefilter(c)
+    return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_LIGHT) and not c:IsCode(id)
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.CheckReleaseGroupCost(tp,Card.IsRace,1,false,nil,nil,RACE_SPELLCASTER) and Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK,0,1,nil) and not c:IsCode(id) end
-	Duel.Release(sg,REASON_COST)
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tributefilter,1,false,nil,nil,tp) and Duel.IsExistingMatchingCard(s.sfilter,tp,LOCATION_DECK,0,2,nil) and not c:IsCode(id) end
+	local g=Duel.SelectReleaseGroupCost(tp,s.tributefilter,1,1,false,nil,nil,tp)
+	Duel.Release(g,REASON_COST)
 end
 function s.ttarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK,0,2,nil) end

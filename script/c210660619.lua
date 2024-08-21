@@ -46,14 +46,15 @@ function s.initial_effect(c)
 	e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e5:SetCode(EVENT_FREE_CHAIN)
 	e5:SetCountLimit(1,{id,2})
+    e5:SetProperty(EFFECT_FLAG_NO_TURN_RESET)
 	e5:SetCost(s.cost)
 	e5:SetTarget(s.ttarget)
 	e5:SetOperation(s.topp)
 	c:RegisterEffect(e5)
     --Piercing
     local e6=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_PIERCE)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetCode(EFFECT_PIERCE)
 	c:RegisterEffect(e6)
 end
 --e1
@@ -100,7 +101,7 @@ function s.sfilter(c)
 	return c:IsRace(RACE_SPELLCASTER) and c:IsLevelBelow(4) and c:IsAbleToHand()
 end
 function s.tributefilter(c)
-    return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_LIGHT) and not c:IsCode(id)
+    return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

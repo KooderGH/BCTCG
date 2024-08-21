@@ -104,17 +104,17 @@ function s.tributefilter(c)
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tributefilter,1,false,nil,nil,tp) and Duel.IsExistingMatchingCard(s.sfilter,tp,LOCATION_DECK,0,2,nil) and not c:IsCode(id) end
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.tributefilter,1,false,nil,nil,tp) and Duel.IsExistingMatchingCard(s.sfilter,tp,LOCATION_DECK,0,2,nil) end
 	local g=Duel.SelectReleaseGroupCost(tp,s.tributefilter,1,1,false,nil,nil,tp)
 	Duel.Release(g,REASON_COST)
 end
 function s.ttarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK,0,2,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.sfilter,tp,LOCATION_DECK,0,2,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
 end
 function s.topp(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter1,tp,LOCATION_DECK,0,2,2,nil)
+	local g=Duel.SelectMatchingCard(tp,s.sfilter,tp,LOCATION_DECK,0,2,2,nil)
 	Duel.SendtoHand(g,nil,REASON_EFFECT)
 	Duel.ConfirmCards(1-tp,g)
 end

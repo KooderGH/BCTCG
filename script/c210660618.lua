@@ -1,17 +1,15 @@
 --Shiro Amakusa
 --Scripted By poka-poka
-
 --(1) FLIP: Target up to 2 monsters your opponent controls; Set their ATK to 0. This effect is negated if you control a non-FIRE Warrior Monster.
 --(2) When this card is destroyed by battle, you can target up to 2 FIRE Warrior monster in your hand or GY; Special summon them.
 --(3) This card gains the following effect(s) based on the number of Equip Cards equipped to it:
 	--1+:Once per turn (Ignition): Target 1 card on the field; Destroy it.
 	--3+:You can Tribute this card; Add 6 Equip Cards from your deck/GY to your hand.
-
 local s,id=GetID()
 function s.initial_effect(c)
     -- 1. FLIP: Set ATK of up to 2 opponent's monsters to 0
     local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id, 0))
+    e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_ATKCHANGE)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
@@ -21,7 +19,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
     -- 2. Special Summon up to 2 FIRE Warrior monsters when destroyed by battle
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id, 0))
+    e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e2:SetCode(EVENT_BATTLE_DESTROYED)
@@ -33,7 +31,7 @@ function s.initial_effect(c)
     -- 3. Effect based on number of Equip Cards
     -- a. Eq>=1: Destroy 1 target on the field
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id, 2))
+    e3:SetDescription(aux.Stringid(id,2))
     e3:SetCategory(CATEGORY_DESTROY)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
@@ -45,7 +43,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3) 
     -- b. Eq>=3: Tribute and add up to 6 Equip Cards to hand
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id, 3))
+    e4:SetDescription(aux.Stringid(id,3))
     e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e4:SetType(EFFECT_TYPE_IGNITION)
     e4:SetRange(LOCATION_MZONE)

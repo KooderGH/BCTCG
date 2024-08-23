@@ -25,22 +25,13 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
-    --Long Distance Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.ldcon)
-    e3:SetValue(1)
-    c:RegisterEffect(e3)
     --Freeze Ability
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e4:SetCondition(s.freezecon)
-    e4:SetOperation(s.freezeop)
-    c:RegisterEffect(e4)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.freezecon)
+    e3:SetOperation(s.freezeop)
+    c:RegisterEffect(e3)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
@@ -88,14 +79,6 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         c:SetTurnCounter(ct)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
-end
---Long Distance Function
-function s.ldfilter(c)
-    return not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end
 --Freeze Function
 function s.freezecon(e,tp,eg,ep,ev,re,r,rp)

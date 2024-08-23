@@ -26,15 +26,6 @@ function s.initial_effect(c)
     e2:SetTarget(s.addtg)
     e2:SetOperation(s.addop)
     c:RegisterEffect(e2)
-    --Long Distance Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.ldcon)
-    e3:SetValue(1)
-    c:RegisterEffect(e3)
 end
 function s.dictactorwizadronfilter(c)
     return c:IsFaceup() and c:IsCode(210662906)
@@ -73,12 +64,4 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
-end
---Long Distance Function
-function s.ldfilter(c)
-    return not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

@@ -16,21 +16,12 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
     c:RegisterEffect(e2)
-    --Long Distance Ability
+    --Avoid Battle damage
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.ldcon)
+    e3:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
     e3:SetValue(1)
     c:RegisterEffect(e3)
-    --Avoid Battle damage
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-    e4:SetValue(1)
-    c:RegisterEffect(e4)
 end
 --Toxic on Battle function
 function s.toxiccon(e,tp,eg,ep,ev,re,r,rp)
@@ -57,12 +48,4 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetValue(-500)
         tc:RegisterEffect(e2)
 	end
-end
---Long Distance Function
-function s.ldfilter(c)
-    return not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

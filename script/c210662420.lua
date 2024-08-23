@@ -11,15 +11,6 @@ function s.initial_effect(c)
     e1:SetTarget(s.cursetg)
     e1:SetOperation(s.curseop)
     c:RegisterEffect(e1)
-    --Long Distance Ability
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e2:SetCondition(s.ldcon)
-    e2:SetValue(1)
-    c:RegisterEffect(e2)
 end
 --Curse Ability Function
 function s.cursetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -41,12 +32,4 @@ function s.curseop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
         tc:RegisterEffect(e1)
     end
-end
---Long Distance Function
-function s.ldfilter(c)
-    return not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

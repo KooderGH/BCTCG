@@ -13,22 +13,13 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Long Distance Ability
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e2:SetCondition(s.ldcon)
-    e2:SetValue(1)
-    c:RegisterEffect(e2)
     --Slow Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_START)
-    e3:SetCondition(s.slowcon)
-    e3:SetOperation(s.slowop)
-    c:RegisterEffect(e3)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e2:SetCode(EVENT_BATTLE_START)
+    e2:SetCondition(s.slowcon)
+    e2:SetOperation(s.slowop)
+    c:RegisterEffect(e2)
 end
 function s.angelfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_WARRIOR)
@@ -51,18 +42,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	if not g then return end
 	Duel.Release(g,REASON_COST)
 	g:DeleteGroup()
-end
---Banish Zombies function
-function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_ZOMBIE) end
-    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
-end
-function s.bnop(e,tp,eg,ep,ev,re,r,rp)
-    local bc=e:GetHandler():GetBattleTarget()
-    if bc:IsRelateToBattle() then
-    Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
-    end
 end
 --Slow Ability Function
 function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
@@ -89,12 +68,4 @@ function s.slowop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.skipcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
-end
---Long Distance Function
-function s.ldfilter(c)
-    return not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

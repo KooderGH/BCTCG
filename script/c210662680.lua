@@ -17,15 +17,6 @@ function s.initial_effect(c)
     e2:SetTarget(s.destg)
     e2:SetOperation(s.desop)
     c:RegisterEffect(e2)
-    --Long Distance Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
-    e3:SetCondition(s.ldcon)
-    e3:SetValue(1)
-    c:RegisterEffect(e3)
 end
 --Can target 1 S/T (Long Distance Attack) Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -40,12 +31,4 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
     end
-end
---Long Distance Function
-function s.ldfilter(c)
-    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and not c:IsCode(id)
-end
-function s.ldcon(e,c)
-    if c==nil then end
-    return Duel.IsExistingMatchingCard(s.ldfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

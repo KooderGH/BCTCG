@@ -10,14 +10,12 @@ function s.initial_effect(c)
     e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e0:SetValue(1)
     c:RegisterEffect(e0)
-    
 	-- Cannot be Set
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_CANNOT_MSET)
     e1:SetCondition(aux.TRUE)
     c:RegisterEffect(e1)
-    
 	-- Cannot be returned to hand, deck, or banished
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
@@ -25,16 +23,12 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EFFECT_CANNOT_REMOVE)
 	c:RegisterEffect(e2)
-
 	local e3=e2:Clone()
 	e3:SetCode(EFFECT_CANNOT_TO_HAND)
 	c:RegisterEffect(e3)
-
 	local e4=e2:Clone()
 	e4:SetCode(EFFECT_CANNOT_TO_DECK)
 	c:RegisterEffect(e4)
-
-	
 	-- Gain ATK when taking LP damage
     local e5=Effect.CreateEffect(c)
     e5:SetType(EFFECT_TYPE_FIELD + EFFECT_TYPE_CONTINUOUS)
@@ -51,14 +45,12 @@ function s.initial_effect(c)
     e6:SetCode(EFFECT_SELF_TOGRAVE)
     e6:SetCondition(s.tgcon)
     c:RegisterEffect(e6)
-	
 	-- Cannot be Normal Summoned unless you control a face-up FIRE Warrior monster
     local e7=Effect.CreateEffect(c)
     e7:SetType(EFFECT_TYPE_SINGLE)
     e7:SetCode(EFFECT_CANNOT_SUMMON)
     e7:SetCondition(s.sumcon)
     c:RegisterEffect(e7)
-	
     -- Gain ATK when any monster is destroyed by battle
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -67,7 +59,6 @@ function s.initial_effect(c)
     e8:SetCondition(s.batcon)
     e8:SetOperation(s.batop)
     c:RegisterEffect(e8)
-    
     -- Gain ATK for each equip card
     local e9=Effect.CreateEffect(c)
     e9:SetType(EFFECT_TYPE_SINGLE)
@@ -76,7 +67,6 @@ function s.initial_effect(c)
     e9:SetRange(LOCATION_MZONE)
     e9:SetValue(s.eqatk)
     c:RegisterEffect(e9)
-    
     -- Destroy equip card instead of this card
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
@@ -95,12 +85,10 @@ end
 function s.tgcon(e)
     return Duel.IsExistingMatchingCard(s.nonfirewarriorfilter, e:GetHandlerPlayer(), LOCATION_MZONE, 0, 1, nil)
 end
-
 -- Cannot be Set
 function s.setcon(e, c, minc)
     return false
 end
-
 -- Gain ATK when taking LP damage
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
     return ep==tp
@@ -111,12 +99,10 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         c:UpdateAttack(400)
     end
 end
-
 -- Gain ATK when any monster is destroyed by battle
 function s.batcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsType, 1, nil, TYPE_MONSTER) and eg:IsExists(Card.IsReason, 1, nil, REASON_BATTLE)
 end
-
 function s.batop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if c:IsFaceup() then
@@ -124,12 +110,10 @@ function s.batop(e,tp,eg,ep,ev,re,r,rp)
         c:UpdateAttack(ct * 400)
     end
 end
-
 -- Gain ATK for each equip card
 function s.eqatk(e,c)
     return c:GetEquipCount()*400
 end
-
 -- Destroy equip card instead of this card
 -- Target function with optional destruction
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -143,7 +127,6 @@ function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
         return false
     end
 end
-
 -- Operation function to destroy the selected equip card
 function s.desrepop(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATION_SZONE,0,1,1,nil)
@@ -151,17 +134,14 @@ function s.desrepop(e,tp,eg,ep,ev,re,r,rp)
         Duel.Destroy(g,REASON_EFFECT+REASON_REPLACE)
     end
 end
-
 -- Equip filter function
 function s.eqfilter(c)
     return c:IsType(TYPE_EQUIP) and c:IsDestructable()
 end
-
 -- Condition function to check if the player controls a face-up FIRE Warrior monster
 function s.sumcon(e)
     return not Duel.IsExistingMatchingCard(s.cfilter, e:GetHandlerPlayer(), LOCATION_MZONE, 0, 1, nil)
 end
-
 -- Filter function to identify FIRE Warrior monsters
 function s.cfilter(c)
     return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_WARRIOR)

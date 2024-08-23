@@ -1,5 +1,5 @@
 -- Hattori Hanzo
--- Scripted By [Your Name]
+-- Scripted By poka-poka
 
 local s,id=GetID()
 function s.initial_effect(c)
@@ -12,7 +12,6 @@ function s.initial_effect(c)
     local e2=e1:Clone()
     e2:SetCode(EFFECT_CANNOT_MSET)
     c:RegisterEffect(e2)
-
     -- 2. When Normal Summoned: Special Summon 1 FIRE Warrior from hand
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
@@ -23,7 +22,6 @@ function s.initial_effect(c)
     e3:SetTarget(s.sptg)
     e3:SetOperation(s.spop)
     c:RegisterEffect(e3)
-
     -- 3. When Special Summoned: Add 1 Equip Card from Deck to hand
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,1))
@@ -34,7 +32,6 @@ function s.initial_effect(c)
     e4:SetTarget(s.thtg)
     e4:SetOperation(s.thop)
     c:RegisterEffect(e4)
-
     -- 4. Cannot be returned (to Hand or Deck)
     local e5=Effect.CreateEffect(c)
     e5:SetType(EFFECT_TYPE_SINGLE)
@@ -45,14 +42,12 @@ function s.initial_effect(c)
     local e6=e5:Clone()
     e6:SetCode(EFFECT_CANNOT_TO_DECK)
     c:RegisterEffect(e6)
-
     -- 5. Monsters this card destroys are banished
     local e7=Effect.CreateEffect(c)
     e7:SetType(EFFECT_TYPE_SINGLE)
     e7:SetCode(EFFECT_BATTLE_DESTROY_REDIRECT)
     e7:SetValue(LOCATION_REMOVED)
     c:RegisterEffect(e7)
-
     -- 6. When destroyed: Add 1 FIRE Warrior from GY to hand except "Hattori Hanzo"
     local e8=Effect.CreateEffect(c)
     e8:SetDescription(aux.Stringid(id,2))
@@ -64,7 +59,6 @@ function s.initial_effect(c)
     e8:SetTarget(s.thtg2)
     e8:SetOperation(s.thop2)
     c:RegisterEffect(e8)
-
     -- 7. Effect based on the number of Equip Cards equipped to it
 	local e9=Effect.CreateEffect(c)
 	e9:SetType(EFFECT_TYPE_SINGLE)
@@ -74,7 +68,6 @@ function s.initial_effect(c)
 	e9:SetValue(s.atkval)
 	e9:SetRange(LOCATION_MZONE)
 	c:RegisterEffect(e9)
-
     -- b. 2+: Opponent cannot activate monster effects during Battle Phase
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_FIELD)
@@ -85,7 +78,6 @@ function s.initial_effect(c)
     e10:SetValue(s.aclimit)
     e10:SetCondition(s.effcon2)
     c:RegisterEffect(e10)
-
     -- c. 3+: Gain 1000 ATK for each Equip Card equipped to it
     local e11=Effect.CreateEffect(c)
     e11:SetType(EFFECT_TYPE_SINGLE)
@@ -95,7 +87,6 @@ function s.initial_effect(c)
 	e11:SetCondition(s.effcon3)
     e11:SetValue(s.atkup)
     c:RegisterEffect(e11)
-
     -- d. 4+: Double Battle Damage
     local e12=Effect.CreateEffect(c)
     e12:SetType(EFFECT_TYPE_SINGLE)
@@ -103,7 +94,6 @@ function s.initial_effect(c)
     e12:SetCondition(s.effcon4)
     e12:SetValue(aux.ChangeBattleDamage(1, DOUBLE_DAMAGE))
     c:RegisterEffect(e12)
-
     -- e. 5+: Add all Equip Cards from GY to hand when removed
 	local e13=Effect.CreateEffect(c)
 	e13:SetDescription(aux.Stringid(id,3))
@@ -115,7 +105,6 @@ function s.initial_effect(c)
 	e13:SetTarget(s.rettg2)
 	e13:SetOperation(s.retop2)
 	c:RegisterEffect(e13)
-
 	-- Track if this card was equipped with 5 or more Equip Cards when sent to GY
 	local e14=Effect.CreateEffect(c)
 	e14:SetType(EFFECT_TYPE_SINGLE)
@@ -135,12 +124,10 @@ function s.sumcon(e)
     local non_fire_warrior = Duel.IsExistingMatchingCard(s.nonfirewarriorfilter, e:GetHandlerPlayer(), LOCATION_MZONE, 0, 1, nil)
     return no_monsters or non_fire_warrior
 end
-
 -- Filter for monsters that are not both FIRE attribute and Warrior type
 function s.nonfirewarriorfilter(c)
     return c:IsFaceup() and not (c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_WARRIOR))
 end
-
 -- 2. Special Summon from hand
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -155,12 +142,10 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
-
 -- Filter for FIRE Warrior monsters in hand
 function s.spfilter(c,e,tp)
     return c:IsRace(RACE_WARRIOR) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
-
 -- 3. Add Equip Card from Deck to hand
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_DECK,0,1,nil) end
@@ -174,7 +159,6 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ConfirmCards(1-tp,g)
     end
 end
-
 -- 6. When destroyed, add 1 FIRE Warrior from GY to hand except "Hattori Hanzo"
 function s.thcon2(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():IsReason(REASON_DESTROY) and e:GetHandler():IsPreviousLocation(LOCATION_MZONE)
@@ -191,12 +175,10 @@ function s.thop2(e,tp,eg,ep,ev,re,r,rp)
         Duel.ConfirmCards(1-tp,g)
     end
 end
-
 -- Filter for FIRE Warrior monsters in the Graveyard, excluding this card
 function s.fwfilter(c)
     return c:IsRace(RACE_WARRIOR) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsAbleToHand() and not c:IsCode(id)
 end
-
 -- 7. Effect based on Equip Cards
 -- a. 1+: Gain ATK based on level difference during battle
 function s.effcon1(e,tp,eg,ep,ev,re,r,rp)
@@ -211,7 +193,6 @@ function s.atkval(e,c)
         return 0
     end
 end
-
 -- b. 2+: Opponent cannot activate monster effects during Battle Phase
 function s.effcon2(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():GetEquipCount()>=2 and Duel.IsBattlePhase()
@@ -219,7 +200,6 @@ end
 function s.aclimit(e,re,tp)
     return re:IsActiveType(TYPE_MONSTER)
 end
-
 -- c. 3+: Gain 1000 ATK for each Equip Card equipped to it
 function s.effcon3(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():GetEquipCount()>=3
@@ -227,12 +207,10 @@ end
 function s.atkup(e,c)
     return e:GetHandler():GetEquipCount()*1000
 end
-
 -- d. 4+: Double Battle Damage
 function s.effcon4(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():GetEquipCount()>=4
 end
-
 -- (5) Add all Equip Cards from GY to hand if this card had 5 or more Equip Cards when sent to GY
 function s.effcon5(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
@@ -240,12 +218,10 @@ function s.effcon5(e,tp,eg,ep,ev,re,r,rp)
         and c:IsReason(REASON_EFFECT+REASON_BATTLE) 
         and c:GetFlagEffect(id)>0
 end
-
 function s.rettg2(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_GRAVE,0,1,nil) end
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
 end
-
 function s.retop2(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetMatchingGroup(s.eqfilter,tp,LOCATION_GRAVE,0,nil)
     if #g>0 then
@@ -270,7 +246,6 @@ function s.equipcheckcon(e)
     end
     return false
 end
-
 -- Filter for Equip Spell Cards
 function s.eqfilter(c)
     return c:IsType(TYPE_EQUIP) and c:IsAbleToHand()

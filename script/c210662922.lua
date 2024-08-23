@@ -18,5 +18,5 @@ function s.initial_effect(c)
 end
 function s.atkval(e,c)
     local g=Duel.GetMatchingGroup(Card.IsMonster,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil)
-    return g:GetClassCount(Card.GetRace)*50
+    return g:GetClassCount(Card.GetRace)*100
 end

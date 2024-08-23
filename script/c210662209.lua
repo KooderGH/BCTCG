@@ -15,12 +15,12 @@ function s.initial_effect(c)
     c:RegisterEffect(e0)
     --Base Destroyer Ability
     local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,1))
-    e1:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DESTROY)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_BATTLE_CONFIRM)
-    e1:SetCondition(function() return Duel.GetAttackTarget()==nil end)
-    e1:SetOperation(s.desop)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetCondition(s.bdcon)
+    e1:SetValue(600)
     c:RegisterEffect(e1)
     --Strengthen
     local e2=Effect.CreateEffect(c)
@@ -55,17 +55,10 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	g:DeleteGroup()
 end
 --Base Destroyer Function
-function s.desop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if not c:IsRelateToEffect(e) then return end
-    if c:IsFaceup() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(c:GetAttack())
-        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        c:RegisterEffect(e1)
-    end
+function s.bdcon(e)
+    local ph=Duel.GetCurrentPhase()
+    return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
+        and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()==nil
 end
 --Strengthen function
 function s.strengthentg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -79,3 +72,4 @@ function s.strengthentg(e,tp,eg,ep,ev,re,r,rp,chk)
     c:RegisterEffect(e1)
     return true
 end
+

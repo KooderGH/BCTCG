@@ -27,12 +27,12 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
     --Base Destroyer Ability
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
-    e3:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DESTROY)
-    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_CONFIRM)
-    e3:SetCondition(function() return Duel.GetAttackTarget()==nil end)
-    e3:SetOperation(s.desop)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_UPDATE_ATTACK)
+    e3:SetCondition(s.bdcon)
+    e3:SetValue(500)
     c:RegisterEffect(e3)
 end
 function s.zombiefilter(c)
@@ -77,15 +77,8 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Base Destroyer Function
-function s.desop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if not c:IsRelateToEffect(e) then return end
-    if c:IsFaceup() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(c:GetAttack())
-        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        c:RegisterEffect(e1)
-    end
+function s.bdcon(e)
+    local ph=Duel.GetCurrentPhase()
+    return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
+        and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()==nil
 end

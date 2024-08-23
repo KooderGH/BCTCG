@@ -2,23 +2,45 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --return hand (Peon Ability)
     local e1=Effect.CreateEffect(c)
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-    e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_DESTROYED)
-    e1:SetTarget(s.destg)
-    e1:SetOperation(s.desop)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetTargetRange(LOCATION_MZONE,0)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetCondition(s.con)
+    e1:SetTarget(s.tg)
+    e1:SetValue(250)
     c:RegisterEffect(e1)
+    --Add lv4 Monster
+    local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,0))
+    e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e2:SetCode(EVENT_DESTROYED)
+    e2:SetTarget(s.drtg)
+    e2:SetOperation(s.drop)
+    c:RegisterEffect(e2)
 end
-function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+function s.con(e)
+	return e:GetHandler():IsAttackPos()
 end
-function s.desop(e,tp,eg,ev,ep,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
+function s.tg(e,c)
+	return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO)
+end
+--Destroy and draw function
+function s.drfilter(c)
+    return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO) and c:IsAbleToHand()
+end
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.drfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.drfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

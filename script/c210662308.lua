@@ -20,7 +20,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.specialfilter(c,e,tp)
-	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,1,nil,e,tp) end
@@ -31,7 +31,7 @@ function s.ssop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp)
     if #g>0 then
-        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_ATTACK)
     end
     --Return To Hand
     local e1=Effect.CreateEffect(e:GetHandler())

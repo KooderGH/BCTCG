@@ -18,22 +18,22 @@ function s.initial_effect(c)
     e1:SetCondition(aux.TRUE)
     c:RegisterEffect(e1)
     
-	-- Cannot be returned or banished
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_UNCOPYABLE)
-    e2:SetCode(EFFECT_CANNOT_REMOVE)
-    c:RegisterEffect(e2)
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_UNCOPYABLE)
-    e3:SetCode(EFFECT_CANNOT_TO_HAND)
-    c:RegisterEffect(e3)
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE + EFFECT_FLAG_UNCOPYABLE)
-    e4:SetCode(EFFECT_CANNOT_TO_DECK)
-    c:RegisterEffect(e4)
+	-- Cannot be returned to hand, deck, or banished
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCode(EFFECT_CANNOT_REMOVE)
+	c:RegisterEffect(e2)
+
+	local e3=e2:Clone()
+	e3:SetCode(EFFECT_CANNOT_TO_HAND)
+	c:RegisterEffect(e3)
+
+	local e4=e2:Clone()
+	e4:SetCode(EFFECT_CANNOT_TO_DECK)
+	c:RegisterEffect(e4)
+
 	
 	-- Gain ATK when taking LP damage
     local e5=Effect.CreateEffect(c)
@@ -131,19 +131,28 @@ function s.eqatk(e,c)
 end
 
 -- Destroy equip card instead of this card
+-- Target function with optional destruction
 function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then
         return e:GetHandler():IsReason(REASON_BATTLE+REASON_EFFECT)
             and Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_SZONE,0,1,nil)
     end
-    return true
+    if Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
+        return true
+    else
+        return false
+    end
 end
-function s.desrepop(e,tp,eg,ep,ev,re,rp)
+
+-- Operation function to destroy the selected equip card
+function s.desrepop(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATION_SZONE,0,1,1,nil)
     if #g>0 then
         Duel.Destroy(g,REASON_EFFECT+REASON_REPLACE)
     end
 end
+
+-- Equip filter function
 function s.eqfilter(c)
     return c:IsType(TYPE_EQUIP) and c:IsDestructable()
 end

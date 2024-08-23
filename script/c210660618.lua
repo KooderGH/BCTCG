@@ -82,30 +82,31 @@ end
 function s.nonfirewarriorfilter(c)
     return c:IsFaceup() and c:IsRace(RACE_WARRIOR) and not c:IsAttribute(ATTRIBUTE_FIRE)
 end
--- 2. Special Summon up to 2 Fire Warrior when destroyed by battle
--- Condition: This card is destroyed by battle
+-- 2. Special Summon up to 2 FIRE Warrior monsters when destroyed by battle
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
     -- Check if the card was destroyed by battle
     local c=e:GetHandler()
     return c:IsPreviousPosition(POS_FACEUP) and c:IsReason(REASON_BATTLE)
 end
--- Filter: Fire Warrior monsters in hand or graveyard
--- Note : add "and c~=ec" if the triggering card is not intended to get targeted as special summon target
+-- Filter: FIRE Warrior monsters in hand or graveyard
 function s.spfilter(c,e,tp)
     return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_WARRIOR) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
--- Target: Select up to 2 Fire Warrior monsters from your hand or graveyard
+-- Target: Select up to 2 FIRE Warrior monsters from your hand or graveyard
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+    local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+    if chk==0 then return ft>0
         and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
-    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,math.min(2,ft),tp,LOCATION_HAND+LOCATION_GRAVE)
 end
 -- Operation: Special Summon the selected monsters
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
+    local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+    if ft<=0 then return end
     local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,nil,e,tp)
     if #g>0 then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-        local sg=g:Select(tp,1,2,nil)
+        local sg=g:Select(tp,1,math.min(2,ft),nil)
         Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
     end
 end

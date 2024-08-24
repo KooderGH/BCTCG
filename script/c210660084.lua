@@ -18,7 +18,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_SZONE)
 	e1:SetTarget(s.dtarget)
 	e1:SetOperation(s.doperation)
-	c:RegisterEffect(e2)
+	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e2)
@@ -82,7 +82,7 @@ end
 function s.filter(c,e)
 	return c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) and not c:IsRace(RACE_DRAGON)
 end
-function ds.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.doperation(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local g=eg:Filter(s.filter,nil,e)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENSE)

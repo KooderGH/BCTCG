@@ -30,7 +30,7 @@ end
 function s.tg(e,c)
 	return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO)
 end
---Destroy and draw function
+--Destroy and add function
 function s.drfilter(c)
     return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO) and c:IsAbleToHand()
 end

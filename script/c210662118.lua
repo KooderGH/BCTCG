@@ -60,7 +60,7 @@ function s.lpop(e,tp,eg,ep,ev,re,r,rp)
         Duel.Damage(1-tp,500,REASON_EFFECT)
     end
 end
---Destroy and draw function
+--Destroy and add function
 function s.drfilter(c)
     return c:IsLevelBelow(3) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO) and c:IsAbleToHand()
 end

@@ -25,7 +25,7 @@ function s.initial_effect(c)
     e4:SetCode(EFFECT_UPDATE_ATTACK)
     e4:SetCondition(s.con)
     e4:SetTarget(s.tg)
-    e4:SetValue(250)
+    e4:SetValue(500)
     c:RegisterEffect(e4)
 end
 --to defense function

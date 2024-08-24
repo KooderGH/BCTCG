@@ -49,7 +49,7 @@ function s.crabfilter(c)
 end
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    local d = Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*250
+    local d = Duel.GetMatchingGroupCount(s.crabfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*150
     if e:GetHandler():IsRelateToEffect(e) and d then
         Duel.Recover(tp,d,REASON_EFFECT)
     end

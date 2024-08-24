@@ -33,6 +33,15 @@ function s.initial_effect(c)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(RACE_ZOMBIE+RACE_AQUA)
     c:RegisterEffect(e4)
+    --Zombie monsters cannot be banished by card effects
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_FIELD)
+    e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e5:SetCode(EFFECT_CANNOT_REMOVE)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
+    e5:SetTarget(s.rmlimit)
+    c:RegisterEffect(e5)
 end
 --Can target 1 S/T (Long Distance Attack) Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -47,4 +56,8 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
     end
+end
+--Cannot remove
+function s.rmlimit(e,c,tp,r)
+    return c:IsRace(RACE_ZOMBIE) and c:IsFaceup() and not c:IsImmuneToEffect(e) and r&REASON_EFFECT>0
 end

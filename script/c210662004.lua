@@ -2,29 +2,24 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --draw
-    local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_DRAW)	
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_TO_GRAVE)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetOperation(s.drop)
-    c:RegisterEffect(e1)
+    --return hand (Peon Ability)
+    local e4=Effect.CreateEffect(c)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.destg)
+    e4:SetOperation(s.desop)
+    c:RegisterEffect(e4)
 end
---Draw Function
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
+--Peon Ability
+function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+end
+function s.desop(e,tp,eg,ev,ep,re,r,rp)
     local c=e:GetHandler()
-    if Duel.IsPlayerCanDraw(1-tp,1) then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-        e1:SetRange(LOCATION_GRAVE)
-        e1:SetCode(EVENT_PHASE+PHASE_DRAW)
-        e1:SetReset(RESET_PHASE+PHASE_END,2)
-        e1:SetCountLimit(1)
-        e1:SetOperation(s.drawop)
-        c:RegisterEffect(e1)
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
-end
-function s.drawop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Draw(tp,1,REASON_EFFECT)
 end

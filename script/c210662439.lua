@@ -2,6 +2,7 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
+    --Attack Up Ability
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetRange(LOCATION_MZONE)
@@ -22,6 +23,7 @@ function s.initial_effect(c)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
 end
+--Attack Up function
 function s.con(e)
 	return e:GetHandler():IsAttackPos()
 end

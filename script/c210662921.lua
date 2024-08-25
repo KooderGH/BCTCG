@@ -5,11 +5,10 @@ function s.initial_effect(c)
     --Attack Up Ability
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
     e1:SetRange(LOCATION_MZONE)
     e1:SetTargetRange(LOCATION_MZONE,0)
-    e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetTarget(s.tg)
-    e1:SetValue(250)
+    e1:SetValue(s.atkval)
     c:RegisterEffect(e1)
     --Add lv4 Monster
     local e2=Effect.CreateEffect(c)
@@ -22,9 +21,13 @@ function s.initial_effect(c)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
 end
---Attack Up function
-function s.tg(e,c)
-	return c:IsRace(RACE_ZOMBIE)
+--GY Attack Up function
+function s.gyfilter(c)
+    return c:IsRace(RACE_ZOMBIE)
+end
+function s.atkval(e,c)
+    local g=Duel.GetMatchingGroupCount(s.gyfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,LOCATION_GRAVE,nil)
+    return g*150
 end
 --Destroy and add function
 function s.drfilter(c)

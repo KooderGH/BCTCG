@@ -2,75 +2,64 @@
 --Scripted by Konstak.
 local s,id=GetID()
 function s.initial_effect(c)
-    --Burrow down
+    --When Normal Summoned (Search Ability)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e1:SetCode(EVENT_SUMMON_SUCCESS)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-    e1:SetTarget(s.burrowdowntg)
-    e1:SetOperation(s.burrowdownop)
+    e1:SetTarget(s.srtg)
+    e1:SetOperation(s.srop)
     c:RegisterEffect(e1)
     local e2=e1:Clone()
-    e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e2)
-    local e3=e1:Clone()
-    e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+    --Opponent No Battle Damage
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e3:SetValue(1)
     c:RegisterEffect(e3)
-    --Burrow up
+    --Avoid Battle damage
     local e4=Effect.CreateEffect(c)
-    e4:SetDescription(aux.Stringid(id,1))
-    e4:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
-    e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e4:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-    e4:SetRange(LOCATION_SZONE)
-    e4:SetCode(EVENT_PHASE+PHASE_END)
-    e4:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
-    e4:SetCondition(s.burrowupcon)
-    e4:SetTarget(s.burrowuptg)
-    e4:SetOperation(s.burrowupop)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e4:SetValue(1)
     c:RegisterEffect(e4)
+    --return hand (Peon Ability)
+    local e5=Effect.CreateEffect(c)
+    e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e5:SetCode(EVENT_DESTROYED)
+    e5:SetTarget(s.destg)
+    e5:SetOperation(s.desop)
+    c:RegisterEffect(e5)
 end
---burrow down function
-function s.burrowdowntg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
+--When SP add function
+function s.dfilter(c)
+    return c:IsLevelBelow(3) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
 end
-function s.burrowdownop(e,tp,eg,ep,ev,re,r,rp)
-    if not e:GetHandler():IsRelateToEffect(e) then return end
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.dfilter,tp,LOCATION_DECK,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_DECK,0,2,2,nil)
+    if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+    end
+end
+--Peon Ability
+function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+end
+function s.desop(e,tp,eg,ev,ep,re,r,rp)
     local c=e:GetHandler()
-    Duel.MoveToField(c,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
-    local e1=Effect.CreateEffect(c)
-    e1:SetCode(EFFECT_CHANGE_TYPE)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD-RESET_TURN_SET)
-    e1:SetValue(TYPE_SPELL+TYPE_CONTINUOUS)
-    c:RegisterEffect(e1)
-end
---burrow up function
-function s.burrowupcon(e,tp,eg,ep,ev,re,r,rp)
-    return tp==Duel.GetTurnPlayer()
-end
-function s.burrowupfilter(c,atk)
-    return c:IsFaceup()
-end
-function s.burrowuptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    local c=e:GetHandler()
-    if chkc then return chkc:IsLocation(LOCATION_MZONE) end
-    if chk==0 then return Duel.IsExistingTarget(s.burrowupfilter,tp,0,LOCATION_MZONE,1,nil) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-    local g=Duel.SelectTarget(tp,s.burrowupfilter,tp,0,LOCATION_MZONE,1,1,nil)
-    Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
-    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_SZONE)
-end
-function s.burrowupop(e,tp,eg,ep,ev,re,r,rp)
-    local tc=Duel.GetFirstTarget()
-    if tc:IsRelateToEffect(e) and Duel.SendtoGrave(tc,REASON_EFFECT)~=0 then
-        local c=e:GetHandler()
-        if c:IsRelateToEffect(e) then
-            Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
-        end
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
 end

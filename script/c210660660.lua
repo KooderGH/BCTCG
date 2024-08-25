@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e2:SetDescription(aux.Stringid(id, 1))
 	e2:SetTarget(function(e, c)
-        return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_DRAGON)
+        return c:IsRace(RACE_DRAGON)
 		end)
 	c:RegisterEffect(e2)  
     -- (3) Destroy monster with lower Level before damage step

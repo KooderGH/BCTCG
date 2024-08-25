@@ -26,7 +26,7 @@ function s.gyfilter(c)
     return c:IsRace(RACE_ZOMBIE)
 end
 function s.atkval(e,c)
-    local g=Duel.GetMatchingGroupCount(s.gyfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,LOCATION_GRAVE,nil)
+    local g=Duel.GetMatchingGroupCount(s.gyfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil)
     return g*150
 end
 --Destroy and add function

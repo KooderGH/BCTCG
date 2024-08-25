@@ -36,7 +36,7 @@ function s.initial_effect(c)
     e5:SetOperation(s.desop)
     c:RegisterEffect(e5)
 end
---When SP add function
+--When NP add function
 function s.dfilter(c)
     return c:IsLevelBelow(3) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
 end

@@ -27,7 +27,7 @@ function s.gyfilter(c)
 end
 function s.atkval(e,c)
     local g=Duel.GetMatchingGroupCount(s.gyfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil)
-    return g*150
+    return g*50
 end
 --Destroy and add function
 function s.drfilter(c)

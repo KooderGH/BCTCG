@@ -36,6 +36,7 @@ function s.initial_effect(c)
 	e4:SetCategory(CATEGORY_DESTROY)
 	e4:SetCode(EVENT_RELEASE)
 	e4:SetCountLimit(1,{id,1})
+    e4:SetCost(s.tcost)
 	e4:SetTarget(s.reltg)
 	e4:SetOperation(s.relop)
 	c:RegisterEffect(e4)
@@ -88,6 +89,16 @@ function s.levelop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --e4
+function s.tcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetActivityCount(tp,ACTIVITY_ATTACK)==0 end
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_ATTACK)
+	e1:SetProperty(EFFECT_FLAG_OATH+EFFECT_FLAG_IGNORE_IMMUNE)
+	e1:SetTargetRange(LOCATION_MZONE,0)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+end
 function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end
 	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)

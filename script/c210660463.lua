@@ -191,11 +191,11 @@ end
 function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tp=c:GetControler()
-    if (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1)) then
-        local lftezm=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,5) and 0x20 or 0
-        local rgtemz=not Duel.IsExistingMatchingCard(Card.IsSequence,tp,LOCATION_MZONE,0,1,nil,6) and 0x40 or 0
-		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
-        local selected=Duel.SelectFieldZone(tp,1,LOCATION_MZONE,0,~ZONES_EMZ|(lftezm|rgtemz))
+    local lftezm=Duel.CheckLocation(tp,LOCATION_EMZONE,0) and 0x20 or 0
+    local rgtemz=Duel.CheckLocation(tp,LOCATION_EMZONE,1) and 0x40 or 0
+    if (lftezm>0 or rgtemz>0) then
+        Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
+        local selected=Duel.SelectFieldZone(tp,1,LOCATION_MZONE,0,~(lftezm|rgtemz))
         selected=selected==0x20 and 5 or 6
         Duel.MoveSequence(c,selected)
     end

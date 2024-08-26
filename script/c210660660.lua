@@ -10,7 +10,7 @@ local s,id=GetID()
 function s.initial_effect(c)
     -- (1) Normal Summon without Tributing
     local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id, 0))
+    e1:SetDescription(aux.Stringid(id,0))
     e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_SUMMON_PROC)
@@ -20,14 +20,12 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
     -- (2) Additional Normal Summon
 	local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_HAND+LOCATION_MZONE, 0)
 	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
-	e2:SetDescription(aux.Stringid(id, 1))
-	e2:SetTarget(function(e, c)
-        return c:IsRace(RACE_DRAGON)
-		end)
+	e2:SetTarget(function(e, c) return c:IsRace(RACE_DRAGON) end)
 	c:RegisterEffect(e2)  
     -- (3) Destroy monster with lower Level before damage step
     local e3=Effect.CreateEffect(c)
@@ -48,6 +46,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e4)
     -- (5) Add FIRE Dragon from Deck when destroyed by battle
     local e5=Effect.CreateEffect(c)
+    e5:SetDescription(aux.Stringid(id,3))
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e5:SetCode(EVENT_DESTROYED)
     e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
@@ -56,7 +55,6 @@ function s.initial_effect(c)
     e5:SetOperation(s.battleop)
     c:RegisterEffect(e5)
 end
-
 -- Normal Summon without Tributing condition
 function s.ntcon(e,c,minc)
 	if c==nil then return true end
@@ -86,7 +84,7 @@ end
 -- Destroy monster with lower Level operation
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local bc = e:GetHandler():GetBattleTarget()
-    if bc then Duel.Destroy(bc, REASON_EFFECT) end
+    if bc then Duel.Destroy(bc,REASON_EFFECT) end
 end
 -- Add FIRE Dragon from GY when destroyed by card effect condition
 function s.gycon(e,tp,eg,ep,ev,re,r,rp)
@@ -95,18 +93,17 @@ end
 -- Add FIRE Dragon from GY target
 function s.gytg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk == 0 then
-        return Duel.IsExistingMatchingCard(s.gyfilter, tp, LOCATION_GRAVE, 0, 1, nil)
+        return Duel.IsExistingMatchingCard(s.gyfilter,tp,LOCATION_GRAVE,0,1,nil)
     end
-    Duel.SetOperationInfo(0, CATEGORY_TOHAND, nil, 1, tp, LOCATION_GRAVE)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
 end
-
 -- Add FIRE Dragon from GY operation
-function s.gyop(e, tp, eg, ep, ev, re, r, rp)
-    Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_ATOHAND)
-    local g = Duel.SelectMatchingCard(tp, s.gyfilter, tp, LOCATION_GRAVE, 0, 1, 1, nil)
+function s.gyop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g = Duel.SelectMatchingCard(tp,s.gyfilter,tp,LOCATION_GRAVE,0,1,1,nil)
     if #g > 0 then
-        Duel.SendtoHand(g, nil, REASON_EFFECT)
-        Duel.ConfirmCards(1 - tp, g)
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end
 -- Filter for FIRE Dragon monsters in the Graveyard
@@ -114,23 +111,23 @@ function s.gyfilter(c)
     return c:IsRace(RACE_DRAGON) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsAbleToHand()
 end
 -- Add FIRE Dragon from Deck when destroyed by battle condition
-function s.battlecon(e, tp, eg, ep, ev, re, r, rp)
+function s.battlecon(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():IsReason(REASON_BATTLE)
 end
 -- Add FIRE Dragon from Deck target
-function s.battletg(e, tp, eg, ep, ev, re, r, rp, chk)
+function s.battletg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk == 0 then
-        return Duel.IsExistingMatchingCard(s.battlefilter, tp, LOCATION_DECK, 0, 1, nil)
+        return Duel.IsExistingMatchingCard(s.battlefilter,tp,LOCATION_DECK,0,1,nil)
     end
-    Duel.SetOperationInfo(0, CATEGORY_TOHAND, nil, 1, tp, LOCATION_DECK)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 -- Add FIRE Dragon from Deck operation
-function s.battleop(e, tp, eg, ep, ev, re, r, rp)
-    Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_ATOHAND)
-    local g = Duel.SelectMatchingCard(tp, s.battlefilter, tp, LOCATION_DECK, 0, 1, 1, nil)
+function s.battleop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g = Duel.SelectMatchingCard(tp,s.battlefilter,tp,LOCATION_DECK,0,1,1,nil)
     if #g > 0 then
-        Duel.SendtoHand(g, nil, REASON_EFFECT)
-        Duel.ConfirmCards(1 - tp, g)
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end
 -- Filter for FIRE Dragon monsters in the Deck

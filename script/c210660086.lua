@@ -116,7 +116,7 @@ function s.retop(e,tp,eg,ep,ev,re,r,rp)
 end
 -- (4) Gain counters when monster(s) are destroyed by a card effect
 function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
-    return re and re:GetHandler():IsType(TYPE_MONSTER) and eg:IsExists(function(c) return c:IsPreviousLocation(LOCATION_MZONE) end,1,nil)
+    return re and re:GetHandler():IsType(TYPE_MONSTER) and eg:IsExists(function(c) return c:IsType(TYPE_MONSTER) end,1,nil)
 end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()

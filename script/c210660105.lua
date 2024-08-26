@@ -62,7 +62,7 @@ function s.val(e,c)
 end
 --e2
 function s.relcon(c)
-	if c:IsLevelAbove()>=7 then return true
+	if c:GetPreviousLevelOnField()>=7 then return true 
 end
 function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end

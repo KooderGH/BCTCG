@@ -61,8 +61,8 @@ function s.val(e,c)
 	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_SPELLCASTER),c:GetControler(),LOCATION_MZONE,0,c)*1
 end
 --e2
-function s.relcon(c)
-	if c:GetPreviousLevelOnField()>=7 then return true end
+function s.relcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():GetPreviousLevelOnField()>=7
 end
 function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end

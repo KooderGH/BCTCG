@@ -59,7 +59,6 @@ function s.ntcon(e,c,minc)
 end
 --e2
 function s.spcond(e,tp,eg,ep,ev,re,r,rp)
-	Debug.Message(e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE))
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE)
 end
 function s.spfilter(c,e,tp)
@@ -68,7 +67,6 @@ end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
 	local mg=e:GetHandler():GetMaterial()
-	Debug.Message(e:GetHandler():GetMaterial())
 	if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then ft=1 end
 	if chk==0 then
 		return ft>0 and ft>=mg:FilterCount(s.spfilter,nil,e,tp)

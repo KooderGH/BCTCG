@@ -20,6 +20,7 @@ function s.initial_effect(c)
     c:SetCounterLimit(COUNTER_FW, 6)
     -- (1) Normal Summon without tributing if you control a Dragon monster
     local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,4))
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_SUMMON_PROC)
     e1:SetCondition(s.ntcon)

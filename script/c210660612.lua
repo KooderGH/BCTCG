@@ -83,7 +83,7 @@ end
 --E1
 function s.spcon(e,c)
 	if c==nil then return true end
-	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)>0 and
+	return Duel.GetLocationCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)>0 and
 		Duel.IsExistingMatchingCard(Card.IsLevelAbove,c:GetControler(),LOCATION_HAND,0,1,c,7)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)

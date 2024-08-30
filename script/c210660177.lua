@@ -3,7 +3,7 @@
 --Effect
 -- (1) You can reveal this card in your hand; Draw 2 cards, then, destroy this card and 1 level 8 monster in your hand. If you cannot, banish your hand face-down. You can only use this effect of "Dioramos" once per turn.
 -- (2) When this card is Tribute Summoned: Gain the following effect: 
---- After damage calculation, when this card battles an opponent's monster: You can banish that monster, also banish this card.
+-- After damage calculation, when this card battles an opponent's monster: You can banish that monster, also banish this card.
 -- (3) Cannot be destroyed by battle.
 -- (4) If this card is destroyed except by its own effect: Banish this card from your GY and target 1 card your opponent controls; banish that target.
 local s,id=GetID()
@@ -41,9 +41,10 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e4:SetCode(EVENT_DESTROYED)
 	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e4:SetCondition(s.spcon)
-	e4:SetTarget(s.sptg)
-	e4:SetOperation(s.spop)
+	e4:SetCondition(s.removecon)
+	e4:SetCost(aux.bfgcost)
+	e4:SetTarget(s.removetg)
+	e4:SetOperation(s.removeop)
 	c:RegisterEffect(e4)
 end
 --e1
@@ -116,4 +117,21 @@ function s.boperation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Group.FromCards(a,d)
 	local rg=g:Filter(Card.IsRelateToBattle,nil)
 	Duel.Remove(rg,POS_FACEUP,REASON_EFFECT)
+end
+--e4
+function s.removecon(e,tp,eg,ep,ev,re,r,rp)
+	return re~=e:GetLabelObject()
+end
+ function s.removetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) and chkc:IsAbleToRemove() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+end
+function s.removeop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
+	end
 end

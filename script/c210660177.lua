@@ -3,9 +3,9 @@
 --Effect
 -- (1) You can reveal this card in your hand; Draw 2 cards, then, destroy this card and 1 level 8 monster in your hand. If you cannot, banish your hand face-down. You can only use this effect of "Dioramos" once per turn.
 -- (2) When this card is Tribute Summoned: Gain the following effect: 
--- After damage calculation, when this card battles an opponent's monster: You can banish that monster, also banish this card.
+--- After damage calculation, when this card battles an opponent's monster: You can banish that monster, also banish this card.
 -- (3) Cannot be destroyed by battle.
--- (4) If this card is destroyed except by its own effect: You can banish this card from your GY and target 1 card your opponent controls; Draw 2 cards then destroy 1 card in your hand, then banish that target.
+-- (4) If this card is destroyed except by its own effect: Banish this card from your GY and target 1 card your opponent controls; banish that target.
 local s,id=GetID()
 function s.initial_effect(c)
     --Darkness on crack(1)
@@ -34,7 +34,17 @@ function s.initial_effect(c)
 	e3:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e3:SetValue(1)
 	c:RegisterEffect(e3)
-    --(4) banish this card from your GY and target 1 card your opponent controls; Draw 2 cards then destroy 1 card in your hand, then banish that target.
+    --(4) banish this card from your GY and target 1 card your opponent controls; banish that target.
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
+	e4:SetCategory(CATEGORY_REMOVE)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetCode(EVENT_DESTROYED)
+	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e4:SetCondition(s.spcon)
+	e4:SetTarget(s.sptg)
+	e4:SetOperation(s.spop)
+	c:RegisterEffect(e4)
 end
 --e1
 function s.filter(c)

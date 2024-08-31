@@ -73,10 +73,9 @@ function s.ropp(e,tp,eg,ep,ev,re,r,rp)
 	Duel.BreakEffect()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectMatchingCard(p,s.filter,p,LOCATION_HAND,0,1,1,nil)
-	local tg=g:GetFirst()
-	if tg then
-        Duel.Destroy(c,REASON_EFFECT)
-		if Duel.Destroy(tg,POS_FACEUP,REASON_EFFECT)==0 then
+	if c:IsRelateToEffect(e) then g:AddCard(c) end
+	if #g==2 then
+		if Duel.Destroy(g,POS_FACEUP,REASON_EFFECT)==0 then
 			Duel.ConfirmCards(1-p,tg)
 			Duel.ShuffleHand(p)
 		end
@@ -120,7 +119,7 @@ function s.boperation(e,tp,eg,ep,ev,re,r,rp)
 end
 --e4
 function s.removecon(e,tp,eg,ep,ev,re,r,rp)
-	return re~=e:GetLabelObject()
+	return re:GetHandler()~=e:GetHandler()
 end
  function s.removetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) and chkc:IsAbleToRemove() end

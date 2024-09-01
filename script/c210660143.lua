@@ -57,7 +57,7 @@ function s.initial_effect(c)
 	e5:SetValue(s.repval)
 	e5:SetOperation(s.repop)
 	e5:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
-	c:RegisterEffect(e1)
+	c:RegisterEffect(e5)
 end
 --e1
 function s.btarget(e,tp,eg,ep,ev,re,r,rp,chk)

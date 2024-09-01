@@ -75,8 +75,7 @@ function s.ropp(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(p,s.filter,p,LOCATION_HAND,0,1,1,nil)
 	if c:IsRelateToEffect(e) then g:AddCard(c) end
 	if #g==2 then
-		if Duel.Destroy(g,POS_FACEUP,REASON_EFFECT)==0 then
-			Duel.ConfirmCards(1-p,tg)
+		if Duel.Destroy(g,REASON_EFFECT)==0 then
 			Duel.ShuffleHand(p)
 		end
 	else

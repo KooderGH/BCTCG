@@ -92,8 +92,9 @@ function s.descon(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_GRAVE,0,nil,TYPE_MONSTER)
     if g:IsExists(function(c) return not c:IsAttribute(ATTRIBUTE_FIRE) end,1,nil) then
         return false
+    else
+        return true
     end
-    return true
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingTarget(Card.IsDestructable,tp,0,LOCATION_MZONE,1,nil) end

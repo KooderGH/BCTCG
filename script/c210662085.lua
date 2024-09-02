@@ -25,7 +25,7 @@ function s.initial_effect(c)
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_DISABLE)
-    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e3:SetCode(EVENT_ATTACK_ANNOUNCE)
     e3:SetCondition(s.knockbackcon)
     e3:SetTarget(s.knockbacktg)
@@ -67,7 +67,7 @@ end
 function s.knockbackop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tc=e:GetHandler():GetBattleTarget()
-    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and Duel.TossCoin(tp,1)==COIN_HEADS and not tc:IsImmuneToEffect(e) then
+    if tc:IsRelateToBattle() and tc and tc:IsFaceup() and not tc:IsImmuneToEffect(e) then
         local e1=Effect.CreateEffect(c)
         e1:SetDescription(3206)
         e1:SetType(EFFECT_TYPE_SINGLE)

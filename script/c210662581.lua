@@ -2,15 +2,15 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	--When opponent's monster declares an attack, change all of their monsters to face-up attack position
-	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_POSITION)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.activate)
-	c:RegisterEffect(e1)
+    --When opponent's monster declares an attack, change your monsters to face-up attack position
+    local e1=Effect.CreateEffect(c)
+    e1:SetCategory(CATEGORY_POSITION)
+    e1:SetType(EFFECT_TYPE_ACTIVATE)
+    e1:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e1:SetCondition(s.condition)
+    e1:SetTarget(s.target)
+    e1:SetOperation(s.activate)
+    c:RegisterEffect(e1)
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return tp~=Duel.GetTurnPlayer()
@@ -19,12 +19,12 @@ function s.filter(c)
 	return c:IsCanTurnSet()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,0,LOCATION_MZONE,1,nil) end
-	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE,nil)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) end
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)
 	Duel.SetOperationInfo(0,CATEGORY_POSITION,g,#g,0,0)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE,nil)
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)
 	if Duel.ChangePosition(g,POS_FACEUP_ATTACK)~=0 then
 		local og=Duel.GetOperatedGroup()
 		local tc=og:GetFirst()

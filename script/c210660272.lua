@@ -8,7 +8,7 @@ function s.initial_effect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetCode(EFFECT_SPSUMMON_CONDITION)
     c:RegisterEffect(e1)
-    --Discard this card and one other FIRE Warrior monster to draw 2 cards
+    --Discard this card and one other Creator God monster to draw 4 cards. then discard 1 card.
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_HANDES+CATEGORY_DRAW)

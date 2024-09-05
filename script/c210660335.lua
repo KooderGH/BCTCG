@@ -3,7 +3,7 @@
 --Previous effect(1) During your opponent's turn (Quick Effect): You can Tribute this card from your hand or face-up field; neither player can banish cards for the rest of this turn.
 --New effect Scripted by poka-poka
 
-local s, id = GetID()
+local s,id=GetID()
 function s.initial_effect(c)
     -- Effect 1: Send from hand to GY and banish cards sent to GY
     local e1=Effect.CreateEffect(c)

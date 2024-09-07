@@ -59,11 +59,12 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function s.opp(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
     local ec=re:GetHandler()
 	if Duel.NegateActivation(ev) then
 		ec:CancelToGrave()
         Duel.SendtoHand(ec,nil,2,REASON_EFFECT)
-		local e1=Effect.CreateEffect(ec)
+		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_FIELD)
 		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 		e1:SetCode(EFFECT_CANNOT_ACTIVATE)

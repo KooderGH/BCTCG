@@ -30,8 +30,9 @@ function s.initial_effect(c)
 	--(3)
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetCode(EVENT_FREE_CHAIN)
+    e3:SetRange(LOCATION_MZONE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_NO_TURN_RESET)
 	e3:SetCountLimit(1,{id,1})
 	e3:SetTarget(s.lvtarget)
@@ -77,10 +78,10 @@ end
 function s.relop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc and tc:IsRelateToEffect(e) then
-		Duel.Destroy(tc,REASON_EFFECT)
 		local atk=tc:GetAttack()
 		local def=tc:GetDefense()
 		local lpgain=atk+def
+        Duel.Destroy(tc,REASON_EFFECT)
 		Duel.Recover(tp,lpgain,REASON_EFFECT)
 	end
 end

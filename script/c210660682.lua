@@ -29,11 +29,12 @@ function s.initial_effect(c)
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_FIELD)
     e3:SetProperty(EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_IGNORE_RANGE+EFFECT_FLAG_IGNORE_IMMUNE)
-    e3:SetRange(LOCATION_MZONE)
     e3:SetCode(EFFECT_TO_GRAVE_REDIRECT)
-    e3:SetTargetRange(1,1)
-    e3:SetValue(LOCATION_REMOVED)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetTargetRange(0xff,0xff)
+    e3:SetTarget(s.rmtarget)
     e3:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_TRIBUTE) end)
+    e3:SetValue(LOCATION_REMOVED)
     c:RegisterEffect(e3)
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -59,4 +60,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.aclimit(e,re,tp)
     return re:IsActiveType(TYPE_MONSTER)
+end
+function s.rmtarget(e,c)
+    return Duel.IsPlayerCanRemove(e:GetHandlerPlayer(),c)
 end

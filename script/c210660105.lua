@@ -2,7 +2,7 @@
 --Scripted By Gideon
 -- (1) While this card is on the field: For each Spellcaster you control except "Kuu", this card gains 1 level.
 -- (2) If this card is Tributed while Level 7 or higher: Target 1 monster your opponent controls; Destroy it and gain LP equal to that monster's ATK and DEF total.
--- (3) You can target 1 monster you control; Raise that monster's level by 3.
+-- (3) You can target 1 monster you control (Ignition); Raise that monster's level by 3.
 -- (4) You can activate this effect; Until your next standby phase: This card gains 300 ATK/DEF for each level it has.
 -- (5) You can only use each activated effect of "Kuu" once per turn and used only once while it is face-up on the field.
 local s,id=GetID()
@@ -47,15 +47,8 @@ function s.initial_effect(c)
 	e4:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1,{id,2})
-	e4:SetValue(s.value)
-	e4:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_STANDBY+RESET_SELF_TURN,1)
+    e4:SetOperation(s.atkop)
 	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EFFECT_UPDATE_DEFENSE)
-	c:RegisterEffect(e5)
-	local e6=e4:Clone()
-	e6:SetCode(EFFECT_UPDATE_ATTACK)
-	c:RegisterEffect(e6)
 end
 --e1
 function s.val(e,c)
@@ -106,6 +99,18 @@ function s.lvopp(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --e4
+function s.atkop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(s.value)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_STANDBY+RESET_SELF_TURN,1)
+	c:RegisterEffect(e1)
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e2)
+end
 function s.value(e,c)
 	return c:GetLevel()*300
 end

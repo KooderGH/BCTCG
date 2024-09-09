@@ -122,7 +122,7 @@ function s.sdcost2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.sdtg2(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_DECKDES,nil,0,1-tp,5)
+    Duel.SetOperationInfo(0,CATEGORY_DECKDES,nil,0,1-tp,10)
 end
 function s.sdop2(e,tp,eg,ep,ev,re,r,rp)
     Duel.DiscardDeck(1-tp,10,REASON_EFFECT)

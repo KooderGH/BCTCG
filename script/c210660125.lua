@@ -51,14 +51,12 @@ function s.initial_effect(c)
     e5:SetCondition(s.tgcon)
     c:RegisterEffect(e5)
     -- Effect 6: Opponent takes half battle damage involving this card
-    local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_FIELD)
-    e6:SetCode(EFFECT_CHANGE_DAMAGE)
-    e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET + EFFECT_FLAG_DAMAGE_STEP)
-    e6:SetRange(LOCATION_MZONE) 
-    e6:SetTargetRange(0,1) 
-    e6:SetValue(s.val)
-    c:RegisterEffect(e6)
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetCode(EFFECT_CHANGE_BATTLE_DAMAGE)
+	e6:SetRange(LOCATION_MZONE) 
+	e6:SetValue(aux.ChangeBattleDamage(1,HALF_DAMAGE))
+	c:RegisterEffect(e6)
     -- Effect 7: Reduce ATK by 400 for each FIRE Warrior monster you control
     local e7=Effect.CreateEffect(c)
     e7:SetType(EFFECT_TYPE_SINGLE)
@@ -150,14 +148,6 @@ end
 
 function s.tgcon(e)
     return Duel.IsExistingMatchingCard(s.nonfirewarriorfilter, e:GetHandlerPlayer(), LOCATION_MZONE, 0, 1, nil)
-end
--- Effect 6: Opponent takes half battle damage involving this card
-function s.val(e,re,dam,r,rp,rc)
-    if r==REASON_BATTLE then
-        return dam/2
-    else
-        return dam
-    end
 end
 -- Effect 7: Reduce ATK by 400 for each FIRE Warrior monster you control
 function s.atkcon(e)

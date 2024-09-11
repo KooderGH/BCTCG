@@ -63,7 +63,7 @@ end
 -- Effect 2
 -- Gain ATK for each Equip Spell
 function s.atkval(e,c)
-    return Duel.GetMatchingGroupCount(Card.IsType,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil,TYPE_EQUIP)*500
+    return Duel.GetMatchingGroupCount(function(card) return card:IsType(TYPE_SPELL) and card:IsFaceup() end, e:GetHandlerPlayer(), LOCATION_ONFIELD, LOCATION_ONFIELD, nil) * 500
 end
 -- Effect 3
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)

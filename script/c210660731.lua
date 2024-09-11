@@ -3,7 +3,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableReviveLimit()
-	c:EnableCounterPermit(0x11)
+	c:EnableCounterPermit(0x4006)
 	--SP Summon by banishing lvl 12 or more monster from GY
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -67,7 +67,7 @@ function s.initial_effect(c)
 	e8:SetOperation(s.winop)
 	c:RegisterEffect(e8)
 end
-s.counter_place_list={0x11}
+s.counter_place_list={0x4006}
 -- Special Summon
 function s.spfilter(c,tp)
     return c:IsLevelAbove(12) and c:IsAbleToRemoveAsCost()
@@ -102,11 +102,11 @@ function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	c:AddCounter(0x11,1)
+	c:AddCounter(0x4006,1)
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:GetCounter(0x11)==3 then
+	if c:GetCounter(0x4006)==3 then
 		Duel.Win(tp,WIN_REASON_VENNOMINAGA)
 	end
 end

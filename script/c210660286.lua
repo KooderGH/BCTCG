@@ -7,7 +7,7 @@ function s.initial_effect(c)
     -- Effect 1: Special Summon if opponent controls 3 or more Dragon/Spellcaster monsters
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))  
-    e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_DESTROY+CATEGORY_DRAW)
+    e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -15,6 +15,16 @@ function s.initial_effect(c)
     e1:SetCondition(s.spcon1)
     e1:SetOperation(s.spop1)
     c:RegisterEffect(e1)
+    -- If summoned this way, destroy all cards.
+    local e0=Effect.CreateEffect(c)
+	e0:SetDescription(aux.Stringid(id,5))
+	e0:SetCategory(CATEGORY_DESTROY)
+	e0:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e0:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e0:SetCondition(s.descon)
+	e0:SetTarget(s.destg)
+	e0:SetOperation(s.desop)
+	c:RegisterEffect(e0)
     -- Effect 2: Special Summon by discarding 2 cards
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))  
@@ -70,7 +80,6 @@ function s.initial_effect(c)
     e7:SetOperation(s.atkop)
     c:RegisterEffect(e7)
 end
-
 -- Effect 1 condition: Opponent controls 3 or more Dragon/Spellcaster monsters
 function s.spcon1(e,c)
     if c==nil then return true end
@@ -80,20 +89,29 @@ end
 function s.dragon_spellcaster_filter(c)
     return c:IsRace(RACE_DRAGON+RACE_SPELLCASTER)
 end
--- Effect 1 operation: Destroy opponent's monsters and draw cards
+-- Effect 1 operation: SS
 function s.spop1(e,tp,eg,ep,ev,re,r,rp,c)
-    local c=e:GetHandler()
-    -- Special Summon the card
-    if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
-        -- After Special Summon, destroy all face-up opponent monsters
-        local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
-        local ct=Duel.Destroy(g,REASON_EFFECT)
-        -- Draw cards equal to the number of monsters destroyed
-        if ct>0 then
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
+	end
+end
+-- Effect 1 Check if ss this way and if true, do rest of effect (destroy, draw, prevent damage)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
+end
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+    local ct=Duel.Destroy(sg,REASON_EFFECT)
+            if ct>0 then
             Duel.BreakEffect()
             Duel.Draw(1-tp,ct,REASON_EFFECT)
         end
-        -- Prevent damage for the rest of the turn
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_FIELD)
         e1:SetCode(EFFECT_CHANGE_DAMAGE)
@@ -106,7 +124,6 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp,c)
         e2:SetCode(EFFECT_NO_EFFECT_DAMAGE)
         e2:SetReset(RESET_PHASE+PHASE_END)
         Duel.RegisterEffect(e2,tp)
-    end
 end
 -- Effect 2 condition: Discard 2 cards to Special Summon
 function s.spcon2(e,c)
@@ -194,12 +211,12 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
         e2:SetCode(EVENT_PHASE+PHASE_END)
         e2:SetCountLimit(1)
-        e2:SetOperation(s.desop)
+        e2:SetOperation(s.desop2)
         e2:SetReset(RESET_PHASE+PHASE_END)
         Duel.RegisterEffect(e2,tp)
     end
 end
 -- Destroy during end phase
-function s.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop2(e,tp,eg,ep,ev,re,r,rp)
     Duel.Destroy(e:GetHandler(),REASON_EFFECT)
 end

@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 	-- Effect 5 : Add DARK fiend from Deck when destroyed by battle
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,3))
+    e5:SetDescription(aux.Stringid(id,0))
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
     e5:SetCode(EVENT_DESTROYED)
     e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)

@@ -117,7 +117,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
-    Duel.Destroy(
+    Duel.Destroy(sg,REASON_EFFECT)
     local ct=Duel.Destroy(sg,REASON_EFFECT)
             if ct>0 then
             Duel.BreakEffect()

@@ -17,7 +17,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e1)
     -- If summoned this way, destroy all cards.
     local e0=Effect.CreateEffect(c)
-	e0:SetDescription(aux.Stringid(id,5))
+	e0:SetDescription(aux.Stringid(id,1))
 	e0:SetCategory(CATEGORY_DESTROY)
 	e0:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e0:SetCode(EVENT_SPSUMMON_SUCCESS)
@@ -27,7 +27,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e0)
     -- Effect 2: Special Summon by discarding 2 cards
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,1))  
+    e2:SetDescription(aux.Stringid(id,2))  
     e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOHAND)
     e2:SetType(EFFECT_TYPE_FIELD)
     e2:SetCode(EFFECT_SPSUMMON_PROC)
@@ -35,8 +35,18 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_HAND)
 	e2:SetCountLimit(1,id)
     e2:SetCondition(s.spcon2)
+    e2:SetTarget(s.sptg2)
     e2:SetOperation(s.spop2)
     c:RegisterEffect(e2)
+    local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,3))
+	e3:SetCategory(CATEGORY_TOHAND)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e3:SetCondition(s.recovcon)
+	e3:SetTarget(s.recovtg)
+	e3:SetOperation(s.recovop)
+	c:RegisterEffect(e3)
     -- Effect 4: Controller Effect Damage becomes LP gain
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_FIELD)
@@ -48,7 +58,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
     -- Effect 5: Add 1 card from GY if you control 3 or more Machine monsters
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,2))
+    e5:SetDescription(aux.Stringid(id,4))
     e5:SetCategory(CATEGORY_TOHAND)
     e5:SetType(EFFECT_TYPE_IGNITION)
     e5:SetRange(LOCATION_MZONE)
@@ -59,7 +69,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e5)
     -- Effect 6: Send 1 monster from Deck to GY, then draw 1 card if you control 3 or more Warrior monsters
     local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,3))
+    e6:SetDescription(aux.Stringid(id,5))
     e6:SetCategory(CATEGORY_TOGRAVE+CATEGORY_DRAW)
     e6:SetType(EFFECT_TYPE_IGNITION)
     e6:SetRange(LOCATION_MZONE)
@@ -70,7 +80,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e6)
     -- Effect 7: During damage calculation, ATK becomes 5000
     local e7=Effect.CreateEffect(c)
-    e7:SetDescription(aux.Stringid(id,4))
+    e7:SetDescription(aux.Stringid(id,6))
     e7:SetType(EFFECT_TYPE_QUICK_O)
 	e7:SetRange(LOCATION_MZONE)
     e7:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
@@ -133,20 +143,39 @@ function s.spcon2(e,c)
 	return aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0,c)
 end
 -- Effect 2 operation: Discard and add 1 card from GY to hand
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
+	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_DISCARD,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
+end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectMatchingCard(tp,s.discardfilter,tp,LOCATION_HAND,0,2,2,c)
-    if #g==2 then
-        Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
-        Duel.BreakEffect()
-        if Duel.SpecialSummon(c,SUMMON_TYPE_SPECIAL,tp,tp,false,false,POS_FACEUP)~=0 then
-            Duel.BreakEffect()
-            local tg=Duel.SelectMatchingCard(tp,Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,1,nil)
-            if #tg>0 then
-                Duel.SendtoHand(tg,nil,REASON_EFFECT)
-                Duel.ConfirmCards(1-tp,tg)
-            end
-        end
-    end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
+	end
+end
+--If Summoned this way, Add to hand.
+function s.recovcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+2
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:GetLocation()==LOCATION_GRAVE and chkc:GetControler()==tp and chkc:IsAbleToHand() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
+	local sg=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,sg,#sg,0,0)
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.SendtoHand(tc,nil,0,REASON_EFFECT)
+	end
 end
 -- Effect 4 : Filter effect damage
 function s.rev(e,re,r,rp,rc)

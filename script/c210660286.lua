@@ -142,7 +142,6 @@ function s.spcon2(e,c)
 	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
 	return aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0,c)
 end
--- Effect 2 operation: Discard and add 1 card from GY to hand
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
 	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
@@ -154,6 +153,7 @@ function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
 	end
 	return false
 end
+-- Effect 2 operation:
 function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
@@ -164,14 +164,14 @@ end
 function s.recovcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+2
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.recovtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:GetLocation()==LOCATION_GRAVE and chkc:GetControler()==tp and chkc:IsAbleToHand() end
 	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
 	local sg=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,sg,#sg,0,0)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.recovop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc and tc:IsRelateToEffect(e) then
 		Duel.SendtoHand(tc,nil,0,REASON_EFFECT)

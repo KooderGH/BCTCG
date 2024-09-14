@@ -34,7 +34,7 @@ function s.initial_effect(c)
     e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e2:SetRange(LOCATION_HAND)
 	e2:SetCountLimit(1,id)
-    e2:SetCondition(s.spcon2)
+    e2:SetCost(s.spcost2)
     e2:SetTarget(s.sptg2)
     e2:SetOperation(s.spop2)
     c:RegisterEffect(e2)
@@ -137,29 +137,22 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
         Duel.RegisterEffect(e2,tp)
 end
 -- Effect 2 condition: Discard 2 cards to Special Summon
-function s.spcon2(e,c)
-	if c==nil then return true end
-	local tp=c:GetControler()
-	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
-	return aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0,c)
+function s.cfilter(c)
+	return c:IsDiscardable() and c:IsAbleToGraveAsCost()
 end
-function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-	local rg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,e:GetHandler())
-	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,HINTMSG_DISCARD,nil,nil,true)
-	if #g>0 then
-		g:KeepAlive()
-		e:SetLabelObject(g)
-		return true
-	end
-	return false
+function s.spcost2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,2,e:GetHandler()) end
+	Duel.DiscardHand(tp,s.cfilter,2,2,REASON_COST+REASON_DISCARD,e:GetHandler())
 end
--- Effect 2 operation:
-function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=e:GetLabelObject()
-	if not g then return end
-	Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
-	g:DeleteGroup()
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
 end
 --If Summoned this way, Add to hand.
 function s.recovcon(e,tp,eg,ep,ev,re,r,rp)

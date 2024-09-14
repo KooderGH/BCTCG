@@ -1,5 +1,5 @@
 --Strike Unit R.E.I.
---Scripted by poka-poka
+--Scripted by poka-poka and fixed by Gideon
 local s,id=GetID()
 function s.initial_effect(c)
     -- Effect 3: Only control 1 "Strike Unit R.E.I."
@@ -117,6 +117,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+    Duel.Destroy(
     local ct=Duel.Destroy(sg,REASON_EFFECT)
             if ct>0 then
             Duel.BreakEffect()
@@ -155,10 +156,10 @@ function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
 end
 -- Effect 2 operation:
 function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
-	end
+	local g=e:GetLabelObject()
+	if not g then return end
+	Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
+	g:DeleteGroup()
 end
 --If Summoned this way, Add to hand.
 function s.recovcon(e,tp,eg,ep,ev,re,r,rp)

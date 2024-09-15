@@ -125,7 +125,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 end
 --Sp summon Filter
 function s.thfilter(c,e,tp)
-	return c:IsRace(RACE_FIEND) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)--need to put Nekoluga id here
+	return c:IsRace(RACE_FIEND) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(210660034)--need to put Nekoluga id here
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

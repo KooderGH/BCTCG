@@ -93,7 +93,6 @@ end
 function s.aclimit(e,re,tp)
     return re:GetHandler():IsCode(e:GetLabel())
 end
-
 -- (2) Draw 1 card
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
@@ -102,10 +101,9 @@ end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Draw(tp,1,REASON_EFFECT)
 end
-
 -- (3) Special Summon
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsPreviousLocation(LOCATION_DECK+LOCATION_GRAVE) and not e:GetHandler():IsReason(REASON_DRAW)
+    return e:GetHandler():IsLocation(LOCATION_HAND) and not e:GetHandler():IsReason(REASON_DRAW)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

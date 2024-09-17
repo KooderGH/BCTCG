@@ -82,9 +82,9 @@ end
 
 -- Effect 1: Discard 2 cost and draw 2 cards
 function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return e:GetHandler():IsDiscardable() and Duel.IsExistingMatchingCard(Card.IsAttribute,tp,LOCATION_HAND,0,1,e:GetHandler(),ATTRIBUTE_FIRE) end
+    if chk==0 then return e:GetHandler():IsDiscardable() and Duel.IsExistingMatchingCard(function(c) return c:IsRace(RACE_WARRIOR) and c:IsAttribute(ATTRIBUTE_FIRE) end,tp,LOCATION_HAND,0,1,e:GetHandler()) end
     Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
-    Duel.DiscardHand(tp,Card.IsAttribute,1,1,REASON_COST+REASON_DISCARD,e:GetHandler(),ATTRIBUTE_FIRE)
+    Duel.DiscardHand(tp,function(c) return c:IsRace(RACE_WARRIOR) and c:IsAttribute(ATTRIBUTE_FIRE) end,1,1,REASON_COST+REASON_DISCARD,e:GetHandler())
 end
 function s.drawtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsPlayerCanDraw(tp,2) end

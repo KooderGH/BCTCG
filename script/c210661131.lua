@@ -2,7 +2,10 @@
 --Scripted by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsLevelBelow,4),1,1)
+	function s.lcheck(g,lc)
+		return g:FilterCount(Card.IsLevelBelow,nil,4) == g:GetCount()
+	end
+	Link.AddProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),1,1,s.lcheck)
 	c:EnableReviveLimit()
     -- Effect 1: Draw 1 card on Link Summon
     local e1=Effect.CreateEffect(c)

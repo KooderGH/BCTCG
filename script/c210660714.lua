@@ -1,4 +1,3 @@
---By Tungnon
 --Deep-Diver Kanna
 --Scripted by senorpizza E1 - poka-poka E 2-5 
 --You can target 1 LIGHT or DARK monster in either GY; banish it, and if you do, Special Summon this card from your hand. This is a Quick Effect if your opponent controls a monster. You can only activate this effect of "Deep-Diver Kanna" once per turn.
@@ -29,7 +28,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	-- Ignition effect to destroy and draw
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id, 1))
+    e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_DESTROY + CATEGORY_DRAW)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
@@ -40,7 +39,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
     -- Gain ATK against WIND monsters
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
+	e4:SetDescription(aux.Stringid(id,2))
 	e4:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
 	e4:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
 	e4:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
@@ -49,7 +48,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
     -- Add cards to hand if destroyed by battle
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,2))
+    e5:SetDescription(aux.Stringid(id,3))
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetCode(EVENT_DESTROYED)
     e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
@@ -59,7 +58,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e5)
     -- Draw a card if destroyed by card effect
     local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id, 3))
+    e6:SetDescription(aux.Stringid(id,4))
     e6:SetCategory(CATEGORY_DRAW)
     e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e6:SetCode(EVENT_DESTROYED)

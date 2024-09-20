@@ -2,6 +2,8 @@
 --Scripted by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsLevelBelow,4),1,1)
+	c:EnableReviveLimit()
     -- Effect 1: Draw 1 card on Link Summon
     local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -51,33 +53,42 @@ function s.drawop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --E2
-function s.tributecost(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.CheckReleaseGroup(tp,Card.IsLevelAbove,1,nil,5)
-end
 function s.tributecon(e)
     local tp = e:GetHandlerPlayer()
     return Duel.IsExistingMatchingCard(Card.IsLevelAbove,tp,LOCATION_MZONE,0,1,nil,5) and
            Duel.IsExistingMatchingCard(Card.IsLevelBelow,tp,LOCATION_GRAVE,0,1,nil,4)
 end
+-- Tribute Cost: Check and release 1 monster with Level 5 or higher
+function s.tributecost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.CheckReleaseGroup(tp,Card.IsLevelAbove,1,nil,5) end
+    local g=Duel.SelectReleaseGroup(tp,Card.IsLevelAbove,1,1,nil,5)
+    Duel.Release(g,REASON_COST)
+end
+
+-- Special Summon Filter
 function s.filter(c,e,tp,zone)
-	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
+    return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
+-- Target Function: Check if we can special summon a Level 4 or lower monster
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	local zone=e:GetHandler():GetLinkedZone(tp)
-	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc,e,tp,zone) end
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp,zone) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
+    local zone=e:GetHandler():GetLinkedZone(tp)
+    if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc,e,tp,zone) end
+    if chk==0 then 
+        return Duel.GetLocationCount(tp,LOCATION_MZONE,tp,LOCATION_REASON_TOFIELD,zone)>0
+            and Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp,zone) 
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
 end
+-- Special Summon Operation
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local zone=c:GetLinkedZone(tp)
-	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) then 
-		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
-	end
+    local c=e:GetHandler()
+    local zone=c:GetLinkedZone(tp)
+    local tc=Duel.GetFirstTarget()
+    if tc and tc:IsRelateToEffect(e) then
+        Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
+    end
 end
 --E3
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)

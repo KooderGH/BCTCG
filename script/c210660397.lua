@@ -75,9 +75,12 @@ function s.coin_operation(e,tp,eg,ep,ev,re,r,rp)
 end
 -- Effect 2 Functions
 function s.discard_condition(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)>=2 and
-           Duel.GetFieldGroupCount(tp,0,LOCATION_HAND+LOCATION_ONFIELD) >
-           Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
+    local phase=Duel.GetCurrentPhase()
+    return (Duel.IsMainPhase() and tp==Duel.GetTurnPlayer()) -- Main Phase
+        or (Duel.IsBattlePhase() and tp~=Duel.GetTurnPlayer()) -- Opponent's Battle Phase
+        and Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)>=2
+        and Duel.GetFieldGroupCount(tp,0,LOCATION_HAND+LOCATION_ONFIELD) >
+        Duel.GetFieldGroupCount(tp,LOCATION_HAND+LOCATION_ONFIELD,0)
 end
 function s.discard_cost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)>=2 end

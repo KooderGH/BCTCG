@@ -88,7 +88,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 -- Unafected other effect Filter
 function s.efilter(e,te)
-	return te:GetOwner()~=e:GetOwner()
+    return te:GetHandler()~=e:GetHandler()
 end
 -- Update Attack
 function s.atkval(e,c)

@@ -27,13 +27,18 @@ function s.initial_effect(c)
     e2:SetOperation(s.reop)
     c:RegisterEffect(e2)
     --disable spsummon (3)
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_FIELD)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-    e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e3:SetTargetRange(1,1)
-    c:RegisterEffect(e3)
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e3:SetTargetRange(1,1)
+	e3:SetCondition(s.dspcon1)
+	c:RegisterEffect(e3)
+	local e7=e3:Clone()
+	e7:SetTargetRange(1,0)
+	e7:SetCondition(s.dspcon2)
+	c:RegisterEffect(e7)
     --self banish (4)
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -78,6 +83,15 @@ function s.reop(e,tp,eg,ep,ev,re,r,rp)
     if tc and tc:IsRelateToEffect(e) then
         Duel.SendtoHand(tc,nil,REASON_EFFECT)
     end
+end
+--e3
+function s.dspcon1(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)< 3
+end
+function s.dspcon2(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)>=3
 end
 --e4
 function s.sdfilter(c)

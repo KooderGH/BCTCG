@@ -61,6 +61,7 @@ function s.initial_effect(c)
 	e6:SetCode(EVENT_PHASE+PHASE_END)
 	e6:SetRange(LOCATION_GRAVE)
 	e6:SetCountLimit(1)
+	e6:SetCondition(s.sscon)
 	e6:SetTarget(s.sstg)
 	e6:SetOperation(s.ssop)
 	c:RegisterEffect(e6)
@@ -143,13 +144,17 @@ function s.regop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,0)
 	end
 end
-function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return true end
+function s.sscon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:GetFlagEffect(id)>0
+end
+function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
 function s.ssop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
-	Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP_DEFENSE)
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
 	end
 end

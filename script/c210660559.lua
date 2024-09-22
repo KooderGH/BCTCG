@@ -134,7 +134,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
     for tc in aux.Next(g) do
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_SET_ATTACK_FINAL)
+        e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
         e1:SetValue(tc:GetAttack()*2)
         tc:RegisterEffect(e1)

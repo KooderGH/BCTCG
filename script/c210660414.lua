@@ -1,11 +1,12 @@
 --Eva Unit-02
---Scripted by Gideon
+--Scripted by Gideon fixed by konstak and poka-poka
 -- (1) You can Special Summon this card from your hand or GY by banishing 3 cards from your GY. If you summon this card this way; banish it when it leaves the field. (HOPT)
 -- (2) When this card is Summoned; Gain 1 Guard Counter(s). 
 -- (3) If this card would be destroyed; Remove 1 Guard Counter instead. Gain's 500 attack for each counter removed this way.
 -- (4) At the End Phase after this card attacks; Destroy all monsters on the field, except this card.
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableCounterPermit(0x1021)
 local e1=Effect.CreateEffect(c)
     --SS from hand or GY
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -41,13 +42,6 @@ local e1=Effect.CreateEffect(c)
     e5:SetTarget(s.reptg)
     c:RegisterEffect(e5)
     --Attack up
-    local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_SINGLE)
-    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e6:SetRange(LOCATION_MZONE)
-    e6:SetCode(EFFECT_UPDATE_ATTACK)
-    e6:SetValue(s.attackup)
-    c:RegisterEffect(e6)
     --destroy
     local e7=Effect.CreateEffect(c)
     e7:SetDescription(aux.Stringid(id,1))
@@ -100,27 +94,37 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	end
 end
 --e2
-s.counter_place_list={0x1021}
 function s.addct(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
+	if chk==0 then return e:GetHandler():GetFlagEffect(id)==0 end
 	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,0x1021)
 end
 function s.addc(e,tp,eg,ep,ev,re,r,rp)
-	if e:GetHandler():IsRelateToEffect(e) then
-		e:GetHandler():AddCounter(0x1021+COUNTER_NEED_ENABLE,1)
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) and c:GetFlagEffect(id)==0 then
+		c:AddCounter(0x1021,1)
+		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 	end
 end
---e5
+-- e5
 function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return not c:IsReason(REASON_REPLACE) and c:IsReason(REASON_EFFECT)
+	if chk==0 then return not c:IsReason(REASON_REPLACE) 
+		and c:IsReason(REASON_BATTLE+REASON_EFFECT) 
 		and c:IsCanRemoveCounter(tp,0x1021,1,REASON_COST) end
-	c:RemoveCounter(tp,0x1021,1,REASON_EFFECT)
-	return true
+	if c:RemoveCounter(tp,0x1021,1,REASON_COST) then
+		s.attackup(c)
+		return true
+	else
+		return false
+	end
 end
---e6
-function s.attackup(e,c)
-	return c:GetCounter(0x1021)==0 and 500 or 0
+-- e6
+function s.attackup(c)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(500)
+	c:RegisterEffect(e1)
 end
 --e7
 function s.descon(e,tp,eg,ep,ev,re,r,rp)

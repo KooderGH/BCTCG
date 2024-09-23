@@ -22,21 +22,14 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e3)
 	--Removed from field remove counter instead
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetCode(EFFECT_DESTROY_REPLACE)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetTarget(s.reptg)
-	c:RegisterEffect(e4)
-	--Attack up
-	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_SINGLE)
-	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetCode(EFFECT_UPDATE_ATTACK)
-	e5:SetValue(s.attackup)
-	c:RegisterEffect(e5)
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e5:SetCode(EFFECT_DESTROY_REPLACE)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetTarget(s.reptg)
+    c:RegisterEffect(e5)
+    --Attack up
 	--SS from GY
 	local e6=Effect.CreateEffect(c)
 	e6:SetDescription(aux.Stringid(id,1))
@@ -61,19 +54,28 @@ function s.addc(e,tp,eg,ep,ev,re,r,rp)
 		e:GetHandler():AddCounter(0x1021+COUNTER_NEED_ENABLE,1)
 	end
 end
---e4
+-- e4
 function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return not c:IsReason(REASON_REPLACE) and c:IsReason(REASON_EFFECT)
+	if chk==0 then return not c:IsReason(REASON_REPLACE) 
+		and c:IsReason(REASON_BATTLE+REASON_EFFECT) 
 		and c:IsCanRemoveCounter(tp,0x1021,1,REASON_COST) end
-	c:RemoveCounter(tp,0x1021,1,REASON_EFFECT)
-	return true
+	if c:RemoveCounter(tp,0x1021,1,REASON_COST) then
+		s.attackup(c)
+		return true
+	else
+		return false
+	end
 end
---e5
-function s.attackup(e,c)
-	return c:GetCounter(0x1021)==0 and 600 or 0
+-- e5
+function s.attackup(c)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(500)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)
+	c:RegisterEffect(e1)
 end
---e6
 function s.filter(c,e,tp)
 	return c:IsRace(RACE_FIEND) and c:IsType(TYPE_MONSTER) and c:IsLevelBelow(3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end

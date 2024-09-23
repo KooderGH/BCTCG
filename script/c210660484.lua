@@ -58,7 +58,7 @@ function s.spfilter(c)
 	return c:IsAttribute(ATTRIBUTE_DARK)
 end
 function s.spcon(e,c)
-	if c==nil and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 then return true end
+	if c==nil then return true end
 	local tp=c:GetControler()
 	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_GRAVE,0,nil)
 	return aux.SelectUnselectGroup(rg,e,tp,3,3,s.rescon,0) 

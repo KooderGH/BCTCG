@@ -93,7 +93,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --e2
 function s.atktarget(e,c)
-	return c:GetLevel()<=6
+	return c:IsLevelBelow(6)
 end
 --e3
 function s.scondition(e,tp,eg,ep,ev,re,r,rp)

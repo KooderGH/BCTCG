@@ -78,6 +78,7 @@ function s.spcon(e,c)
     local code=c:GetCode()
     -- Exclude the card itself that is attempting to be Special Summoned
     return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,1,e:GetHandler(),code)
+		and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     local code=c:GetCode()

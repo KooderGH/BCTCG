@@ -35,16 +35,22 @@ function s.initial_effect(c)
     e3:SetCondition(s.spcon)
     c:RegisterEffect(e3)
     -- Effect 4: Equip and take control during End Phase if destroyed by opponent card
-    local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-	e4:SetCode(EVENT_PHASE+PHASE_END)
-	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e4:SetRange(LOCATION_GRAVE)
-	e4:SetCountLimit(1)
-    e4:SetCondition(s.eqcon)
-    e4:SetTarget(s.eqtg)
-    e4:SetOperation(s.eqop)
-    c:RegisterEffect(e4)
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e4:SetCode(EVENT_TO_GRAVE)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e4:SetOperation(s.tgop)
+	c:RegisterEffect(e4)
+    local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+	e5:SetCode(EVENT_PHASE+PHASE_END)
+	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e5:SetRange(LOCATION_GRAVE)
+	e5:SetCountLimit(1)
+    e5:SetCondition(s.eqcon)
+    e5:SetTarget(s.eqtg)
+    e5:SetOperation(s.eqop)
+    c:RegisterEffect(e5)
 end
 
 -- Condition for Effect 1: No cards in GY
@@ -82,14 +88,20 @@ function s.spcon(e,c)
     return Duel.GetFieldGroupCount(c:GetControler(), LOCATION_MZONE,0)==0
 end
 -- Condition for Effect 4: Sent to GY because destroyed by opponent's card
+function s.tgop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsPreviousControler(tp)
+		and rp~=tp and (r&REASON_DESTROY)~=0 then
+		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
+	end
+end
 function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
-    local c = e:GetHandler()
-    return c:IsReason(REASON_DESTROY) and rp ~= tp and c:IsPreviousLocation(LOCATION_ONFIELD)
+	return e:GetHandler():GetFlagEffect(id)>0
 end
 -- Target for Effect 4: Equip to an opponent's monster
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsLocation(LOCATION_MZONE) and aux.CheckStealEquip(chkc, e, tp) end
-    if chk==0 then return true end
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and aux.CheckStealEquip(chkc,e,tp) end
+	if chk==0 then return true end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONTROL)
 	local g=Duel.SelectTarget(tp,aux.CheckStealEquip,tp,0,LOCATION_MZONE,1,1,nil,e,tp)
 	Duel.SetOperationInfo(0,CATEGORY_CONTROL,g,1,0,0)
@@ -98,27 +110,28 @@ function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 -- Equip limit function
 function s.eqlimit(e,c)
-    return e:GetOwner()==c
+	return e:GetOwner()==c
 end
 -- Operation for Effect 4: Equip this card and take control of target
 function s.eqop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local tc=Duel.GetFirstTarget()
-    if tc and c:IsRelateToEffect(e) and aux.CheckStealEquip(tc, e, tp) and tc:IsRelateToEffect(e) and Duel.Equip(tp, c, tc) then
-        -- Add Equip limit
-        local e1 = Effect.CreateEffect(tc)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_EQUIP_LIMIT)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetReset(RESET_EVENT + RESETS_STANDARD)
-        e1:SetValue(s.eqlimit)
-        c:RegisterEffect(e1)
-        -- Control of equipped monster
-        local e2 = Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_EQUIP)
-        e2:SetCode(EFFECT_SET_CONTROL)
-        e2:SetValue(tp)
-        e2:SetReset(RESET_EVENT + RESETS_STANDARD - RESET_TURN_SET)
-        c:RegisterEffect(e2)
-    end
+	local c=e:GetHandler()
+	local tc=Duel.GetFirstTarget()
+	if tc and c:IsRelateToEffect(e) and aux.CheckStealEquip(tc,e,tp) and tc:IsRelateToEffect(e) and Duel.Equip(tp,c,tc) then
+		--Add Equip limit
+		local e1=Effect.CreateEffect(tc)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_EQUIP_LIMIT)
+		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetValue(s.eqlimit)
+		c:RegisterEffect(e1)
+		--Control of equiped monster
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_EQUIP)
+		e2:SetCode(EFFECT_SET_CONTROL)
+		e2:SetValue(tp)
+		e2:SetReset(RESET_EVENT+RESETS_STANDARD-RESET_TURN_SET)
+		c:RegisterEffect(e2)
+	end
 end
+

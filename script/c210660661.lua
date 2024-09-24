@@ -112,7 +112,7 @@ function s.sdop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e7
 function s.sdfilter2(c)
-    return c:IsSpellTrap() and c:IsAbleToGraveAsCost()
+    return c:IsType(TYPE_TRAP) and c:IsAbleToGraveAsCost()
 end
 function s.sdcost2(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.sdfilter2,tp,LOCATION_DECK,0,3,nil) end

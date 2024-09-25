@@ -69,15 +69,17 @@ function s.spcon1(e,c)
     local tp=c:GetControler()
     return Duel.GetLP(tp) - Duel.GetLP(1-tp) >= 2000
 end
-function s.spop1(e,tp,eg,ep,ev,re,r,rp,c)
-    -- Cannot be Tributed after Special Summon
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetCode(EFFECT_UNRELEASABLE_SUM)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD)
-    e1:SetValue(1)
-    c:RegisterEffect(e1)
+function s.spop1(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
+        -- Cannot be Tributed
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+        e1:SetCode(EFFECT_UNRELEASABLE_SUM)
+        e1:SetValue(1)
+        c:RegisterEffect(e1)
+    end
 end
 -- Special Summon from GY if LP is 7000 or higher (Once per turn)
 function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
@@ -90,15 +92,7 @@ function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
-        -- Cannot be Tributed
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCode(EFFECT_UNRELEASABLE_SUM)
-        e1:SetValue(1)
-        c:RegisterEffect(e1)
-    end
+    Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end
 -- Negate LIGHT monster effects on field or GY
 function s.negtg(e,c)

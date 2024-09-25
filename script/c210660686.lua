@@ -79,15 +79,7 @@ function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
-        -- Cannot be Tributed
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-        e1:SetCode(EFFECT_UNRELEASABLE_SUM)
-        e1:SetValue(1)
-        c:RegisterEffect(e1)
-    end
+    Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end
 -- Negate DARK monster effects on field or GY
 function s.negtg(e,c)

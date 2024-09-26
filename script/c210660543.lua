@@ -96,6 +96,7 @@ function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
 				e3:SetType(EFFECT_TYPE_SINGLE)
 				e3:SetCode(EFFECT_SET_ATTACK_FINAL)
 				e3:SetValue(tc:GetAttack()/2)
+				e3:SetReset(RESET_EVENT+RESETS_STANDARD)
 				tc:RegisterEffect(e3)
 		end
 		if tc:IsType(TYPE_TRAPMONSTER) then

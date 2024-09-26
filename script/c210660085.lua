@@ -65,17 +65,18 @@ function s.initial_effect(c)
     e6:SetValue(function (e,c) return c:IsRace(RACE_DRAGON) end)
     c:RegisterEffect(e6)
 end
-function s.nscon(e,c)
+function s.nscon(e, c)
     if c==nil then return true end
-    local tp=e:GetHandlerPlayer()
-    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsRace,RACE_DRAGON),c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+    local tp=c:GetControler()
+    local hasNonDragonMonster = Duel.IsExistingMatchingCard(function(mc) return not mc:IsRace(RACE_DRAGON) end,tp,LOCATION_MZONE,0,1,nil)
+    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0) == 0 or not hasNonDragonMonster
 end
 --e2
 function s.retg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToHand() end
-    if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,0,LOCATION_ONFIELD,1,nil) end
+    if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsControler(1-tp) and chkc:IsType(TYPE_MONSTER) and chkc:IsAbleToHand() end
+    if chk==0 then return Duel.IsExistingTarget(function(c) return c:IsControler(1-tp) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand() end,tp,0,LOCATION_ONFIELD,1,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
-    local g=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,0,LOCATION_ONFIELD,1,1,nil)
+    local g=Duel.SelectTarget(tp,function(c) return c:IsControler(1-tp) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand() end,tp,0,LOCATION_ONFIELD,1,1,nil)
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
 end
 function s.reop(e,tp,eg,ep,ev,re,r,rp)

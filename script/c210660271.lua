@@ -76,7 +76,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Destroy(g,REASON_EFFECT)
 end
 --e4
-function s.srfilter(c,e,tp)
+function s.spfilter(c,e,tp)
 	return c:IsRace(RACE_CREATORGOD) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)

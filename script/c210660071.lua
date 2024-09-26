@@ -55,10 +55,11 @@ function s.initial_effect(c)
 end
 
 -- Condition for Special Summon
-function s.spcon(e,c)
+function s.spcon(e, c)
     if c==nil then return true end
     local tp=c:GetControler()
-    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)==0 or Duel.IsExistingMatchingCard(Card.IsAttribute,tp,LOCATION_MZONE,0,1,nil,ATTRIBUTE_FIRE)
+    local hasNonFireMonster = Duel.IsExistingMatchingCard(function(mc) return not mc:IsAttribute(ATTRIBUTE_FIRE) end, tp, LOCATION_MZONE, 0, 1, nil)
+    return Duel.GetFieldGroupCount(tp, LOCATION_MZONE, 0) == 0 or not hasNonFireMonster
 end
 -- Operation function to restrict other summons
 function s.spsummon_success(e,tp,eg,ep,ev,re,r,rp)

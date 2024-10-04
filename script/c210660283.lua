@@ -128,9 +128,8 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATTRIBUTE)
 	local rc=Duel.AnnounceAttribute(tp,1,ATTRIBUTE_ALL)
-	local g=Duel.GetMatchingGroup(aux.FaceupFilter(Card.IsAttribute,rc),tp,LOCATION_MZONE,LOCATION_MZONE,nil)
+	local g=Duel.GetMatchingGroup(aux.FaceupFilter(Card.IsAttribute,rc),tp,0,LOCATION_MZONE,nil)
 	Duel.Destroy(g,REASON_EFFECT)
-
 end
 --ss from hand
 function s.ssummoncon(e,c)

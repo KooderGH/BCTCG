@@ -27,7 +27,7 @@ function s.ccon(e)
     local tp=e:GetHandlerPlayer()
     return Duel.GetMatchingGroupCount(s.filter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end
---Atk gain
+--Atk/Def gain
 function s.adval(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*150
 end

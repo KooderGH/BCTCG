@@ -18,14 +18,26 @@ function s.initial_effect(c)
     e2:SetTarget(s.destg)
     e2:SetOperation(s.desop)
     c:RegisterEffect(e2)
-    --LP Drain Ability
+    --Attack Up Ability
     local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
+    e3:SetType(EFFECT_TYPE_FIELD)
     e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EVENT_PHASE+PHASE_END)
-    e3:SetCountLimit(1)
-    e3:SetOperation(s.lpop)
+    e3:SetTargetRange(LOCATION_MZONE,0)
+    e3:SetCode(EFFECT_UPDATE_ATTACK)
+    e3:SetCondition(s.con)
+    e3:SetTarget(s.tg)
+    e3:SetValue(250)
     c:RegisterEffect(e3)
+    --Add Monster
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,2))
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.addtg)
+    e4:SetOperation(s.addop)
+    c:RegisterEffect(e4)
 end
 --Destroy That Target Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -41,9 +53,26 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
         Duel.Destroy(tc,REASON_EFFECT)
     end
 end
---LP Drain Function
-function s.lpop(e,tp,eg,ep,ev,re,r,rp)
-    if e:GetHandler():IsRelateToEffect(e) then
-        Duel.Damage(1-tp,500,REASON_EFFECT)
+--Attack Up function
+function s.con(e)
+	return e:GetHandler():IsAttackPos()
+end
+function s.tg(e,c)
+	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE)
+end
+--Destroy and add function
+function s.addfilter(c)
+    return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE) and c:IsAbleToHand()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

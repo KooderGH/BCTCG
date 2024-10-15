@@ -13,32 +13,40 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Metal Mechanic
+    --Immune to Wave, Surge, Single Attack
     local e2=Effect.CreateEffect(c)
-    e2:SetCode(EFFECT_DESTROY_REPLACE)
-    e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+    e2:SetType(EFFECT_TYPE_SINGLE)
     e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e2:SetRange(LOCATION_MZONE)
-    e2:SetTarget(s.desatktg)
+    e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e2:SetValue(1)
     c:RegisterEffect(e2)
-    --self destroy
+    --Metal Mechanic
     local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_DESTROY_REPLACE)
+    e3:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
     e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_SELF_DESTROY)
-    e3:SetCondition(s.sdcon)
+    e3:SetTarget(s.desatktg)
     c:RegisterEffect(e3)
+    --self destroy
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCode(EFFECT_SELF_DESTROY)
+    e4:SetCondition(s.sdcon)
+    c:RegisterEffect(e4)
 end
-function s.smsfilter(c)
-    return c:IsFaceup() and c:IsCode(210662358)
+function s.filter(c)
+    return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsFaceup()
 end
 function s.spcon(e,c)
     if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.smsfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.filter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectReleaseGroup(tp,s.smsfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+    local g=Duel.SelectReleaseGroup(tp,s.filter,1,1,false,true,true,c,nil,nil,false,nil,nil)
     if g then
         g:KeepAlive()
         e:SetLabelObject(g)
@@ -52,6 +60,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
+--Metal Ability Function
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
     if chk==0 then return c:IsFaceup() end

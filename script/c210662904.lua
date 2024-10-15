@@ -1,61 +1,78 @@
 -- Red Bot
 --Scripted By Konstak
 local s,id=GetID()
-local COUNTER_CAULDRON=0x4005
 function s.initial_effect(c)
-    c:EnableCounterPermit(COUNTER_CAULDRON)
-    --activate
+    --Cannot Attack
     local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_COUNTER)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetProperty(EFFECT_FLAG_DELAY)
-    e1:SetCode(EVENT_SUMMON_SUCCESS)
-    e1:SetTarget(s.target)
-    e1:SetOperation(s.operation)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_CANNOT_ATTACK)
     c:RegisterEffect(e1)
-    --counter
+    --Can target 1 card on the field. destroy that target (Ignition)
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,0))
-    e2:SetCategory(CATEGORY_COUNTER)
-    e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e2:SetCategory(CATEGORY_DESTROY)
+    e2:SetType(EFFECT_TYPE_IGNITION)
     e2:SetRange(LOCATION_MZONE)
-    e2:SetCode(EVENT_PHASE+PHASE_END)
     e2:SetCountLimit(1)
-    e2:SetOperation(s.operation)
+    e2:SetTarget(s.destg)
+    e2:SetOperation(s.desop)
     c:RegisterEffect(e2)
-    --Inflict Damage
+    --Attack Up Ability
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
-    e3:SetCategory(CATEGORY_DAMAGE)
-    e3:SetType(EFFECT_TYPE_IGNITION)
-    e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e3:SetType(EFFECT_TYPE_FIELD)
     e3:SetRange(LOCATION_MZONE)
-    e3:SetCountLimit(1)
-    e3:SetTarget(s.dmgtg)
-    e3:SetOperation(s.dmgop)
+    e3:SetTargetRange(LOCATION_MZONE,0)
+    e3:SetCode(EFFECT_UPDATE_ATTACK)
+    e3:SetCondition(s.con)
+    e3:SetTarget(s.tg)
+    e3:SetValue(500)
     c:RegisterEffect(e3)
+    --Add Monster
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,2))
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.addtg)
+    e4:SetOperation(s.addop)
+    c:RegisterEffect(e4)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-    local c=e:GetHandler()
-    if chk==0 then return Duel.IsCanAddCounter(tp,COUNTER_CAULDRON,1,c) end
+--Destroy That Target Function
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() end
+    if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        c:AddCounter(COUNTER_CAULDRON,1)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if tc:IsRelateToEffect(e) then
+        Duel.Destroy(tc,REASON_EFFECT)
     end
 end
-function s.dmgtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local c=e:GetHandler()
-    if chk==0 then return c:GetCounter(COUNTER_CAULDRON)>0 end
-    local dam=c:GetCounter(COUNTER_CAULDRON)*200
-    Duel.SetTargetPlayer(1-tp)
-    Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+--Attack Up function
+function s.con(e)
+	return e:GetHandler():IsAttackPos()
 end
-function s.dmgop(e,tp,eg,ep,ev,re,r,rp)
-    if not e:GetHandler():IsRelateToEffect(e) then return end
-    local d=e:GetHandler():GetCounter(COUNTER_CAULDRON)*250
-    local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
-    Duel.Damage(p,d,REASON_EFFECT)
+function s.tg(e,c)
+	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE)
+end
+--Destroy and add function
+function s.addfilter(c)
+    return c:IsLevel(5) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE) and c:IsAbleToHand()
+end
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

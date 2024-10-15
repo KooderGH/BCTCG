@@ -34,7 +34,7 @@ function s.initial_effect(c)
     e4:SetOperation(s.desop)
     c:RegisterEffect(e4)
 end
---When SP add function
+--When NS add function
 function s.dfilter(c)
     return c:IsLevelBelow(3) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO) and c:IsAbleToHand()
 end

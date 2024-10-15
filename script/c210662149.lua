@@ -2,8 +2,8 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
-    -- Special Summon Tribute
+    c:EnableUnsummonable()
+    --Special Summon Tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -13,8 +13,9 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --draw
+    --Opponent drop Money draw
     local e2=Effect.CreateEffect(c)
+    e2:SetDescription(aux.Stringid(id,3))
     e2:SetCategory(CATEGORY_DRAW)	
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetCode(EVENT_TO_GRAVE)
@@ -22,8 +23,9 @@ function s.initial_effect(c)
     e2:SetOperation(s.drop)
     c:RegisterEffect(e2)
 end
+--Special Summon Tribute Function
 function s.blackfilter(c)
-	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsFaceup()
+	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_WARRIOR) and c:IsFaceup()
 end
 function s.spcon(e,c)
 	if c==nil then return true end

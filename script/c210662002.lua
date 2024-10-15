@@ -2,7 +2,7 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --once normal summoned, Special summon as many grateful cranes as possible (3 *1)
+    --once normal summoned, Special summon as many as possible
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -17,7 +17,7 @@ function s.initial_effect(c)
     e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e2)
 end
---Special summon
+--once normal summoned, Special summon as many as possible function
 function s.spfilter(c,e,tp)
 	return c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end

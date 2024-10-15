@@ -23,26 +23,24 @@ function s.initial_effect(c)
     e2:SetTarget(s.sptg2)
     e2:SetOperation(s.spop2)
     c:RegisterEffect(e2)
-    --draw
+    --When Special Summoned (Search Ability)
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,2))
-    e3:SetCategory(CATEGORY_DRAW)	
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_TO_GRAVE)
-    e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e3:SetOperation(s.drop)
+    e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e3:SetTarget(s.srtg)
+    e3:SetOperation(s.srop)
     c:RegisterEffect(e3)
-    --No battle damage
+    --Opponent drop Money draw
     local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e4:SetDescription(aux.Stringid(id,3))
+    e4:SetCategory(CATEGORY_DRAW)	
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetCode(EVENT_TO_GRAVE)
+    e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e4:SetOperation(s.drop)
     c:RegisterEffect(e4)
-    --Avoid Battle damage
-    local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_SINGLE)
-    e5:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-    e5:SetValue(1)
-    c:RegisterEffect(e5)
 end
 --Special Summon SS Function
 function s.spcon(e,c)
@@ -72,6 +70,22 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
     if not g then return end
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
+end
+--When SP add function
+function s.dfilter(c)
+    return c:IsLevel(5) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_WARRIOR) and c:IsAbleToHand()
+end
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.dfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end
 --Draw Function
 function s.drop(e,tp,eg,ep,ev,re,r,rp)

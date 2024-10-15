@@ -50,7 +50,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
     local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,ft,ft,nil,e,tp)
     if #g>0 and Duel.TossCoin(tp,1)==COIN_HEADS then
-        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_ATTACK)
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
 --Toxic on Battle function
@@ -72,10 +72,5 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
         e1:SetValue(-500)
         tc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetCode(EFFECT_UPDATE_DEFENSE)
-        e2:SetValue(-500)
-        tc:RegisterEffect(e2)
 	end
 end

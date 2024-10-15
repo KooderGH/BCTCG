@@ -14,6 +14,15 @@ function s.initial_effect(c)
     e1:SetTarget(s.hwwtg)
     e1:SetOperation(s.hwwop)
     c:RegisterEffect(e1)
+    --return hand (Peon Ability)
+    local e2=Effect.CreateEffect(c)
+    e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
+    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e2:SetCode(EVENT_DESTROYED)
+    e2:SetTarget(s.destg)
+    e2:SetOperation(s.desop)
+    c:RegisterEffect(e2)
 end
 --Haniwanwan Battle Function
 function s.hwwcon(e,tp,eg,ep,ev,re,r,rp)
@@ -35,7 +44,7 @@ function s.hwwop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
         e1:SetCode(EFFECT_DISABLE)
-        e1:SetReset(RESET_PHASE+PHASE_MAIN1,2)
+        e1:SetReset(RESET_PHASE+PHASE_END,2)
         tc:RegisterEffect(e1)
         Duel.NegateAttack()
     end
@@ -91,4 +100,15 @@ end
 function s.droperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)
 	Duel.Draw(1-tp,2,REASON_EFFECT)
+end
+--Peon Ability
+function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+end
+function s.desop(e,tp,eg,ev,ep,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoHand(c,nil,REASON_EFFECT)
+    end
 end

@@ -34,6 +34,7 @@ function s.initial_effect(c)
     e3:SetOperation(s.lpop)
     c:RegisterEffect(e3)
 end
+--Summon Requirement Function
 function s.firefilter(c)
 	return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsFaceup()
 end
@@ -66,6 +67,6 @@ end
 --Damage LP Function
 function s.lpop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToEffect(e) then
-        Duel.Damage(1-tp,250,REASON_EFFECT)
+        Duel.Damage(1-tp,500,REASON_EFFECT)
     end
 end

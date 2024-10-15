@@ -2,54 +2,32 @@
 --Scripted By Konstak, fix by Gid
 local s,id=GetID()
 function s.initial_effect(c)
-    --Strong Against
+    --Freeze Ability
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
-    e1:SetCategory(CATEGORY_REMOVE)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_BATTLE_START)
-    e1:SetTarget(s.strongtg)
-    e1:SetOperation(s.strongop)
+    e1:SetType(EFFECT_TYPE_IGNITION)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetCountLimit(1)
+    e1:SetOperation(s.freezeop)
     c:RegisterEffect(e1)
-    --Freeze Ability
-    local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,1))
-    e2:SetType(EFFECT_TYPE_IGNITION)
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetCountLimit(1)
-    e2:SetOperation(s.freezeop)
-    c:RegisterEffect(e2)
     --Also treated as a WIND monster on the field
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e2:SetCode(EFFECT_ADD_ATTRIBUTE)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetValue(ATTRIBUTE_WIND)
+    c:RegisterEffect(e2)
+    --Add Monster
     local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetCode(EFFECT_ADD_ATTRIBUTE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetValue(ATTRIBUTE_WIND)
+    e3:SetDescription(aux.Stringid(id,1))
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e3:SetCode(EVENT_DESTROYED)
+    e3:SetTarget(s.drtg)
+    e3:SetOperation(s.drop)
     c:RegisterEffect(e3)
-end
---Strong function
-function s.strongtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE)) end
-end
-function s.strongop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    local bc=e:GetHandler():GetBattleTarget()
-    if c:IsRelateToBattle() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(-bc:GetAttack()/2)
-        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetCode(EFFECT_UPDATE_DEFENSE)
-        e2:SetValue(-bc:GetDefense()/2)
-        e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e2)
-    end
 end
 --Freeze Function
 function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
@@ -90,4 +68,20 @@ end
 function s.droperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)
 	Duel.Draw(1-tp,2,REASON_EFFECT)
+end
+--Destroy and add function
+function s.drfilter(c)
+    return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsAbleToHand()
+end
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.drfilter,tp,LOCATION_DECK,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.drfilter,tp,LOCATION_DECK,0,2,2,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

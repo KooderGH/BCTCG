@@ -2,36 +2,67 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Strong Against
+    --When Normal Summoned (Search Ability)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
-    e1:SetCategory(CATEGORY_REMOVE)
+    e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_BATTLE_START)
-    e1:SetTarget(s.strongtg)
-    e1:SetOperation(s.strongop)
+    e1:SetCode(EVENT_SUMMON_SUCCESS)
+    e1:SetTarget(s.srtg)
+    e1:SetOperation(s.srop)
     c:RegisterEffect(e1)
+    local e2=e1:Clone()
+    e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+    c:RegisterEffect(e2)
+    --Change effect damage
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_FIELD)
+    e3:SetCode(EFFECT_CHANGE_DAMAGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e3:SetTargetRange(1,0)
+    e3:SetValue(s.damval)
+    c:RegisterEffect(e3)
+    --return hand (Peon Ability)
+    local e4=Effect.CreateEffect(c)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.destg)
+    e4:SetOperation(s.desop)
+    c:RegisterEffect(e4)
 end
---Strong function
-function s.strongtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and (bc:IsAttribute(ATTRIBUTE_FIRE)) end
+--When NS add function
+function s.dfilter(c)
+    return c:IsLevelBelow(3) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsAbleToHand()
 end
-function s.strongop(e,tp,eg,ep,ev,re,r,rp)
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.dfilter,tp,LOCATION_DECK,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_DECK,0,2,2,nil)
+    if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+    end
+end
+--Effect Damage Function
+function s.damval(e,re,val,r,rp,rc)
+    local damage = 100
+    if (r&REASON_EFFECT)~=0 then return damage
+    else return val end
+end
+--Peon Ability
+function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+end
+function s.desop(e,tp,eg,ev,ep,re,r,rp)
     local c=e:GetHandler()
-    local bc=e:GetHandler():GetBattleTarget()
-    if c:IsRelateToBattle() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_SINGLE)
-        e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(-bc:GetAttack()/2)
-        e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e1)
-        local e2=Effect.CreateEffect(c)
-        e2:SetType(EFFECT_TYPE_SINGLE)
-        e2:SetCode(EFFECT_UPDATE_DEFENSE)
-        e2:SetValue(-bc:GetDefense()/2)
-        e2:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
-        bc:RegisterEffect(e2)
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
 end

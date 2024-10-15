@@ -5,37 +5,73 @@ function s.initial_effect(c)
     c:EnableUnsummonable()
     -- Special Summon this card
     local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
-    --once normal summoned, SS as many brollows as possible
+    -- Special Summon Tribute
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,0))
-    e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetProperty(EFFECT_FLAG_DELAY)
-    e2:SetCode(EVENT_SUMMON_SUCCESS)
-    e2:SetCountLimit(1)
-    e2:SetTarget(s.spamtg)
-    e2:SetOperation(s.spamop)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e2:SetType(EFFECT_TYPE_FIELD)
+    e2:SetRange(LOCATION_HAND)
+    e2:SetCode(EFFECT_SPSUMMON_PROC)
+    e2:SetCondition(s.spcon2)
+    e2:SetTarget(s.sptg2)
+    e2:SetOperation(s.spop2)
     c:RegisterEffect(e2)
-    local e3=e2:Clone()
-    e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+    --once special summoned, SS as many as possible
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,2))
+    e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetProperty(EFFECT_FLAG_DELAY)
+    e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+    e3:SetCountLimit(1)
+    e3:SetTarget(s.spamtg)
+    e3:SetOperation(s.spamop)
     c:RegisterEffect(e3)
-    local e4=e2:Clone()
-    e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+    --return hand (Peon Ability)
+    local e4=Effect.CreateEffect(c)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetCode(EVENT_DESTROYED)
+    e4:SetTarget(s.destg)
+    e4:SetOperation(s.desop)
     c:RegisterEffect(e4)
 end
-function s.botfilter(c)
-    return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE)
-end
+--Special Summon SS Function
 function s.spcon(e,c)
     if c==nil then return true end
     local tp=e:GetHandlerPlayer()
-    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(s.botfilter,c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 or Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_DARK),c:GetControler(),LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+end
+--Special Summon Tribute Function
+function s.blackfilter(c)
+    return c:IsAttribute(ATTRIBUTE_DARK)
+end
+function s.spcon2(e,c)
+    if c==nil then return true end
+    return Duel.CheckReleaseGroup(c:GetControler(),s.blackfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+end
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,c)
+    local g=Duel.SelectReleaseGroup(tp,s.blackfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+    if g then
+        g:KeepAlive()
+        e:SetLabelObject(g)
+    return true
+    end
+    return false
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
+    local g=e:GetLabelObject()
+    if not g then return end
+    Duel.Release(g,REASON_COST)
+    g:DeleteGroup()
 end
 --Special Summon as many Function
 function s.spfilter(c,e,tp)
@@ -53,5 +89,16 @@ function s.spamop(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,ft,ft,nil,e,tp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+    end
+end
+--Peon Ability
+function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+end
+function s.desop(e,tp,eg,ev,ep,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
 end

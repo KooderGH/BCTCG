@@ -1,28 +1,30 @@
 -- Emelia & Cat
+--Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	--Activate
-	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_REMOVE)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCost(s.cost)
-	e1:SetOperation(s.activate)
-	c:RegisterEffect(e1)
-end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,1000) end
-	Duel.PayLPCost(tp,1000)
+    --Activate
+    local e0=Effect.CreateEffect(c)
+    e0:SetType(EFFECT_TYPE_ACTIVATE)
+    e0:SetCode(EVENT_FREE_CHAIN)
+    c:RegisterEffect(e0)
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_UPDATE_DEFENSE)
+    e1:SetRange(LOCATION_FZONE)
+    e1:SetTargetRange(LOCATION_MZONE,0)
+    e1:SetLabel(1)
+    e1:SetCondition(s.ccon)
+    e1:SetValue(s.adval)
+    c:RegisterEffect(e1)
 end
 function s.filter(c)
-	return c:IsRace(RACE_MACHINE) and aux.SpElimFilter(c,true,true)
+    return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsFaceup()
 end
-function s.tfilter(c)
-	return not c:IsAbleToRemove()
+function s.ccon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetMatchingGroupCount(s.filter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE+LOCATION_GRAVE+LOCATION_HAND,nil)
-	if g then
-        Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
-	end
+--Atk gain
+function s.adval(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*100
 end

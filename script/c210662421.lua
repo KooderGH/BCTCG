@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableUnsummonable()
+    c:EnableUnsummonable()
     --special summon tribute
     local e1=Effect.CreateEffect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
-    --Once while this card is face-up on the field: If it would be destroyed; gain 500 ATK instead.
+    --Once while this card is face-up on the field: If it would be destroyed; gain X ATK instead.
     local e2=Effect.CreateEffect(c)
     e2:SetCode(EFFECT_DESTROY_REPLACE)
     e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
@@ -22,14 +22,15 @@ function s.initial_effect(c)
     e2:SetCountLimit(1)
     e2:SetTarget(s.desreptg)
     c:RegisterEffect(e2)
-    --Can banish zombie monsters
+    --Add Monster
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
-    e3:SetCategory(CATEGORY_REMOVE)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_START)
-    e3:SetTarget(s.bntg)
-    e3:SetOperation(s.bnop)
+    e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+    e3:SetCode(EVENT_DESTROYED)
+    e3:SetTarget(s.addtg)
+    e3:SetOperation(s.addop)
     c:RegisterEffect(e3)
 end
 function s.angelfilter(c)
@@ -66,15 +67,19 @@ function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	c:RegisterEffect(e1)
 	return true
 end
---Banish Zombies function
-function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
-    local bc=e:GetHandler():GetBattleTarget()
-    if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_ZOMBIE) end
-    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
+--Destroy and add function
+function s.addfilter(c)
+    return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_WARRIOR) and c:IsAbleToHand()
 end
-function s.bnop(e,tp,eg,ep,ev,re,r,rp)
-    local bc=e:GetHandler():GetBattleTarget()
-    if bc:IsRelateToBattle() then
-    Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
+function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_GRAVE,0,2,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.addop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_GRAVE,0,2,2,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

@@ -78,7 +78,7 @@ function s.strongop(e,tp,eg,ep,ev,re,r,rp)
         bc:RegisterEffect(e2)
     end
 end
---Wave on Battle Function
+--Wave on Ignition Function
 function s.wavetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)

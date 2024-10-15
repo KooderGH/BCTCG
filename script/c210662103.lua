@@ -6,7 +6,7 @@ function s.initial_effect(c)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_EQUIP)
     e1:SetCode(EFFECT_UPDATE_ATTACK)
-    e1:SetValue(200)
+    e1:SetValue(300)
     c:RegisterEffect(e1)
 end
 function s.filter(c)

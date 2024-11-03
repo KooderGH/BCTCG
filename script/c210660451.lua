@@ -206,7 +206,7 @@ end
 function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():AddCounter(0x4002,1)
 end
---Banish all monsters your opponent controls (8)
+--Banish all cards your opponent controls (8)
 function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return e:GetHandler():IsCanRemoveCounter(tp,0x4002,7,REASON_COST) end
     e:GetHandler():RemoveCounter(tp,0x4002,7,REASON_COST)
@@ -216,12 +216,12 @@ function s.rmfilter(c)
 end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
-    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_MZONE,e:GetHandler())
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_ONFIELD,e:GetHandler())
     Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
     Duel.SetChainLimit(aux.FALSE)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_MZONE,e:GetHandler())
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_ONFIELD,e:GetHandler())
     Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
     local e1=Effect.CreateEffect(e:GetHandler())
     e1:SetType(EFFECT_TYPE_FIELD)

@@ -49,7 +49,7 @@ function s.initial_effect(c)
 end
 --e1
 function s.filter(c)
-	return c:IsMonster() and c:IsLevel(8) and not c:IsCode(id)
+	return c:IsMonster() and c:IsLevel(8)
 end
 function s.rcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return not e:GetHandler():IsPublic() end
@@ -72,7 +72,7 @@ function s.ropp(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ShuffleHand(p)
 	Duel.BreakEffect()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectMatchingCard(p,s.filter,p,LOCATION_HAND,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(p,s.filter,p,LOCATION_HAND,0,1,1,e:GetHandler())
 	if c:IsRelateToEffect(e) then g:AddCard(c) end
 	if #g==2 then
 		if Duel.Destroy(g,REASON_EFFECT)==2 then

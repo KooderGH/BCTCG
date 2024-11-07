@@ -98,9 +98,9 @@ function s.racefilter(c)
     return c:IsFaceup() and not c:IsCode(id)
 end
 function s.chtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
-    if chk==0 then return Duel.IsExistingTarget(s.racefilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
-    local g=Duel.SelectTarget(tp,s.racefilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and chkc:IsFaceup() end
+    if chk==0 then return Duel.IsExistingTarget(s.racefilter,tp,LOCATION_MZONE,0,1,nil) end
+    local g=Duel.SelectTarget(tp,s.racefilter,tp,LOCATION_MZONE,0,1,1,nil)
     local c=e:GetHandler()
     local rc=c:AnnounceAnotherRace(tp)
     local att=c:AnnounceAnotherAttribute(tp)

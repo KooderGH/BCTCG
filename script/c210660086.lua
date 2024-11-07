@@ -152,9 +152,9 @@ end
 function s.spop3(e,tp,eg,ep,ev,re,r,rp)
     if Duel.GetLocationCount(tp,LOCATION_MZONE) <= 0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g = Duel.SelectMatchingCard(tp, s.spfilter3, tp, LOCATION_GRAVE, 0, 1, 1, nil, e, tp)
+    local g = Duel.SelectMatchingCard(tp,s.spfilter3,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
     if #g > 0 then
-        Duel.SpecialSummon(g, 0, tp, tp, false, false, POS_FACEUP)
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
 -- (7) Special Summon 2 Dragon monsters from GY when destroyed by card effect
@@ -163,14 +163,14 @@ function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
     local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
-    if chk==0 then return ft>0 and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
+    if chk==0 then return ft>0 and Duel.IsExistingMatchingCard(s.spfilter3,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,math.min(2,ft),tp,LOCATION_GRAVE)
 end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp)
     local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
     if ft<=0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_GRAVE,0,1,math.min(2,ft),nil,e,tp)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter3,tp,LOCATION_GRAVE,0,1,math.min(2,ft),nil,e,tp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end

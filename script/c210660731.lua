@@ -70,7 +70,7 @@ end
 s.counter_place_list={0x4006}
 -- Special Summon
 function s.spfilter(c,tp)
-    return c:IsLevelAbove(12) and c:IsAbleToRemoveAsCost()
+    return c:IsLevelAbove(12) and c:IsAbleToRemoveAsCost() and not c:IsCode(id)
 end
 function s.spcon(e,c)
     if c==nil then return true end

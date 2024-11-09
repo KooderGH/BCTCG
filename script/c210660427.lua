@@ -13,7 +13,7 @@ function s.initial_effect(c)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_DESTROYED)
+    e1:SetCode(EFFECT_DESTROY_REPLACE)
     e1:SetValue(LOCATION_HAND)
     e1:SetTarget(s.thtg)
     e1:SetOperation(s.thop)
@@ -65,13 +65,15 @@ function s.initial_effect(c)
 end
 --(1)
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+	if chk==0 then return e:GetHandler():IsAbleToHand() end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-    if e:GetHandler():IsRelateToEffect(e) then
-        Duel.SendtoHand(e:GetHandler(),nil,0,REASON_EFFECT)
-    end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SendtoHand(c,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,c)
+	end
 end
 --(2)
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)

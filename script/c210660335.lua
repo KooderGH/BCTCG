@@ -91,7 +91,7 @@ end
 function s.tgop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsPreviousControler(tp)
-		and rp~=tp and (r&REASON_DESTROY)~=0 then
+		and rp==1-tp and (r&REASON_DESTROY)~=0 then
 		c:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 	end
 end

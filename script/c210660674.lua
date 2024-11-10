@@ -59,7 +59,7 @@ local e1=Effect.CreateEffect(c)
     e6:SetCategory(CATEGORY_TOHAND)
     e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e6:SetCode(EVENT_DESTROYED)
-    e6:SetRange(LOCATION_SZONE)
+    e6:SetCondition(s.thcon)
     e6:SetTarget(s.thtg)
     e6:SetOperation(s.thop)
     c:RegisterEffect(e6)
@@ -171,9 +171,14 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --e4
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousLocation(LOCATION_SZONE)
+end
+
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return c:IsAbleToHand() end
+	if chk==0 then return c:IsAbleToHand() and Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,c,1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_LEAVE_GRAVE,c,1,0,0)
 end

@@ -107,7 +107,7 @@ function s.starget(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.sfilter(c)
-	return c:IsAbleToHand()
+	return c:IsAbleToHand() and c:IsMonster()
 end
 function s.soperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)

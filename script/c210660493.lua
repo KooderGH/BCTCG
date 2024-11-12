@@ -117,7 +117,7 @@ function s.initial_effect(c)
     e13:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e13:SetRange(LOCATION_MZONE)
     e13:SetCondition(s.imcon)
-    e13:SetValue(1)
+    e13:SetValue(s.immunefilter()
     c:RegisterEffect(e13)
 end
 --(1) functions
@@ -168,4 +168,7 @@ end
 --(10)
 function s.imcon(e)
 	return Duel.GetCurrentPhase()==PHASE_BATTLE
+end
+function s.immunefilter(e,te)
+    return te:GetOwner()~=e:GetOwner() and Duel.GetCurrentPhase()==PHASE_BATTLE
 end

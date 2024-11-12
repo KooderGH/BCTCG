@@ -77,7 +77,7 @@ end
 --e5 (4)
 function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsReason(REASON_EFFECT) and c:IsReason(REASON_DESTROY)
+	return c:IsReason(REASON_EFFECT) and c:IsReason(REASON_DESTROY)
 end
 function s.dfilter(c,e,tp)
 	return c:IsRace(RACE_PSYCHIC) and c:IsAbleToHand()

@@ -167,8 +167,8 @@ function s.gactivate(e,tp,eg,ep,ev,re,r,rp)
 end
 --(10)
 function s.imcon(e)
-	return Duel.GetCurrentPhase()==PHASE_BATTLE
+	return Duel.IsBattlePhase()
 end
 function s.immunefilter(e,te)
-    return te:GetOwner()~=e:GetOwner() and Duel.GetCurrentPhase()==PHASE_BATTLE
+    return te:GetOwner()~=e:GetOwner()
 end

@@ -83,6 +83,7 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 end
 -- Special Summon from GY if LP is 7000 or higher (Once per turn)
 function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
     return Duel.GetLP(tp)>=7000 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)

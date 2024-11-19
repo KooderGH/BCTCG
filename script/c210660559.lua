@@ -67,7 +67,7 @@ end
 function s.spcon1(e,c)
     if c==nil then return true end
     local tp=c:GetControler()
-    return Duel.GetLP(tp) - Duel.GetLP(1-tp) >= 2000 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+    return Duel.GetLP(tp) - Duel.GetLP(1-tp) >= 2000 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 function s.spop1(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()

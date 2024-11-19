@@ -57,7 +57,7 @@ end
 --e1
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	--e:GetHandlerPlayer is used here due to EFFECT_SPSUMMON_PROC not having TP build in.
-	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_GRAVE,0)>=7 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_GRAVE,0)>=7 and Duel.GetLocationCount(e:GetHandlerPlayer(),LOCATION_MZONE)>0
 end
 --e2 e3 e4
 function s.rtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)

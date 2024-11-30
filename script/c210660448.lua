@@ -275,7 +275,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 	else
 		local att=s.getattribute(g2)
 		if (att&att-1)~=0 then
-			if s[1-tp]==0 or (s[1-tp]&att)==0 then
+			if s[1-tp]==0 or (s[1-tp]==0 & att==0) then
 				Duel.Hint(HINT_SELECTMSG,1-tp,aux.Stringid(id,0))
 				att=Duel.AnnounceAttribute(1-tp,1,att)
 			else att=s[1-tp] end

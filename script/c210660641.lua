@@ -7,6 +7,7 @@
 --(4) When this card is Banished; You can add 1 LIGHT monster from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableUnsummonable()
     --cannot special summon (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

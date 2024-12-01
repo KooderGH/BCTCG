@@ -29,7 +29,7 @@ function s.initial_effect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
     e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e1:SetCode(EVENT_DESTROYED)
     e1:SetRange(LOCATION_HAND|LOCATION_GRAVE)
     e1:SetCountLimit(1)
@@ -181,7 +181,7 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
         and Duel.GetFieldGroupCount(tp,LOCATION_EMZONE,0)==0
         and (Duel.CheckLocation(tp,LOCATION_EMZONE,0) or Duel.CheckLocation(tp,LOCATION_EMZONE,1))end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
-    Duel.SetChainLimit(aux.FALSE)
+	Duel.SetChainLimit(aux.FALSE)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

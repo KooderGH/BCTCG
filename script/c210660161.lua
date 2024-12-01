@@ -2,7 +2,7 @@
 --Scripted by poka-poka
 local s,id=GetID()
 local COUNTER_FW=0x4007
-local TYPES=TYPE_FUSION+TYPE_RITUAL+TYPE_SYNCHRO+TYPE_XYZ
+local TYPES=TYPE_FUSION+TYPE_RITUAL+TYPE_SYNCHRO+TYPE_XYZ+TYPE_LINK
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	c:EnableCounterPermit(COUNTER_FW)

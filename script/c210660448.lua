@@ -96,6 +96,9 @@ function s.initial_effect(c)
 	local e11=e9:Clone()
 	e11:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
 	c:RegisterEffect(e11)
+
+	s[0]=0
+	s[1]=0
 	--(3)end
 	--(4)Start
 	--Cannot attack directly
@@ -275,7 +278,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 	else
 		local att=s.getattribute(g2)
 		if (att&att-1)~=0 then
-			if s[1-tp]==0 or (s[1-tp]==0 & att==0) then
+			if s[1-tp]==0 or (s[1-tp]&att)==0 then
 				Duel.Hint(HINT_SELECTMSG,1-tp,aux.Stringid(id,0))
 				att=Duel.AnnounceAttribute(1-tp,1,att)
 			else att=s[1-tp] end
@@ -329,9 +332,9 @@ function s.rcfilter(c)
 end
 function s.recoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(s.rcfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,1,c) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.rcfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,2,c) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,s.rcfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,1,1,c)
+	local g=Duel.SelectMatchingCard(tp,s.rcfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,2,2,c)
 	Duel.Remove(g,POS_FACEUP,REASON_COST)
 end
 function s.recoverselftarget(e,tp,eg,ep,ev,re,r,rp,chk)

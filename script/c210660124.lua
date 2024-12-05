@@ -153,7 +153,7 @@ end
 --e5 (4.3)
 function s.sthcon(e)
 	local c=e:GetHandler()
-	return c:GetEquipCount()>=1
+	return c:GetEquipCount()>=3
 end
 function s.ssfilter(c)
 	return c:IsLevel(12) and c:IsAbleToHand() and c:IsAttribute(ATTRIBUTE_FIRE)

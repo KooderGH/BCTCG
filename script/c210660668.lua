@@ -53,7 +53,7 @@ function s.retcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local t=c:GetBattleTarget()
 	e:SetLabelObject(t)
-	return t:IsRelateToBattle() and t:IsAttributeExcept(c:GetAttribute())
+	return t and t:IsRelateToBattle() and not t:IsAttribute(c:GetAttribute())
 end
 function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

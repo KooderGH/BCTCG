@@ -78,7 +78,7 @@ end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
     local c = e:GetHandler()
     local bc = c:GetBattleTarget()
-    return bc and bc:IsFaceup() and bc:GetLevel() < c:GetLevel()
+    return bc and bc:IsFaceup() and bc:IsLevelBelow(c:GetLevel()-1)
 end
 -- Destroy monster with lower Level operation
 function s.desop(e,tp,eg,ep,ev,re,r,rp)

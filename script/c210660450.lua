@@ -1,15 +1,17 @@
 --High Lord Babel
 --Scripted by Gideon
 --Effect
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card's Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. Neither player can activate cards or effects in response to this card effect.
 -- (2) Cannot be returned to hand or banished.
 -- (3) Cannot be targeted by card effects.
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
--- (5) Unaffected by effects other than its own.
+-- (5) Unaffected by effects other than its own
 -- (6) Each time card(s) on your side of the field are destroyed by card effect(s): Place one Castle Counter on this card.
 -- (7) When this card has 10 Castle Counters, you win the duel.
 -- (8) During each end phase: Gain 1000 LP for each Dragon monster you control.
 -- (9) While you have no cards in your hand: You cannot lose the duel by any means.
+-- (10) Once per turn (Ignition): You can add 1 FIRE Dragon monster from your deck to your hand. 
+-- (11) You can only control 1 "High Lord Babel".
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -30,7 +32,7 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     e1:SetCode(EVENT_DESTROYED)
     e1:SetRange(LOCATION_HAND|LOCATION_GRAVE)
-    e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e1:SetCountLimit(1)
     e1:SetCondition(s.spcon)
     e1:SetCost(s.spcost)
     e1:SetTarget(s.sptg)
@@ -146,6 +148,20 @@ function s.initial_effect(c)
     local e14=e12:Clone()
     e14:SetCode(EFFECT_CANNOT_LOSE_EFFECT)
     c:RegisterEffect(e14)
+    --(9)Finish
+    --(10)Start
+    c:SetUniqueOnField(1,0,id)
+    --(10)Finish
+    --(11)Start
+    local e15=Effect.CreateEffect(c)
+    e15:SetDescription(aux.Stringid(id,2))
+    e15:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e15:SetType(EFFECT_TYPE_IGNITION)
+    e15:SetRange(LOCATION_MZONE)
+    e15:SetCountLimit(1)
+    e15:SetTarget(s.searchdrgtarget)
+    e15:SetOperation(s.searchdrgopp)
+    c:RegisterEffect(e15)
 end
 --(1)
 function s.cfilter(c,tp)
@@ -223,4 +239,20 @@ end
 --(9)
 function s.losecon(e)
 	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0
+end
+--(11)
+function s.dragonfiltersearch(c)
+    return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_DRAGON) and c:IsAbleToHand()
+end
+function s.searchdrgtarget(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.dragonfiltersearch,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.searchdrgopp(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.dragonfiltersearch,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

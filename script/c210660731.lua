@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
     c:EnableReviveLimit()
 	c:EnableCounterPermit(0x4006)
-	--SP Summon by banishing lvl 12 or more monster from GY
+	-- SP Summon by banishing Level 12 or higher monster or Link-3 or higher monster from GY
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
@@ -70,7 +70,8 @@ end
 s.counter_place_list={0x4006}
 -- Special Summon
 function s.spfilter(c,tp)
-    return c:IsLevelAbove(12) and c:IsAbleToRemoveAsCost() and not c:IsCode(id)
+    return (c:IsLevelAbove(12) or (c:IsType(TYPE_LINK) and c:GetLink()>=3)) 
+        and c:IsAbleToRemoveAsCost() and not c:IsCode(id)
 end
 function s.spcon(e,c)
     if c==nil then return true end

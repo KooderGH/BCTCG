@@ -1,10 +1,11 @@
 --Huntress Terun
---Scripted By Gideon (1,2) and poka-poka (3,4) and naim (debug touches)
+--Scripted By Gideon (1,2) and poka-poka (3,4,5) and naim (debug touches)
 -- (1) You can Normal Summon/Set this card without Tribute.
 -- (2) When this card is Tribute Summoned; You can Special Summon the monsters that were used for this card Tribute and set their levels to 7.
 -- (3) If you control 3 or more Level 7 LIGHT Spellcaster monsters: You can target 1 card on your opponent side of the field, 1 card in their hand randomly, and 1 card in their GY; Banish those targets.
 -- (4) If this card is Tributed by a Spellcaster; Negate all current effect's on the field until the end phase.
--- (5) You can only use each effect of "Huntress Terun" once per turn and used only once while it is face-up on the field.
+-- (5) If this card is Special Summoned; Add 1 Spell from your deck to your hand.
+-- (6) You can only use each effect of "Huntress Terun" once per turn and used only once while it is face-up on the field.
 local s,id=GetID()
 function s.initial_effect(c)
 	--summon & set with no tribute (1)
@@ -51,6 +52,16 @@ function s.initial_effect(c)
 	e5:SetOperation(s.negop)
 	e5:SetCountLimit(1,{id,2})
 	c:RegisterEffect(e5)
+	--Special Summoned; Add 1 Spell from your deck to your hand. (5)
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,3))
+	e6:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e6:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e6:SetTarget(s.thtg)
+	e6:SetOperation(s.thop)
+	e6:SetCountLimit(1,{id,3})
+	c:RegisterEffect(e6)
 end
 --E1
 function s.ntcon(e,c,minc)
@@ -149,7 +160,23 @@ function s.negop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetReset(RESET_PHASE+PHASE_END)
 	Duel.RegisterEffect(e1,tp)
 end
--- E5: You can only use each effect once per turn and only once while face-up on the field.
+-- E5:Special Summoned; Add 1 Spell from your deck to your hand.
+function s.thfilter(c)
+    return c:IsType(TYPE_SPELL) and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
+end
+-- E6: You can only use each effect once per turn and only once while face-up on the field.
 function s.efcon(e)
     return e:GetHandler():IsFaceup()
 end

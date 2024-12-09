@@ -7,7 +7,7 @@
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
 -- (5) Unaffected by effects other than its own
 -- (6) Each time card(s) on your side of the field are destroyed by card effect(s): Place one Castle Counter on this card.
--- (7) When this card has 10 Castle Counters, you win the duel.
+-- (7) When this card has 7 Castle Counters, you win the duel.
 -- (8) During each end phase: Gain 1000 LP for each Dragon monster you control.
 -- (9) While you have no cards in your hand: You cannot lose the duel by any means.
 -- (10) Once per turn (Ignition): You can add 1 FIRE Dragon monster from your deck to your hand. 
@@ -219,7 +219,7 @@ function s.ctop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(7)
 function s.wincon(e)
-	return e:GetHandler():GetCounter(0x4000)>=10
+	return e:GetHandler():GetCounter(0x4000)>=7
 end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Win(tp,0x62)

@@ -59,7 +59,20 @@ function s.initial_effect(c)
     e8:SetTarget(s.thtg2)
     e8:SetOperation(s.thop2)
     c:RegisterEffect(e8)
-    -- 7. Effect based on the number of Equip Cards equipped to it
+	-- 7. Quick Effect: Anti Gaia
+    local e15=Effect.CreateEffect(c)
+    e15:SetDescription(aux.Stringid(id,4))
+    e15:SetCategory(CATEGORY_DESTROY)
+    e15:SetType(EFFECT_TYPE_QUICK_O)
+    e15:SetCode(EVENT_FREE_CHAIN)
+    e15:SetHintTiming(0,TIMINGS_CHECK_MONSTER)
+    e15:SetRange(LOCATION_MZONE)
+    e15:SetCountLimit(1,id)
+    e15:SetCondition(s.descon)
+    e15:SetTarget(s.destg)
+    e15:SetOperation(s.desop)
+    c:RegisterEffect(e15)
+    -- 8. Effect based on the number of Equip Cards equipped to it
 	local e9=Effect.CreateEffect(c)
 	e9:SetType(EFFECT_TYPE_SINGLE)
 	e9:SetCode(EFFECT_UPDATE_ATTACK)
@@ -179,7 +192,26 @@ end
 function s.fwfilter(c)
     return c:IsRace(RACE_WARRIOR) and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsAbleToHand() and not c:IsCode(id)
 end
--- 7. Effect based on Equip Cards
+-- 7. Qucik Effect : Anti Gaia
+function s.desfilter(c)
+    return c:IsFaceup() and c:IsCode(210660493)
+end
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsExistingMatchingCard(s.desfilter,tp,0,LOCATION_ONFIELD,1,nil)
+end
+
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.desfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+    local g=Duel.GetMatchingGroup(s.desfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.GetMatchingGroup(s.desfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+    if #g>0 then
+        Duel.Destroy(g,REASON_EFFECT)
+    end
+end
+-- 8. Effect based on Equip Cards
 -- a. 1+: Gain ATK based on level difference during battle
 function s.effcon1(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():GetEquipCount()>=1

@@ -2,7 +2,7 @@
 --By Gideon
 -- (1) When a monster effect is activated in your opponent's hand (Quick Effect): You can send this card from your hand to the GY; negate the activation, and if you do, return that card to their hand (if possible). For the rest of this turn after this card resolves, your opponent cannot activate cards, or the effects of cards, with the same name. You can only use this effect of "Ninja Girl Tomoe" once per turn.
 -- (2) FLIP: You can draw 2 cards, then discard 1 card.
--- (3) If this card is destroyed by battle; Add 1 monster from your deck to your hand.
+-- (3) If this card is destroyed by battle; Add 1 level 6 or lower monster from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Negate Handtrap (1)
@@ -107,7 +107,7 @@ function s.starget(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.sfilter(c)
-	return c:IsAbleToHand() and c:IsMonster()
+	return c:IsAbleToHand() and c:IsMonster() and c:IsLevelBelow(6)
 end
 function s.soperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)

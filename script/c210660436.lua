@@ -1,9 +1,10 @@
 --Nobiluga
---Scripted by Gideon
+--Scripted by Gideon & poka-poka e5
 -- (1) While this card is face-up on the field: You take no battle damage.
 -- (2) During either's player turn (Quick): You can target one card on the field: Return it. You can only active this effect of "Nobiluga" once while face-up on the field and once per turn.
 -- (3) If you control a non-Fiend type monster: You destroy this card.
 -- (4) If you control 3 or more Fiend type monsters: You can Tribute this card; Add one Fiend type monster from your Deck or GY to your hand.
+-- (5) If your opponent control's princess cat and/or goddess of light sirus, you can discard obiluga and one other card, banish all princess cat and goddess of light sirius from the field.
 local s,id=GetID()
 function s.initial_effect(c)
 	--While faceup no b damage
@@ -44,6 +45,19 @@ function s.initial_effect(c)
 	e4:SetTarget(s.thtg)
 	e4:SetOperation(s.thop)
 	c:RegisterEffect(e4)
+	--If opponent control sirius/princess, discard this card+other banish all princess/sirius on the field
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetCategory(CATEGORY_REMOVE)
+	e5:SetType(EFFECT_TYPE_QUICK_O)
+	e5:SetHintTiming(0,TIMINGS_CHECK_MONSTER+TIMING_END_PHASE)
+	e5:SetCode(EVENT_FREE_CHAIN)
+	e5:SetRange(LOCATION_HAND)
+	e5:SetCondition(s.rmcon)
+	e5:SetCost(s.rmcost)
+	e5:SetTarget(s.rmtg)
+	e5:SetOperation(s.rmop)
+	c:RegisterEffect(e5)
 end
 --e2
 function s.retg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -88,4 +102,59 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--e5
+function s.rmfilter(c)
+    return c:IsFaceup() and (c:IsCode(210660612) or c:IsCode(210660686))
+end
+
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsExistingMatchingCard(s.rmfilter,tp,0,LOCATION_ONFIELD,1,nil)
+end
+function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then
+        return e:GetHandler():IsDiscardable() 
+            and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,e:GetHandler())
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,1,1,e:GetHandler())
+    Duel.SendtoGrave(Group.FromCards(e:GetHandler(),g:GetFirst()),REASON_COST+REASON_DISCARD)
+end
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.rmfilter,tp,0,LOCATION_ONFIELD,1,nil) end
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_ONFIELD,nil)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_ONFIELD,nil)
+    if #g>0 then
+        Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+    end
+end
+--e5
+function s.rmfilter(c)
+    return c:IsFaceup() and (c:IsCode(210660612) or c:IsCode(210660686))
+end
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsExistingMatchingCard(s.rmfilter,tp,0,LOCATION_ONFIELD,1,nil)
+end
+function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then
+        return e:GetHandler():IsDiscardable() 
+            and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,e:GetHandler())
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,1,1,e:GetHandler())
+    Duel.SendtoGrave(Group.FromCards(e:GetHandler(),g:GetFirst()),REASON_COST+REASON_DISCARD)
+end
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.rmfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.GetMatchingGroup(s.rmfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+    if #g>0 then
+        Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+    end
 end

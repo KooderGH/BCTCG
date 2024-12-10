@@ -1,11 +1,12 @@
 --Bora
---Scripted by Gideon
+--Scripted by Gideon & poka-poka e6
 -- (1) You can Special Summon this card from your hand by removing 2 Fog Counter(s) from the field.
 -- (2) Your opponent takes no battle damage involving this card.
 -- (3) This card gains 500 ATK/DEF for each Fog Counter(s) on the field.
 -- (4) During your opponent's end phase: Place 1 Fog Counter on each face-up card on the field. 
 -- (5) If this card is destroyed by card effect and send to the GY: You can remove 4 Fog Counter(s) on the field; Special Summon this card from the GY.
--- (6) You can only control one "Bora"
+-- (6) If your opponent control's princess cat, you can discard this card and one other card from your hand; banish it.
+-- (7) You can only control one "Bora"
 local s,id=GetID()
 function s.initial_effect(c)
 	--Can only control one
@@ -59,6 +60,20 @@ function s.initial_effect(c)
 	e5:SetTarget(s.gsstarget)
 	e5:SetOperation(s.gssoperation)
 	c:RegisterEffect(e5)
+	-- Discard this card and other card Banish Princess card on the field
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,2))
+	e6:SetCategory(CATEGORY_REMOVE+CATEGORY_HANDES)
+	e6:SetType(EFFECT_TYPE_QUICK_O)
+	e6:SetCode(EVENT_FREE_CHAIN)
+	e6:SetHintTiming(0,TIMINGS_CHECK_MONSTER+TIMING_END_PHASE)
+	e6:SetRange(LOCATION_HAND)
+	e6:SetCountLimit(1)
+	e6:SetCondition(s.rmcon)
+	e6:SetCost(s.rmcost)
+	e6:SetTarget(s.rmtg)
+	e6:SetOperation(s.rmop)
+	c:RegisterEffect(e6)
 end
 --Fog counter
 s.counter_place_list={0x1019}
@@ -107,4 +122,30 @@ function s.gssoperation(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) then
 		Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
 	end
+end
+--e6
+function s.rmfilter(c)
+    return c:IsFaceup() and c:IsCode(210660612)
+end
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsExistingMatchingCard(s.rmfilter,tp,0,LOCATION_ONFIELD,1,nil)
+end
+function s.rmcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return e:GetHandler():IsDiscardable()
+        and Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,e:GetHandler()) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,Card.IsDiscardable,tp,LOCATION_HAND,0,1,1,e:GetHandler())
+    g:AddCard(e:GetHandler())
+    Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+end
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.rmfilter,tp,0,LOCATION_ONFIELD,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,1,1-tp,LOCATION_ONFIELD)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+    local g=Duel.SelectMatchingCard(tp,s.rmfilter,tp,0,LOCATION_ONFIELD,1,1,nil)
+    if #g>0 then
+        Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+    end
 end

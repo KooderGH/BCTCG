@@ -8,6 +8,7 @@
 -- (5) You can only use 1 of these effects of "Shitakiri Sparrow" per turn, and only once that turn.
 -- * (Quick) You can remove 3 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
 -- * If this card is sent to the GY; For every 2 WIND monsters you control, add 1 Spell card from your GY to your hand.
+-- * Once per turn (Ignition): You can banish 1 card in your GY and target 1 Spell/Trap card your opponent controls on the field; Destroy it.
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableCounterPermit(COUNTER_SPELL)
@@ -79,6 +80,17 @@ function s.initial_effect(c)
     e9:SetTarget(s.addtg)
     e9:SetOperation(s.addop)
     c:RegisterEffect(e9)
+	--Ignition: Banish 1 card in your GY and target 1 Spell/Trap card your opponent controls on the field; Destroy it(5)
+	local e10=Effect.CreateEffect(c)
+	e10:SetDescription(aux.Stringid(id,3))
+	e10:SetCategory(CATEGORY_DESTROY)
+	e10:SetType(EFFECT_TYPE_IGNITION)
+	e10:SetRange(LOCATION_MZONE)
+	e10:SetCountLimit(1,id)
+	e10:SetCost(s.destcost)
+	e10:SetTarget(s.desttarget)
+	e10:SetOperation(s.destoperation)
+	c:RegisterEffect(e10)
 end
 s.counter_place_list={COUNTER_SPELL}
 --Self Destroy Function
@@ -149,5 +161,31 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
     if #tg>0 then
         Duel.SendtoHand(tg,nil,REASON_EFFECT)
         Duel.ConfirmCards(tp,tg)
+    end
+end
+--5 *3 Ignition Destroy S/T
+function s.costfilter(c)
+    return c:IsAbleToRemoveAsCost()
+end
+function s.destcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.costfilter,tp,LOCATION_GRAVE,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+    local g=Duel.SelectMatchingCard(tp,s.costfilter,tp,LOCATION_GRAVE,0,1,1,nil)
+    Duel.Remove(g,POS_FACEUP,REASON_COST)
+end
+function s.destfilter(c)
+    return c:IsSpellTrap()
+end
+function s.desttarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and s.destfilter(chkc) end
+    if chk==0 then return Duel.IsExistingTarget(s.destfilter,tp,0,LOCATION_ONFIELD,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    local g=Duel.SelectTarget(tp,s.destfilter,tp,0,LOCATION_ONFIELD,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function s.destoperation(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if tc and tc:IsRelateToEffect(e) then
+        Duel.Destroy(tc,REASON_EFFECT)
     end
 end

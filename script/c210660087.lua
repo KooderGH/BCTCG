@@ -1,5 +1,5 @@
 --Raiden
---Scripted by Konstak
+--Scripted by Konstak e1-6 Poka e7
 --Effect
 -- (1) When this card is Tributed Summoned; Destroy all monster's on the field except "Raiden".
 -- (2) If you control no monsters; You can Special Summon this card from your hand. If Summoned this way, your opponent's monster's cannot be destroyed by battle this turn.
@@ -7,6 +7,7 @@
 -- (4) Does piercing damage.
 -- (5) When this card is destroyed by a card effect: You can target one card in your hand; Destroy it.
 -- (6) When this card is destroyed by battle: You can target one card your opponent controls: Destroy it.
+-- (7) You can normal summon/set this card without tribute but your opponent cannot take battle damage from Raiden this turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --once tributed summon (1)
@@ -63,6 +64,19 @@ function s.initial_effect(c)
     e4:SetTarget(s.destg3)
     e4:SetOperation(s.desop3)
     c:RegisterEffect(e4)
+	--(7)normal summon / set without tribute but your opponent cannot take battle damage from Raiden this turn.
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,3))
+	e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetCode(EFFECT_SUMMON_PROC)
+	e6:SetCountLimit(1,id)
+	e6:SetCondition(s.ntcon)
+	e6:SetOperation(s.ntop)
+	c:RegisterEffect(e6)
+	local e7=e6:Clone()
+	e7:SetCode(EFFECT_SET_PROC)
+	c:RegisterEffect(e7)
 end
 --Destroy all except this card
 function s.destroyfilter(c)
@@ -125,4 +139,19 @@ function s.desop3(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
     end
+end
+--summon & set with no tribute (7)
+function s.ntcon(e,c,minc)
+	if c==nil then return true end
+	return minc==0 and c:GetLevel()>4 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+end
+function s.ntop(e,tp,eg,ep,ev,re,r,rp,c)
+	--opponent takes no battle damage from this card
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END-RESET_TOFIELD)
+	e1:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+	c:RegisterEffect(e1)
 end

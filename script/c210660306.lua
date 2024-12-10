@@ -1,10 +1,10 @@
 --Mighty Bomburr
---Scripted by Konstak
+--Scripted by Konstak & poka-poka e7
 --Effect
 -- (1) Cannot be tributed.
 -- (2) When this card is Summoned: For each EARTH Machine monster you control, Target 1 card your opponent controls; Destroy those targets.
 -- (3) When this card is destroyed: You can add one EARTH Machine Type monster from your Deck to your Hand.
--- (4) You can only activate each effect of "Mighty Bomburr" once per turn.
+-- (4) Unaffected by Zombie type Monster effect
 local s,id=GetID()
 function s.initial_effect(c)
     --cannot be tributed
@@ -44,8 +44,16 @@ function s.initial_effect(c)
     e6:SetCode(EVENT_DESTROYED)
     e6:SetTarget(s.srtg)
     e6:SetOperation(s.srop)
-    e6:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
+    e6:SetCountLimit(1)
     c:RegisterEffect(e6)
+	--This card is immune to Zombie effects
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_SINGLE)
+	e7:SetCode(EFFECT_IMMUNE_EFFECT)
+	e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetValue(s.immuneval)
+	c:RegisterEffect(e7)
 end
 --Summon and destroy
 function s.filter(c)
@@ -80,4 +88,8 @@ function s.srop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--Anti Zombie
+function s.immuneval(e,te)
+    return te:GetHandler():IsRace(RACE_ZOMBIE)
 end

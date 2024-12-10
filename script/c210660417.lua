@@ -3,7 +3,7 @@
 --Effect
 -- (1) If you control a EARTH Machine monster: You can Special Summon this card from your hand by paying 500 LP.
 -- (2) (Quick effect) You destroy all Set cards your opponent controls. You can only use this effect of Mighty Thermae D-Lux once per Duel.
--- (3) You can Tribute this card; Special Summon one LV4 or lower Earth Machine monster from your deck. You can only activate this effect of "Mighty Thermae D-Lux" once per turn.
+-- (3) You can Tribute this card; Special Summon one LV8 or lower Earth Machine monster from your deck. You can only activate this effect of "Mighty Thermae D-Lux" once per turn.
 -- (4) If this card deals direct battle damage; You can add one Trap card from your Deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -81,7 +81,7 @@ function s.trcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Release(e:GetHandler(),REASON_COST)
 end
 function s.specialfilter(c)
-	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
+	return c:IsLevelBelow(8) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsAbleToHand()
 end
 function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,1,nil,e,tp) end

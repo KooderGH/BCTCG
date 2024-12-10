@@ -25,6 +25,16 @@ function s.initial_effect(c)
 	e2:SetOperation(s.negop)
 	c:RegisterEffect(e2)
 	aux.DoubleSnareValidity(c,LOCATION_MZONE)
+	-- E3 : Once per turn (Ignition): You can destroy this card to add 1 card from your deck to your hand. You cannot Summon monsters the turn you use this effect.
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_DESTROY+CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1)
+	e3:SetTarget(s.addtarget)
+	e3:SetOperation(s.addoperation)
+	c:RegisterEffect(e3)
 end
 -- Cost: Discard this card from the hand
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -100,4 +110,42 @@ function s.negcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateEffect(ev)
+end
+--KMS to search deck
+function s.addfilter(c)
+    return c:IsAbleToHand()
+end
+function s.addtarget(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil)
+        and e:GetHandler():IsDestructable() end
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,e:GetHandler(),1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.addoperation(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) and Duel.Destroy(c,REASON_EFFECT)>0 then
+        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+        local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,1,nil)
+        if #g>0 then
+            Duel.SendtoHand(g,nil,REASON_EFFECT)
+            Duel.ConfirmCards(1-tp,g)
+        end
+        -- Summon Restric
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_CANNOT_SUMMON)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
+        e1:SetTargetRange(1,0)
+        e1:SetReset(RESET_PHASE+PHASE_END)
+        Duel.RegisterEffect(e1,tp)
+        local e2=e1:Clone()
+        e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+        Duel.RegisterEffect(e2,tp)
+		local e3=e1:Clone()
+		e3:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
+		Duel.RegisterEffect(e3,tp)
+        local e4=e1:Clone()
+        e4:SetCode(EFFECT_CANNOT_MSET)
+        Duel.RegisterEffect(e4,tp)
+    end
 end

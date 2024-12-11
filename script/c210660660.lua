@@ -1,11 +1,11 @@
 --Sea Serpent Daliasan
 --Scripted by poka-poka
 --Effect
---(1) You can Normal Summon this card without Tributing. If this card is Normal Summoned without Tributing, or is Special Summoned, its Level becomes 4 and its original ATK becomes 1800.
+--(1) You can Normal Summon this card without Tributing. If this card is Normal Summoned without Tributing, or is Special Summoned, its original ATK becomes 1800.
 --(2) During your Main Phase, you can Normal Summon 1 Dragon type monster in addition to your Normal Summon (but not Set). (You can only gain this effect once per turn)
 --(3) Before the damage step: If this card battle a monster with a lower level then it; Destroy that opposing monster.
---(4) When this card is destroyed by a card effect; You can add 1 FIRE Dragon monster from your GY to your hand.
---(5) When this card is destroyed by battle; You can add 1 FIRE Dragon monster from your deck to your hand.
+--(4) When this card is destroyed by a card effect; You can add up to 3 FIRE Dragon monster from your GY to your hand.
+--(5) If this card is destroyed by battle; Add 2 FIRE Dragon monster from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
     -- (1) Normal Summon without Tributing
@@ -43,10 +43,10 @@ function s.initial_effect(c)
     e4:SetTarget(s.gytg)
     e4:SetOperation(s.gyop)
     c:RegisterEffect(e4)
-    -- (5) Add FIRE Dragon from Deck when destroyed by battle
+    -- (5) Add FIRE Dragon from Deck If destroyed by battle
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,3))
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetCode(EVENT_DESTROYED)
     e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
     e5:SetCondition(s.battlecon)
@@ -69,10 +69,10 @@ function s.ntop(e,tp,eg,ep,ev,re,r,rp,c)
 	e1:SetCode(EFFECT_SET_BASE_ATTACK)
 	e1:SetValue(1800)
 	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EFFECT_CHANGE_LEVEL)
-	e2:SetValue(4)
-	c:RegisterEffect(e2)
+	--local e2=e1:Clone()
+	--e2:SetCode(EFFECT_CHANGE_LEVEL)
+	--e2:SetValue(4)
+	--c:RegisterEffect(e2)
 end
 -- Destroy monster with lower Level before damage step condition
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
@@ -99,7 +99,7 @@ end
 -- Add FIRE Dragon from GY operation
 function s.gyop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g = Duel.SelectMatchingCard(tp,s.gyfilter,tp,LOCATION_GRAVE,0,1,1,nil)
+    local g = Duel.SelectMatchingCard(tp,s.gyfilter,tp,LOCATION_GRAVE,0,1,3,nil)
     if #g > 0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
@@ -123,7 +123,7 @@ end
 -- Add FIRE Dragon from Deck operation
 function s.battleop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g = Duel.SelectMatchingCard(tp,s.battlefilter,tp,LOCATION_DECK,0,1,1,nil)
+    local g = Duel.SelectMatchingCard(tp,s.battlefilter,tp,LOCATION_DECK,0,1,2,nil)
     if #g > 0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)

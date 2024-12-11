@@ -1,4 +1,4 @@
---By Tungnon (effect 2*1 and 2*2 by Konstak)
+--By Tungnon (effect 2*1 and 2*2 by Konstak) e3 by poka-poka
 --Spectral Goth Vega
 local s,id=GetID()
 function s.initial_effect(c)

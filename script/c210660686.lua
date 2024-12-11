@@ -11,7 +11,7 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.spcon1)
     c:RegisterEffect(e1)
-    -- Effect 2: Special Summon from GY if LP is 2000 or Lower (Once per turn)
+    -- Effect 2: Special Summon from GY if LP is 5000 or Lower (Once per turn)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -70,7 +70,7 @@ function s.spcon1(e,c)
 end
 -- Special Summon from GY if LP is 2000 or Lower (Once per turn)
 function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetLP(tp)<=2000
+    return Duel.GetLP(tp)<=5000
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

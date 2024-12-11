@@ -1,11 +1,12 @@
 --Lilin
---Scripted By Gideon
+--Scripted By Gideon & e7 by poka-poka
 -- (1) This card gains 500 ATK/DEF for each Level 5 or higher LIGHT Spellcaster on the field.
--- (2) When this card is Tribute Summoned; Add 3 level's to all monster's you control.
+-- (2) When this card is Tribute Summoned; Add 5 level's to all monster's you control.
 -- (3) When this card is Tributed; Destroy all monster's your opponent control. You cannot attack the turn you use this effect.
 -- (4) You can Tribute 1 LIGHT Spellcaster you control except "Lilin"; Add up to 2 Level 4 or lower Spellcaster's from your deck to your hand.
 -- (5) You can only use each effect of "Lilin" once per turn and used only once while it is face-up on the field.
 -- (6) Has piercing battle damage.
+-- (7) You can Special Summon this card from your hand. If you do, you cannot summon other monster's this turn except for LIGHT Spellcaster monsters.
 local s,id=GetID()
 function s.initial_effect(c)
     --500 ATK/DEF for each Level 5 or higher LIGHT Spellcaster
@@ -58,6 +59,17 @@ function s.initial_effect(c)
 	e6:SetType(EFFECT_TYPE_SINGLE)
 	e6:SetCode(EFFECT_PIERCE)
 	c:RegisterEffect(e6)
+	--SP summon with demerit
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,3))
+	e7:SetType(EFFECT_TYPE_FIELD)
+	e7:SetCode(EFFECT_SPSUMMON_PROC)
+	e7:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e7:SetRange(LOCATION_HAND)
+	e7:SetCountLimit(1,{id,3})
+	e7:SetCondition(s.spcon)
+	e7:SetOperation(s.spop)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.cfilter(c)
@@ -83,7 +95,7 @@ function s.levelop(e,tp,eg,ep,ev,re,r,rp)
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetValue(3)
+		e1:SetValue(5)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
 		tc:RegisterEffect(e1)
 	end
@@ -130,4 +142,31 @@ function s.topp(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(tp,s.sfilter,tp,LOCATION_DECK,0,2,2,nil)
 	Duel.SendtoHand(g,nil,REASON_EFFECT)
 	Duel.ConfirmCards(1-tp,g)
+end
+--e7
+function s.spcon(e,c)
+    if c==nil then return true end
+    return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+end
+-- Special Summon this card and apply summoning restriction
+function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
+    -- Restriction: Only LIGHT Spellcaster monsters can be summoned
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetTargetRange(1,0)
+    e1:SetTarget(s.splimit)
+    e1:SetReset(RESET_PHASE+PHASE_END)
+    Duel.RegisterEffect(e1,tp)
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_CANNOT_SUMMON)
+    Duel.RegisterEffect(e2,tp)
+	local e3=e1:Clone()
+    e3:SetCode(EFFECT_CANNOT_MSET)
+    c:RegisterEffect(e3)
+end
+-- Restriction for summoning only LIGHT Spellcaster monsters
+function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
+    return not c:IsAttribute(ATTRIBUTE_LIGHT) or not c:IsRace(RACE_SPELLCASTER)
 end

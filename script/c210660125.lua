@@ -6,7 +6,7 @@ function s.initial_effect(c)
     -- Effect 1: Discard this card and one other FIRE Warrior monster to draw 2 cards
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
-    e1:SetCategory(CATEGORY_HANDES+CATEGORY_DRAW)
+    e1:SetCategory(CATEGORY_HANDES+CATEGORY_DRAW+CATEGORY_SEARCH)
     e1:SetType(EFFECT_TYPE_IGNITION)
     e1:SetRange(LOCATION_HAND)
     e1:SetCost(s.discost)
@@ -78,6 +78,15 @@ function s.initial_effect(c)
     e8b:SetCode(EFFECT_EXTRA_ATTACK)
     e8b:SetValue(s.extraatkval)
     c:RegisterEffect(e8b)
+	-- Effect 9: Unaffected By other card effect when equiped by equip spell
+	local e9=Effect.CreateEffect(c)
+    e9:SetType(EFFECT_TYPE_SINGLE)
+    e9:SetCode(EFFECT_IMMUNE_EFFECT)
+    e9:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e9:SetRange(LOCATION_MZONE)
+	e9:SetCondition(s.immcon)
+    e9:SetValue(s.efilter)
+    c:RegisterEffect(e9)
 end
 
 -- Effect 1: Discard 2 cost and draw 2 cards
@@ -92,9 +101,19 @@ function s.drawtg(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.SetTargetParam(2)
     Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
+function s.eqfilter(c)
+    return c:IsType(TYPE_EQUIP) and c:IsAbleToHand()
+end
 function s.drawop(e,tp,eg,ep,ev,re,r,rp)
     local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-    Duel.Draw(p,d,REASON_EFFECT)
+    if Duel.Draw(p,d,REASON_EFFECT) > 0 then
+        Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+        local g=Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATION_DECK,0,1,1,nil)
+        if #g > 0 then
+            Duel.SendtoHand(g,nil,REASON_EFFECT)
+            Duel.ConfirmCards(1-tp,g)
+        end
+    end
 end
 -- Effect 2: Special Summon condition and operation
 function s.spcon(e,c)
@@ -163,4 +182,14 @@ end
 -- Effect 8b: Gain extra attacks for each equip card
 function s.extraatkval(e,c)
     return c:GetEquipCount()
+end
+
+-- Effect 9
+function s.efilter(e,te)
+    return te:GetHandler()~=e:GetHandler()
+end
+function s.immcon(e)
+    local c=e:GetHandler()
+    local eqg=c:GetEquipGroup()
+    return eqg and eqg:IsExists(Card.IsType,1,nil,TYPE_SPELL)
 end

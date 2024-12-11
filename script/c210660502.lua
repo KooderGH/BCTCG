@@ -1,11 +1,12 @@
 --Myrcia
---Scripted By Gideon
--- (1) When this card is Normal Summoned; you can Special Summon one Level 4 or lower Spellcaster from your hand.
+--Scripted By Gideon & (6) by poka-poka
+-- (1) When this card is Normal Summoned; you can Special Summon one Light Spellcaster from your hand.
 -- (2) When this card is Tributed: You can Target 1 card per 2 levels this card had on the field; Negate their effects.
--- (3) When an Spellcaster is Tributed except "Myrcia"; You can draw 1 card.
+-- (3) When an Spellcaster is Tributed except "Myrcia"; You can draw 2 card.
 -- (4) When a monster your opponent control's is Tribute summoned: You can reduce it's level to 1; Add the difference to this card.
--- (5) You can only use each above effect of "Myrcia" once per turn and used only once while it is face-up on the field.
--- (6) If this card is in your GY: You can banish 3 Spell cards from your GY; Special Summon this card. You can only use this effect of "Myrcia" once per duel.
+-- (5) If this card is in your GY: You can banish 3 Spell cards from your GY; Special Summon this card.
+-- (6) When this card is Tributed; Add 1 Spell card from your banish zone to your hand.
+-- (7) You can only use each above effect of "Myrcia" once per turn and used only once while it is face-up on the field.
 local s,id=GetID()
 function s.initial_effect(c)
 	--spsummon
@@ -64,15 +65,26 @@ function s.initial_effect(c)
 	e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e6:SetType(EFFECT_TYPE_QUICK_O)
 	e6:SetRange(LOCATION_GRAVE)
-    e6:SetCountLimit(1,{id,3},EFFECT_COUNT_CODE_DUEL)
+    e6:SetCountLimit(1,{id,4})
 	e6:SetCost(s.gravecost)
 	e6:SetTarget(s.spgravetg)
 	e6:SetOperation(s.sgravepop)
 	c:RegisterEffect(e6)
+	-- Spell From Banished to hand
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,5))
+	e7:SetCategory(CATEGORY_TOHAND)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e7:SetCode(EVENT_RELEASE)
+    e7:SetProperty(EFFECT_FLAG_DELAY)
+	e7:SetCountLimit(1,{id,5})
+	e7:SetTarget(s.thtg2)
+	e7:SetOperation(s.thop2)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.filter(c,e,tp)
-	return c:IsLevelBelow(4) and c:IsRace(RACE_SPELLCASTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_SPELLCASTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -141,10 +153,10 @@ function s.drawcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.spcfilter,1,nil,tp)
 end
 function s.drawtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,2) end
 	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(1)
-	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
+	Duel.SetTargetParam(2)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
 function s.drawpop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
@@ -201,4 +213,19 @@ function s.sgravepop(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) then
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 	end
+end
+--e7
+function s.thtg2(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.spellfilter,tp,LOCATION_REMOVED,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_REMOVED)
+end
+function s.spellfilter(c)
+    return c:IsType(TYPE_SPELL) and c:IsAbleToHand()
+end
+function s.thop2(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.SelectMatchingCard(tp,s.spellfilter,tp,LOCATION_REMOVED,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

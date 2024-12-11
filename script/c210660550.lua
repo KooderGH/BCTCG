@@ -1,7 +1,8 @@
 --The 10th Angel
---Scripted by Gideon.
--- (1) During either players turn: You can Discard the top card in your deck and target one card on the field; Destroy that target. You can only activiate this effect of "The 10th Angel" once per turn.
--- (2) Your opponent must discard the top card in their deck to Normal Summon or Special Summon a monster.
+--Scripted by Gideon 2, 3. & 1 by poka-poka 
+-- (1) You can Special Summon this card by discarding the top 3 cards in your deck
+-- (2) During either players turn(Quick): You can Discard the top card in your deck and target one card on the field; Destroy that target. You can only activiate this effect of "The 10th Angel" once per turn.
+-- (3) Your opponent must discard the top 2 card in their deck to Normal Summon or Special Summon a monster.
 --special summon
 local s,id=GetID()
 function s.initial_effect(c)
@@ -18,7 +19,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.tdtg)
 	e1:SetOperation(s.tdop)
 	c:RegisterEffect(e1)
-	--Discard to normal or Special
+	--Discard 2 card to normal or Special
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_SUMMON_COST)
@@ -30,23 +31,17 @@ function s.initial_effect(c)
 	local e3=e2:Clone()
 	e3:SetCode(EFFECT_SPSUMMON_COST)
 	c:RegisterEffect(e3)
-end
---e1
-function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,1000) end
-	Duel.PayLPCost(tp,1000)
-end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,tp,LOCATION_HAND)
-end
-function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
-	end
+	--(1)send 3 top deck to gy for sp summon
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,3))
+	e4:SetType(EFFECT_TYPE_FIELD)
+	e4:SetCode(EFFECT_SPSUMMON_PROC)
+	e4:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e4:SetRange(LOCATION_HAND)
+	e4:SetCountLimit(1)
+	e4:SetCondition(s.spcon)
+	e4:SetOperation(s.spop)
+	c:RegisterEffect(e4)
 end
 --e2
 function s.tdcost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -68,9 +63,18 @@ function s.tdop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e3
 function s.costchk(e,c,tp)
-	return Duel.IsPlayerCanDiscardDeckAsCost(tp,1)
+	return Duel.IsPlayerCanDiscardDeckAsCost(tp,2)
 end
 function s.costop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)
-	Duel.DiscardDeck(tp,1,REASON_COST)
+	Duel.DiscardDeck(tp,2,REASON_COST)
+end
+--(1)
+function s.spcon(e,c)
+    if c==nil then return true end
+    local tp=c:GetControler()
+    return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.IsPlayerCanDiscardDeck(tp,3)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
+    Duel.DiscardDeck(tp,3,REASON_COST)
 end

@@ -1,5 +1,5 @@
 --Windy
---Scripted By Konstak, fixed by Gid
+--Scripted By Konstak, fixed by Gid & e5 by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon
@@ -11,7 +11,7 @@ function s.initial_effect(c)
     e1:SetCountLimit(1,id)
     e1:SetCondition(s.spcon)
     c:RegisterEffect(e1)
-    --during damage calculation gain 700 atk
+    --during damage calculation gain 1000 atk
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_REMOVE)
@@ -44,6 +44,17 @@ function s.initial_effect(c)
     e4:SetTarget(s.thtg)
     e4:SetOperation(s.thop)
     c:RegisterEffect(e4)
+	--Spell from banished to hand
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetCategory(CATEGORY_TOHAND)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e5:SetCode(EVENT_SUMMON_SUCCESS)
+	e5:SetCountLimit(1,{id,4})
+	e5:SetTarget(s.thtg2)
+	e5:SetOperation(s.thop2)
+	c:RegisterEffect(e5)
+
 end
 --e1
 function s.spfilter(c)
@@ -66,7 +77,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)
-        e1:SetValue(700)
+        e1:SetValue(1000)
         e1:SetReset(RESET_PHASE+PHASE_DAMAGE_CAL)
         c:RegisterEffect(e1)
         local e2=Effect.CreateEffect(c)
@@ -91,7 +102,7 @@ function s.atktg2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.atkop2(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_GRAVE,0,1,1,nil)
+    local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_GRAVE,0,1,2,nil)
     if #g>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
@@ -107,9 +118,36 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,2,nil)
     if #g>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--e5
+function s.thtg2(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.spellfilter,tp,LOCATION_REMOVED,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_REMOVED)
+end
+function s.spellfilter(c)
+    return c:IsType(TYPE_SPELL) and c:IsAbleToHand()
+end
+function s.thop2(e,tp,eg,ep,ev,re,r,rp)
+    local g=Duel.SelectMatchingCard(tp,s.spellfilter,tp,LOCATION_REMOVED,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(1,0)
+        e1:SetValue(s.aclimit)
+        e1:SetLabel(g:GetFirst():GetCode())
+        e1:SetReset(RESET_PHASE+PHASE_END)
+        Duel.RegisterEffect(e1,tp)
+    end
+end
+function s.aclimit(e,re,tp)
+    return re:GetHandler():IsCode(e:GetLabel())
 end

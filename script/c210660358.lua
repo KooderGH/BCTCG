@@ -1,6 +1,5 @@
---By Tungnon
+--By Tungnon & poka-poka (3)
 --Graveflower Verbena
-
 local s,id=GetID()
 function s.initial_effect(c)
 	--Equip this card to opponent's attacking monster
@@ -27,6 +26,18 @@ function s.initial_effect(c)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
+	--When a card from gy banished except this card, move this card to gy, draw a card
+	local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,2)) 
+    e3:SetCategory(CATEGORY_TOGRAVE+CATEGORY_DRAW)
+    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_REMOVE)
+    e3:SetProperty(EFFECT_FLAG_DELAY)
+    e3:SetRange(LOCATION_REMOVED)
+    e3:SetCountLimit(1,{id,2})
+    e3:SetCondition(s.drawcon)
+    e3:SetOperation(s.drawop)
+    c:RegisterEffect(e3)
 end
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local at=Duel.GetAttacker()
@@ -82,4 +93,17 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetValue(LOCATION_REMOVED)
 		c:RegisterEffect(e1,true)
 	end
+end
+function s.gybanishedfilter(c,tp,id)
+    return c:IsControler(tp) and c:GetCode()~=id and c:IsLocation(LOCATION_REMOVED)
+end
+function s.drawcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsExists(s.gybanishedfilter,1,nil,tp,e:GetHandler():GetCode())
+end
+function s.drawop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        Duel.SendtoGrave(c,REASON_EFFECT+REASON_RETURN)
+        Duel.Draw(tp,1,REASON_EFFECT)
+    end
 end

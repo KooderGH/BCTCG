@@ -1,5 +1,5 @@
 --Headmistress Jeanne
---Scripted by Konstak, Fixed by Gideon
+--Scripted by Konstak, Fixed by Gideon, (9) by poka-poka
 --Effect:
 local s,id=GetID()
 function s.initial_effect(c)
@@ -112,6 +112,16 @@ function s.initial_effect(c)
     e14:SetTarget(s.gytg)
     e14:SetOperation(s.gyop)
     c:RegisterEffect(e14)
+	-- (9) Ignition: Add Flare Counter
+    local e15=Effect.CreateEffect(c)
+    e15:SetDescription(aux.Stringid(id,5))
+    e15:SetCategory(CATEGORY_COUNTER)
+    e15:SetType(EFFECT_TYPE_IGNITION)
+    e15:SetRange(LOCATION_MZONE)
+    e15:SetCountLimit(1)
+    e15:SetCondition(s.addcountercon)
+    e15:SetOperation(s.addcounterop)
+    c:RegisterEffect(e15)
 end
 function s.spfilter(e,c)
     return not c:IsAttribute(ATTRIBUTE_LIGHT) or not c:IsRace(RACE_SPELLCASTER)
@@ -226,4 +236,17 @@ function s.gyop(e,tp,eg,ep,ev,re,r,rp)
     if c:IsRelateToEffect(e) then
 		Duel.SendtoHand(c,nil,REASON_EFFECT)
 	end
+end
+--Ignition: add 1 flare Counter
+function s.counterfilter(c)
+    return c:IsFaceup() and c:IsRace(RACE_SPELLCASTER)
+end
+function s.addcountercon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetMatchingGroupCount(s.counterfilter,tp,LOCATION_MZONE,0,nil)>=4
+end
+function s.addcounterop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) then
+        c:AddCounter(0x4004,1)
+    end
 end

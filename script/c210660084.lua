@@ -1,5 +1,5 @@
 --Megidora
---Scripted by Gideon, 6th effect by Konstak
+--Scripted by Gideon, 6th effect by Konstak, 7th by poka
 --Effect
 --(1) Any monster that is Normal Summoned, Flip Summoned, or Special Summoned is changed to Defense Position except Dragon type monsters.
 --(2) Once per turn (Igntion): You can target one monster on your side of the field except "Megidora" and one monster on your opponent side; Destroy both targets.
@@ -7,6 +7,7 @@
 --(4) When this card is destroyed by a card effect: You can target 1 Dragon monster in your GY except "Megidora"; Special Summon it.
 --(5) When this card is destroyed by battle: You can target 1 monster you control; It gains 500 ATK.
 --(6) Can be treated as 2 Tributes for the Tribute Summon of a Dragon monster.
+--(7) When this card is Normal Summoned; Add 1 Dragon monster from your deck or GY to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
     --Stumbling but dragons fly so
@@ -55,7 +56,7 @@ function s.initial_effect(c)
 	e6:SetTarget(s.sptg)
 	e6:SetOperation(s.spop)
 	c:RegisterEffect(e6)
-    --Destroyed by battle, You can target 1 monster you control; It gains 500 ATK.
+    --Destroyed by battle, You can target 1 monster you control; It gains 1000 ATK.
     local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,3))
 	e7:SetCategory(CATEGORY_ATKCHANGE)
@@ -72,6 +73,15 @@ function s.initial_effect(c)
     e8:SetCode(EFFECT_DOUBLE_TRIBUTE)
     e8:SetValue(function (e,c) return c:IsRace(RACE_DRAGON) end)
     c:RegisterEffect(e8)
+	--(7) Add 1 Dragon monster from Deck to hand
+	local e9=Effect.CreateEffect(c)
+    e9:SetDescription(aux.Stringid(id,4))
+    e9:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e9:SetCode(EVENT_SUMMON_SUCCESS)
+    e9:SetTarget(s.thtg)
+    e9:SetOperation(s.thop)
+    c:RegisterEffect(e9)
 end
 --e1 (1)
 function s.dtarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -151,8 +161,24 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_ATTACK)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-		e1:SetValue(500)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetValue(1000)
 		tc:RegisterEffect(e1)
 	end
+end
+-- (7) Add 1 Dragon monster from Deck to hand
+function s.thfilter(c)
+    return c:IsRace(RACE_DRAGON) and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

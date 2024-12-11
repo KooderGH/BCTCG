@@ -1,10 +1,11 @@
 --Thundia
---Scripted By Gideon
+--Scripted By Gideon & (5) by poka-poka
 -- (1) If your opponent controls more monsters then you, You can Special Summon this card from your hand.
 -- (2) When this card is Summoned; You can Tribute 1 monster you control except "Thundia"; Send 1 card your opponent controls to the GY. (Does not target)
 -- (3) You can Target 1 DARK monster on the field; Banish it.
 -- (4) When this card is Tributed; Add up to 3 LIGHT monsters from your GY to your hand except "Thundia", then raise their level by 2.
--- (5) You can only use each effect of "Thundia" once per turn and used only once while it is face-up on the field.
+-- (5) When this card is destroyed and sent to the GY; Special Summon 1 LIGHT Spellcaster from your hand, then raise their level by 2 and their attack by 500.
+-- (6) You can only use each effect of "Thundia" once per turn and used only once while it is face-up on the field.
 local s,id=GetID()
 function s.initial_effect(c)
 	--(1) SS from hand
@@ -55,6 +56,16 @@ function s.initial_effect(c)
 	e6:SetOperation(s.relop)
 	e6:SetLabel(1)
 	c:RegisterEffect(e6)
+	--(5)
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,7))
+	e7:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e7:SetCode(EVENT_DESTROYED)
+	e7:SetCondition(s.spcon2)
+	e7:SetTarget(s.sptg2)
+	e7:SetOperation(s.spop2)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.spcon(e,c)
@@ -122,4 +133,39 @@ function s.relop(e,tp,eg,ep,ev,re,r,rp)
 			tc:RegisterEffect(e1)
 		end
 	end
+end
+--e7
+function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsReason(REASON_EFFECT+REASON_BATTLE)
+end
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_HAND,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
+end
+function s.spfilter(c,e,tp)
+	return c:IsRace(RACE_SPELLCASTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsAttribute(ATTRIBUTE_LIGHT)
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
+    if #g>0 then
+        local tc=g:GetFirst()
+        Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
+        if tc:IsFaceup() then
+            local e1=Effect.CreateEffect(tc)
+            e1:SetType(EFFECT_TYPE_SINGLE)
+            e1:SetCode(EFFECT_UPDATE_LEVEL)
+            e1:SetValue(2)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+            tc:RegisterEffect(e1)
+            local e2=Effect.CreateEffect(tc)
+            e2:SetType(EFFECT_TYPE_SINGLE)
+            e2:SetCode(EFFECT_UPDATE_ATTACK)
+            e2:SetValue(500)
+            e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+            tc:RegisterEffect(e2)
+        end
+    end
 end

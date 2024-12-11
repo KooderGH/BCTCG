@@ -4,7 +4,7 @@
 -- (2) Before damage caluation: If this card battles a monster with 2400 or less ATK; destroy it then deal damage equal to it's DEF. 
 -- (3) Once per turn: You can place this face-up card in your Spell & Trap zone as a Continuous Spell.
 -- (4) While this card is treated as a Continuous Spell, it gains the following effect:
--- * During your main phase 2, you can target one Monster your oppponent controls that has 2400 or less ATK; destroy it, then place this card in your opponent's monster zone.
+-- * During your main phase 2, you can target one Monster your oppponent controls that has 2400 or less ATK; destroy it, then special summon this card to your Monster zone.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Discard draw 2 (1)
@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	e3:SetTarget(s.spelltarget)
 	e3:SetOperation(s.spellop)
 	c:RegisterEffect(e3)
-	--Target 2400 or lower as spell then SS to opp
+	--Target 2400 or lower as spell then SS
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,3))
 	e4:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
@@ -129,7 +129,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	if tc:IsRelateToEffect(e) and Duel.Destroy(tc,REASON_EFFECT)~=0 then
 		local c=e:GetHandler()
 		if c:IsRelateToEffect(e) then
-			Duel.SpecialSummon(c,1,tp,1-tp,false,false,POS_FACEUP)
+			Duel.SpecialSummon(c,1,tp,tp,false,false,POS_FACEUP)
 		end
 	end
 end

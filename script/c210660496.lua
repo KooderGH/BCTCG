@@ -72,7 +72,7 @@ end
 function s.atkcon(e)
     local c=e:GetHandler()
     local eqg=c:GetEquipGroup()
-    return eqg and eqg:GetCount()>0
+    return eqg and eqg:IsExists(Card.IsType,1,nil,TYPE_SPELL)
 end
 -- Equip an Equip Spell from GY
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk)

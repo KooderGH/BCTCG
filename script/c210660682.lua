@@ -22,6 +22,17 @@ function s.initial_effect(c)
     e2:SetCode(EVENT_SUMMON_SUCCESS)
     e2:SetOperation(s.regop)
     c:RegisterEffect(e2)
+	-- e3: Draw 1 card when banished, optional additional draw if the drawn card is a monster
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_DRAW)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetCode(EVENT_REMOVE)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetCountLimit(1,id)
+	e3:SetTarget(s.drawtg)
+	e3:SetOperation(s.drawop)
+	c:RegisterEffect(e3)
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
@@ -72,4 +83,22 @@ function s.aclimit(e,re,tp)
 end
 function s.rmtarget(e,c)
     return Duel.IsPlayerCanRemove(e:GetHandlerPlayer(),c)
+end
+--Draw when banished
+function s.drawtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
+    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
+end
+function s.drawop(e,tp,eg,ep,ev,re,r,rp)
+    if Duel.Draw(tp,1,REASON_EFFECT)>0 then
+        local g=Duel.GetOperatedGroup()
+        local tc=g:GetFirst()
+        if tc and tc:IsType(TYPE_MONSTER) and Duel.IsPlayerCanDraw(tp,1) then
+            Duel.ConfirmCards(1-tp,tc)
+            if Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
+                Duel.SendtoGrave(tc,REASON_EFFECT+REASON_DISCARD)
+                Duel.Draw(tp,1,REASON_EFFECT)
+            end
+        end
+    end
 end

@@ -2,17 +2,21 @@
 --Scripted by Gideon with Naim's help. Special thanks to Naim for the EMZ effects! Link Precedure by Konstak
 --Effect
 -- Link Monster ↙↘	
--- 2 Level 3 or lower Fiend Monsters
+-- 2 Level 3 or lower Fiend Monsters, excepts token
 -- (1) Cannot be used as Link material.
 -- (2) Summon Cannot be Negated.
 -- (3) This cards Summon and Effects cannot be negated.
 -- (4) Cannot be returned to hand, banished, or tributed while on the field.
--- (5) After 10 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
+-- (5) After 15 turns have passed after you Summoned this card (counting the turn you Summoned this card as the 1st turn), you win the Duel.
 -- (6) Once per turn during your Main phase: You can Special Summon one Fiend monster from your hand or GY.
 -- (7) If you control 4 or more Fiend monsters, your opponent cannot enter the battle phase.
 -- (8) When this card leaves the field; banish it.
+-- (9) You cannot enter the battle phase while you control this card.
+-- (10) You can only control 1 "Legeluga" on the field
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     c:EnableReviveLimit()
     --Link Summon Procedure
     Link.AddProcedure(c,s.matfilter,2,2)
@@ -61,7 +65,7 @@ function s.initial_effect(c)
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS+EFFECT_FLAG_CANNOT_NEGATE+EFFECT_FLAG_CANNOT_DISABLE)
     e8:SetCode(EVENT_SPSUMMON_SUCCESS)
-	  e8:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+	e8:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
     e8:SetOperation(s.activate)
     aux.GlobalCheck(s,function()
         local ge1=Effect.CreateEffect(c)
@@ -104,10 +108,18 @@ function s.initial_effect(c)
     e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CANNOT_NEGATE)
     e11:SetValue(LOCATION_REMOVED)
     c:RegisterEffect(e11)
+	--Cannot enter battle phase
+	local e12=Effect.CreateEffect(c)
+    e12:SetType(EFFECT_TYPE_FIELD)
+    e12:SetCode(EFFECT_CANNOT_BP)
+    e12:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_NEGATE)
+    e12:SetRange(LOCATION_MZONE)
+    e12:SetTargetRange(1,0)
+    c:RegisterEffect(e12)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)
-	return c:IsLevelBelow(3) and c:IsRace(RACE_FIEND) and c:IsFaceup()
+	return c:IsLevelBelow(3) and c:IsRace(RACE_FIEND) and c:IsFaceup() and not c:IsType(TYPE_TOKEN)
 end
 --(3) functions
 function s.rmlimit(e,c,tp,r,re)
@@ -125,7 +137,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetLabel(0)
 	e1:SetValue(0)
 	e1:SetTargetRange(1,1)
-	e1:SetReset(RESET_PHASE+PHASE_END,11)
+	e1:SetReset(RESET_PHASE+PHASE_END,16)
 	Duel.RegisterEffect(e1,tp)
 	local descnum=tp==c:GetOwner() and 0 or 1
 	local e2=Effect.CreateEffect(c)
@@ -136,7 +148,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	e2:SetLabelObject(e1)
 	e2:SetOwnerPlayer(tp)
 	e2:SetOperation(s.reset)
-	e2:SetReset(RESET_PHASE+PHASE_END,11)
+	e2:SetReset(RESET_PHASE+PHASE_END,16)
 	c:RegisterEffect(e2)
 end
 function s.reset(e,tp,eg,ep,ev,re,r,rp)
@@ -154,7 +166,7 @@ function s.checkop(e,tp,eg,ep,ev,re,r,rp)
 	ct=ct+1
 	e:GetHandler():SetTurnCounter(ct)
 	e:SetValue(ct)
-	if ct==10 then
+	if ct==15 then
 		if re then re:Reset() end
 	end
 end
@@ -166,7 +178,7 @@ function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	for _,te in ipairs(eff) do
 		local p=te:GetOwnerPlayer()
 		local ct=te:GetValue()
-		if ct==10 then
+		if ct==15 then
 			t[p]=t[p]+1
 			local label=te:GetLabel()+1
 			if label==3 then

@@ -1,10 +1,11 @@
 --Princess Cat
 --Scripted by Gideon
--- (1) You can Special Summon this card by discarding 1 monster from your hand that is level 7 or higher.
--- (2) While this card is face-up on the field; Your opponent cannot attack with level 6 or lower monsters.
+-- (1) You can Special Summon this card by discarding 1 monster from your hand that is level 7 or higher except "Princess Cat".
+-- (2) While this card is face-up on the field; Your opponent cannot attack with level 5 or lower monsters.
 -- (3) During your opponent's turn, when a Spell Card is activated: You can negate the activation, and if you do, destroy it, then, draw 1 card. You can only use this effect of "Princess Cat" once per turn.
 -- (4) If you activate a Trap Card (except during the Damage Step): You can target 1 monster in your GY; Special Summon that target. You can only use this effect of "Princess Cat" once per turn.
 -- (5) Unaffected by other cards' effects.
+-- (x) Cannot be special Summoned from hand except by its own effect
 -- (6) If this card would leave the field; Banish it 
 local s,id=GetID()
 function s.initial_effect(c)
@@ -79,21 +80,31 @@ function s.initial_effect(c)
 	e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e7:SetValue(LOCATION_REMOVED)
 	c:RegisterEffect(e7)
+	local e8=Effect.CreateEffect(c)
+	e8:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e8:SetType(EFFECT_TYPE_SINGLE)
+	e8:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e8:SetRange(LOCATION_HAND)
+	e8:SetValue(s.splimit)
+	c:RegisterEffect(e8)
 end
 --E1
 function s.spcon(e,c)
-	if c==nil then return true end
-	return Duel.GetLocationCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)>0 and
-		Duel.IsExistingMatchingCard(Card.IsLevelAbove,c:GetControler(),LOCATION_HAND,0,1,c,7)
+    if c==nil then return true end
+    return Duel.GetLocationCount(e:GetHandlerPlayer(),LOCATION_MZONE,0)>0 and
+        Duel.IsExistingMatchingCard(s.spfilter,c:GetControler(),LOCATION_HAND,0,1,c)
+end
+function s.spfilter(c)
+    return c:IsLevelAbove(7) and not c:IsCode(id)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
-	local g=Duel.SelectMatchingCard(tp,Card.IsLevelAbove,tp,LOCATION_HAND,0,1,1,c,7)
-	Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DISCARD)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND,0,1,1,c)
+    Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
 end
 --e2
 function s.atktarget(e,c)
-	return c:IsLevelBelow(6)
+	return c:IsLevelBelow(5)
 end
 --e3
 function s.scondition(e,tp,eg,ep,ev,re,r,rp)
@@ -136,4 +147,12 @@ function s.traprebornopp(e,tp,eg,ep,ev,re,r,rp)
 	if tc and tc:IsRelateToEffect(e) then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
+end
+
+function s.splimit(e,se,sp,st)
+    local c=e:GetHandler()
+    if c:IsLocation(LOCATION_HAND) then
+        return se:GetHandler()==c
+    end
+    return true
 end

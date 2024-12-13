@@ -1,16 +1,16 @@
 --Gaia the Creator
---Scripted by Gideon, Link Precedure by Konstak
+--Scripted by Gideon, Link Precedure by Konstak, SP summon limit by poka-poka
 --Effect
 -- Link Monster ↙⬇↘	
 -- 3 Monsters
 -- (1) Cannot be used as Link material.
 -- (2) Cannot be returned to hand or banished.
--- (3) Cannot be targeted by card effects. This effect cannot be negated.
+-- (3) Cannot be targeted by card effects.
 -- (4) While you control this card, you cannot Normal Summon / Set Monsters. This effect cannot be negated.
--- (5) Neither player can activate the effects of monsters in the hand. This effect cannot be negated.
+-- (5) Neither player can activate the effects of monsters in the hand.
 -- (6) Inflict's Piercing Damage. This effect cannot be negated.
--- (7) All effects that add or subtract ATK/DEF are reversed. This effect cannot be negated.
--- (8) When this card destroys an opponent's monster by battle and sends it to the GY: Special Summon that monster to your field. This effect cannot be negated.
+-- (7) All effects that add or subtract ATK/DEF are reversed. 
+-- (8) When this card destroys an opponent's monster by battle and sends it to the GY: Special Summon that monster to your field.
 -- (9) When this card leaves the field: You can target 1 Monster in either GY except "Gaia the Creator": Special Summon it
 -- (10) During the battle phase: This card is unaffected by other card effects.
 local s,id=GetID()
@@ -48,7 +48,7 @@ function s.initial_effect(c)
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
     e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(1)
     c:RegisterEffect(e4)
@@ -69,7 +69,7 @@ function s.initial_effect(c)
     --Neither player can activate the effects of monsters in the hand. This effect cannot be negated.
     local e8=Effect.CreateEffect(c)
     e8:SetType(EFFECT_TYPE_FIELD)
-    e8:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
+    e8:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e8:SetCode(EFFECT_CANNOT_ACTIVATE)
     e8:SetRange(LOCATION_MZONE)
     e8:SetTargetRange(1,1)
@@ -85,7 +85,6 @@ function s.initial_effect(c)
     local e10=Effect.CreateEffect(c)
     e10:SetType(EFFECT_TYPE_FIELD)
     e10:SetCode(EFFECT_REVERSE_UPDATE)
-    e10:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CANNOT_DISABLE)
     e10:SetRange(LOCATION_MZONE)
     e10:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
     c:RegisterEffect(e10)
@@ -94,7 +93,6 @@ function s.initial_effect(c)
     e11:SetDescription(aux.Stringid(id,0))
     e11:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e11:SetCode(EVENT_BATTLE_DESTROYING)
-    e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e11:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e11:SetCondition(aux.bdogcon)
     e11:SetTarget(s.battletg)
@@ -119,6 +117,23 @@ function s.initial_effect(c)
     e13:SetCondition(s.imcon)
     e13:SetValue(s.immunefilter)
     c:RegisterEffect(e13)
+	--Sp Summon limitt
+	local e14=Effect.CreateEffect(c)
+	e14:SetType(EFFECT_TYPE_FIELD)
+	e14:SetRange(LOCATION_MZONE)
+	e14:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e14:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e14:SetTargetRange(1,0)
+	e14:SetTarget(s.limittg)
+	c:RegisterEffect(e14)
+	local e15=Effect.CreateEffect(c)
+	e15:SetType(EFFECT_TYPE_FIELD)
+	e15:SetCode(EFFECT_LEFT_SPSUMMON_COUNT)
+	e15:SetRange(LOCATION_MZONE)
+	e15:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e15:SetTargetRange(1,0)
+	e15:SetValue(s.countval)
+	c:RegisterEffect(e15)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)
@@ -171,4 +186,13 @@ function s.imcon(e)
 end
 function s.immunefilter(e,te)
     return te:GetOwner()~=e:GetOwner()
+end
+--(11)
+function s.limittg(e,c,tp,sumtp,sumpos)
+    local count=Duel.GetActivityCount(tp,ACTIVITY_SPSUMMON)
+    return count>=1
+end
+function s.countval(e,re,tp)
+    local count=Duel.GetActivityCount(tp,ACTIVITY_SPSUMMON)
+    if count>=1 then return 0 else return 1-count end
 end

@@ -1,9 +1,10 @@
 --Li'l Valkyrie
---Scripted by Gideon
+--Scripted by Gideon & e6 by poka-poka
 -- (1) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) by having 3 or more LIGHT monsters with different names in your GY while controlling  no monsters.
 -- (2) Unaffected by Spell/Trap effects and by activated effects effects from any monster whose original Level/Rank is lower then this card's current Level.
 -- (3) All Special Summon monsters your opponent controls lose 800 ATK/DEF
 -- (4) Once per turn (Quick): You can make your opponent send 1 monster from their hand or their side of the field to the banish zone (their choice).
+-- (5) You cannot control more than 3 monster when you control this face up card.
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
@@ -49,6 +50,15 @@ function s.initial_effect(c)
 	e5:SetTarget(s.tgtg)
 	e5:SetOperation(s.tgop)
 	c:RegisterEffect(e5)
+	--limit 3 monster
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_FIELD)
+	e6:SetCode(EFFECT_MAX_MZONE)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e6:SetTargetRange(1,0)
+	e6:SetValue(s.limit3)
+	c:RegisterEffect(e6)
 end
 --e2
 function s.rescon(sg,e,tp,mg)
@@ -90,4 +100,8 @@ function s.tgop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.HintSelection(sg)
 		Duel.Remove(sg,REASON_RULE,PLAYER_NONE,1-tp)
 	end
+end
+--limit 3 mosnter
+function s.limit3(e,fp,rp,r)
+    return 3
 end

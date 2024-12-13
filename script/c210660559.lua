@@ -2,6 +2,8 @@
 --Scripted by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     -- Effect 1: Special Summon from hand if LP difference is 2000 or more
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
@@ -61,6 +63,13 @@ function s.initial_effect(c)
     e6:SetOperation(s.atkop)
     e6:SetCountLimit(1,id+1,EFFECT_COUNT_CODE_DUEL)
     c:RegisterEffect(e6)
+	-- Effect 7 : Cannot attack the turn it is Special Summoned
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e7:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e7:SetOperation(s.atklimit)
+	c:RegisterEffect(e7)
 end
 
 -- Special Summon from hand if LP difference is 2000 or more
@@ -134,4 +143,12 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetValue(tc:GetAttack()*2)
         tc:RegisterEffect(e1)
     end
+end
+-- Cannot attack the turn it is Special Summoned
+function s.atklimit(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_CANNOT_ATTACK)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+	e:GetHandler():RegisterEffect(e1)
 end

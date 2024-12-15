@@ -1,5 +1,5 @@
 --Li'l Gau
---Scripted By Konstak
+--Scripted By Konstak & e7 by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon
@@ -40,6 +40,13 @@ function s.initial_effect(c)
     e6:SetRange(LOCATION_MZONE)
     e6:SetValue(function(e,c) return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_DARK) end)
     c:RegisterEffect(e6)
+	-- Cannot be used as link material except for "princess" card
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_SINGLE)
+	e7:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+	e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e7:SetValue(s.linklimit)
+	c:RegisterEffect(e7)
 end
 --Special Summon Function
 function s.spcon(e,c)
@@ -70,4 +77,9 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
     end
+end
+--e7
+function s.linklimit(e,c)
+    if not c then return false end
+    return c:GetCode()~=210660161
 end

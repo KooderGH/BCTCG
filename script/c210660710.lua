@@ -8,10 +8,10 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
+	e1:SetDescription(aux.Stringid(id,1))
+	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_HAND)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCondition(s.hspcon)
 	e1:SetTarget(s.hsptg)
 	e1:SetOperation(s.hspop)
@@ -58,24 +58,31 @@ end
 function s.rfilter(c,tp)
 	return c:IsControler(1-tp) and c:IsSummonType(SUMMON_TYPE_SPECIAL)
 end
-function s.hspcon(e,c)
-	if c==nil then return true end
-	local tp=e:GetHandlerPlayer()
-	return Duel.CheckReleaseGroup(tp,s.rfilter,1,false,1,true,c,tp,nil,true,nil,tp)
+function s.hspcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsLocation(LOCATION_HAND) and Duel.GetLocationCount(tp,LOCATION_MZONE) > 0
 end
-function s.hsptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.rfilter,1,1,false,true,true,c,nil,nil,true,nil,tp)
+function s.hsptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then
+		return Duel.CheckReleaseGroup(tp,s.rfilter,1,false,1,true,nil,nil,nil,true,nil,tp)
+	end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+	local g=Duel.SelectReleaseGroup(tp,s.rfilter,1,1,false,true,true,nil,nil,nil,true,nil,tp)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
-	return true
+		return true
 	end
 	return false
 end
-function s.hspop(e,tp,eg,ep,ev,re,r,rp,c)
+function s.hspop(e,tp,eg,ep,ev,re,r,rp)
 	local g=e:GetLabelObject()
 	if not g then return end
-	Duel.Release(g,REASON_COST)
+	if Duel.Release(g,REASON_COST) > 0 then
+		local c=e:GetHandler()
+		if c:IsRelateToEffect(e) then
+			Duel.SpecialSummon(c,SUMMON_TYPE_SPECIAL,tp,tp,false,false,POS_FACEUP)
+		end
+	end
 	g:DeleteGroup()
 end
 --e3

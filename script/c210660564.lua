@@ -19,8 +19,7 @@ function s.initial_effect(c)
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_DISABLE)
-    e2:SetType(EFFECT_TYPE_QUICK_O)
-    e2:SetCode(EVENT_FREE_CHAIN)
+    e2:SetType(EFFECT_TYPE_IGNITION)
     e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e2:SetRange(LOCATION_MZONE)
     e2:SetCountLimit(1,id)
@@ -55,6 +54,12 @@ function s.initial_effect(c)
     e5:SetTarget(s.sdtg)
     e5:SetOperation(s.sdop)
     c:RegisterEffect(e5)
+	--Cannot be special summoned
+	local e6=Effect.CreateEffect(c)
+	e6:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_SINGLE_RANGE)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetCode(EFFECT_SPSUMMON_CONDITION)
+	c:RegisterEffect(e6)
 end
 
 -- E1

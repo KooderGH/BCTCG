@@ -7,9 +7,11 @@
 -- (4) You can only use 1 of these effects of "Issun Boshi" per turn, and only once that turn.
 -- * When this card deals battle damage; Draw 1 card.
 -- * If this card is sent to the GY while your opponent controls more cards than the combined number of cards in your hand and that you control; Draw cards equal to their surplus. You cannot activate this effect if you control a non WIND monster.
+-- (5) You can only control 1 Issun Boshi
 local s,id=GetID()
 function s.initial_effect(c)
     --self destroy (1)
+    c:SetUniqueOnField(1,0,id)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
     e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)

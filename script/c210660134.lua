@@ -7,8 +7,10 @@
 -- (4) You can only use 1 of these effects of "Usashima Taro" per turn, and only once that turn.
 -- * You can Tribute 1 WIND Machine monster you control and target 1 monster your opponet controls; Send that target to the GY.
 -- * If this card is sent to the GY while you control no WIND monsters: Target 1 monster your opponent controls; Take control of that target.
+-- (5) Can only control 1 Taro
 local s,id=GetID()
 function s.initial_effect(c)
+    c:SetUniqueOnField(1,0,id)
     --self destroy (1)
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,3))

@@ -1,21 +1,14 @@
 --Princess Kaguya
 --Scripted by Konstak
 --Effect
--- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
+-- (1) You can only control 1 "Princess Kaguya"
 -- (2) If you control a WIND Attribute monster, you can Special Summon this card from your hand.
 -- (3) You can only use 1 of these effects of "Princess Kaguya" per turn, and only once that turn.
 -- * Once per turn: You can have all wind monsters gain 400 ATK for each wind monster you control until your opponent's end phase.
 -- * If this card is send to the GY; You can Special Summon one WIND Machine monster from your hand.
 local s,id=GetID()
 function s.initial_effect(c)
-    --self destroy (1)
---    local e1=Effect.CreateEffect(c)
---    e1:SetType(EFFECT_TYPE_SINGLE)
---    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
---    e1:SetRange(LOCATION_MZONE)
---    e1:SetCode(EFFECT_SELF_DESTROY)
---    e1:SetCondition(s.sdcon)
---    c:RegisterEffect(e1)
+    c:SetUniqueOnField(1,0,id)
     --Special Summon this card (2)
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_FIELD)

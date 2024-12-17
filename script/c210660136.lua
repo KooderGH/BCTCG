@@ -7,8 +7,10 @@
 -- (4) You can only use 1 of these effects of "Momotaro" per turn, and only once that turn.
 -- * If this card is Special Summoned; Add 1 Lv8 or lower WIND Machine monster from your Deck to your hand.
 -- * If this card is sent to the GY: For each WIND monster you control, Target 1 Spell/Trap your opponent controls; Destroy those targets.
+-- (5) Can only control 1 "Momotaro"
 local s,id=GetID()
 function s.initial_effect(c)
+    c:SetUniqueOnField(1,0,id)
     --self destroy (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

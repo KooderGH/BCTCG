@@ -7,8 +7,10 @@
 -- (4) You can only use 1 of these effects of "Kasa Jizo" per turn, and only once that turn.
 -- * You can Target 1 card on the field (Ignition); Destroy that target. 
 -- * If this card is sent to the GY: You can target 1 card on the field; Destroy that target. You cannot activate this effect if you control a non WIND monster.
+-- (5) You can only control 1 Jizo
 local s,id=GetID()
 function s.initial_effect(c)
+    c:SetUniqueOnField(1,0,id)
     --self destroy (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

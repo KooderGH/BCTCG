@@ -9,9 +9,11 @@
 -- * (Quick) You can remove 3 Spell Counter(s) from this card to add 1 WIND monster from your Deck or GY to your hand.
 -- * If this card is sent to the GY; For every 2 WIND monsters you control, add 1 Spell card from your GY to your hand.
 -- * Once per turn (Ignition): You can banish 1 card in your GY and target 1 Spell/Trap card your opponent controls on the field; Destroy it.
+-- (6) You can only control 1 Shitakiri
 local s,id=GetID()
 function s.initial_effect(c)
     c:EnableCounterPermit(COUNTER_SPELL)
+    c:SetUniqueOnField(1,0,id)
     --self destroy (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)

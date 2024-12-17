@@ -55,18 +55,17 @@ function s.initial_effect(c)
 end
 -- 1. FLIP Effect: Set ATK of up to 2 opponent's monsters to 0
 function s.fliptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if Duel.IsExistingMatchingCard(s.nonfirewarriorfilter,tp,LOCATION_MZONE,0,1,nil) then return false end
     if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) end
-    if chk == 0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end
+    if chk == 0 then 
+        return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) 
+    end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
     local g = Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_MZONE,1,2,nil)
     Duel.SetOperationInfo(0,CATEGORY_ATKCHANGE,g,#g,0,0)
 end
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.IsExistingMatchingCard(s.nonfirewarriorfilter,tp,LOCATION_MZONE,0,1,nil) then
-        Duel.NegateEffect(0)
-        return
-    end
     local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
     for tc in aux.Next(g) do
         if tc:IsFaceup() and tc:IsRelateToEffect(e) then
@@ -79,8 +78,9 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
         end
     end
 end
+
 function s.nonfirewarriorfilter(c)
-    return c:IsFaceup() and c:IsRace(RACE_WARRIOR) and not c:IsAttribute(ATTRIBUTE_FIRE)
+    return c:IsFaceup() and (not c:IsRace(RACE_WARRIOR) or not c:IsAttribute(ATTRIBUTE_FIRE))
 end
 -- 2. Special Summon up to 2 FIRE Warrior monsters when destroyed by battle
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)

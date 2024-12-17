@@ -59,7 +59,9 @@ function s.rfilter(c,tp)
 	return c:IsControler(1-tp) and c:IsSummonType(SUMMON_TYPE_SPECIAL)
 end
 function s.hspcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsLocation(LOCATION_HAND) and Duel.GetLocationCount(tp,LOCATION_MZONE) > 0
+	return e:GetHandler():IsLocation(LOCATION_HAND)
+	and Duel.GetLocationCount(tp,LOCATION_MZONE) > 0
+	and Duel.IsMainPhase() and Duel.GetCurrentPhase()==PHASE_MAIN1
 end
 function s.hsptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then

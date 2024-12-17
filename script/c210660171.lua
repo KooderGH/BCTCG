@@ -1,6 +1,6 @@
 --Balaluga
 --Scripted by Gideon. Thanks to naim for showing me -reset_tofield
--- (1) If you control a Fiend monster: You can Special Summon this card from your hand. This card cannot be Tributed if summoned this way. 
+-- (1) If you control a Fiend monster: You can Special Summon this card from your hand. This card cannot be Tributed or used as Link Material if summoned this way. 
 -- (2) While this card is face-up on the field: Monsters with 1500 or more ATK cannot  declare an attack except Fiend Monsters.
 -- (3) Your opponent takes no damage while this card is on the field.
 local s,id=GetID()
@@ -59,6 +59,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	local e3=e1:Clone()
 	e3:SetCode(EFFECT_UNRELEASABLE_EFFECT)
 	c:RegisterEffect(e3)
+    local e4=e1:Clone()
+    e4:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+    c:RegisterEffect(e4)
 end
 --e2
 function s.atktarget(e,c)

@@ -6,8 +6,11 @@
 -- (4) When this card is Tributed; Add up to 3 LIGHT monsters from your GY to your hand except "Thundia", then raise their level by 2.
 -- (5) When this card is destroyed and sent to the GY; Special Summon 1 LIGHT Spellcaster from your hand, then raise their level by 2 and their attack by 500.
 -- (6) You can only use each effect of "Thundia" once per turn and used only once while it is face-up on the field.
+-- (7) You can only control 1 Thundia
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--(1) SS from hand
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)

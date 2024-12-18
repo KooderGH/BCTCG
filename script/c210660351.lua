@@ -2,6 +2,8 @@
 --Scripted By Konstak, help from Snooze for the tribute effect
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     c:EnableUnsummonable()
     --special summon
     local e1=Effect.CreateEffect(c)

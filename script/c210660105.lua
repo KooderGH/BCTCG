@@ -5,8 +5,11 @@
 -- (3) You can target 1 monster you control (Ignition); Raise that monster's level by 3.
 -- (4) You can activate this effect; Until your next standby phase: This card gains 300 ATK/DEF for each level it has.
 -- (5) You can only use each activated effect of "Kuu" once per turn and used only once while it is face-up on the field.
+-- (6) You can only control 1 Kuu
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--(1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

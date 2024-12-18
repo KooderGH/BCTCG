@@ -2,6 +2,8 @@
 --Scripted By Konstak, fixed by Gid & e5 by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     --special summon
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)

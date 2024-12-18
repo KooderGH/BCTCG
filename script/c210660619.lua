@@ -7,8 +7,11 @@
 -- (5) You can only use each effect of "Lilin" once per turn and used only once while it is face-up on the field.
 -- (6) Has piercing battle damage.
 -- (7) You can Special Summon this card from your hand. If you do, you cannot summon other monster's this turn except for LIGHT Spellcaster monsters.
+-- (8) You can only control 1 Lilin
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     --500 ATK/DEF for each Level 5 or higher LIGHT Spellcaster
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

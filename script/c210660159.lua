@@ -6,8 +6,11 @@
 -- (4) If this card is Tributed; You can Special Summon 1 LIGHT Spellcaster from your hand, then raise it's level by 4.
 -- (5) You can only use each effect of "Kalisa" once per turn and used only once while it is face-up on the field.
 -- (6) This card can be treated as 2 Tributes for the Tribute Summon of a LIGHT monster.
+-- (7) You can only control 1 Kalisa
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--summon & set with no tribute
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

@@ -2,6 +2,8 @@
 --Scripted By poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
     -- Effect 1 : When opponent activates a spell card, 
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))

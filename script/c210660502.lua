@@ -7,8 +7,11 @@
 -- (5) If this card is in your GY: You can banish 3 Spell cards from your GY; Special Summon this card.
 -- (6) When this card is Tributed; Add 1 Spell card from your banish zone to your hand.
 -- (7) You can only use each above effect of "Myrcia" once per turn and used only once while it is face-up on the field.
+-- (8) You can only control 1 Myrcia
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

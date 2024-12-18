@@ -6,8 +6,11 @@
 -- (4) If this card is Tributed by a Spellcaster; Negate all current effect's on the field until the end phase.
 -- (5) If this card is Special Summoned; Add 1 Spell from your deck to your hand.
 -- (6) You can only use each effect of "Huntress Terun" once per turn and used only once while it is face-up on the field.
+-- (7) You can only control 1 Huntress Terun
 local s,id=GetID()
 function s.initial_effect(c)
+	--Can only control one
+	c:SetUniqueOnField(1,0,id)
 	--summon & set with no tribute (1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

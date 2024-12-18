@@ -16,6 +16,7 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e1:SetRange(LOCATION_HAND)
     e1:SetCode(EVENT_DAMAGE)
+	e1:SetCountLimit(1,{id,1})
     e1:SetCondition(s.sumcon)
     e1:SetTarget(s.sumtg)
     e1:SetOperation(s.sumop)
@@ -57,7 +58,8 @@ function s.initial_effect(c)
 end
 --(1)
 function s.sumcon(e,tp,eg,ep,ev,re,r,rp)
-    return ep==tp and tp~=rp
+    return ep==tp and tp~=rp and Duel.IsTurnPlayer(1-tp)
+	and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0) + 2 <= Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 

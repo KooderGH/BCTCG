@@ -3,7 +3,7 @@
 --Effect
 -- (1) When you take damage from a card in your opponent's possession: You can Special Summon this card from your hand.
 -- (2) When this card is Special Summoned by its effect: Activate the appropriate effect based on the type of damage:
--- * Battle damage: Destroy all monster's your opponent controls. You cannot attack the turn you use this effect. You can only use this effect of "Dark Aegis Garu" once per Duel.
+-- * Battle damage: Destroy all monster's your opponent controls.  You can only use this effect of "Dark Aegis Garu" once per Duel.
 -- * Effect damage: Inflict damage to your opponent equal to double the damage you took. This card gains ATK equal to the damage you inflicted to your opponent this way.
 -- (3) Other monsters you control cannot attack.
 -- (4) During each end phase: This card gains 1000 ATK.
@@ -18,6 +18,7 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e1:SetRange(LOCATION_HAND)
     e1:SetCode(EVENT_DAMAGE)
+	e1:SetCountLimit(1,{id,1})
     e1:SetCondition(s.sumcon)
     e1:SetTarget(s.sumtg)
     e1:SetOperation(s.sumop)
@@ -70,7 +71,8 @@ function s.initial_effect(c)
     c:RegisterEffect(e6)
 end
 function s.sumcon(e,tp,eg,ep,ev,re,r,rp)
-    return ep==tp and tp~=rp
+    return ep==tp and tp~=rp and Duel.IsTurnPlayer(1-tp)
+	and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0) + 2 <= Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
@@ -99,15 +101,15 @@ function s.sumop2(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local sg=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
     Duel.Destroy(sg,REASON_EFFECT)
-    if c:IsRelateToEffect(e) and c:IsFaceup() then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_FIELD)
-        e1:SetCode(EFFECT_CANNOT_ATTACK)
-        e1:SetProperty(EFFECT_FLAG_OATH+EFFECT_FLAG_IGNORE_IMMUNE)
-        e1:SetTargetRange(LOCATION_MZONE,0)
-        e1:SetReset(RESET_PHASE+PHASE_END)
-        Duel.RegisterEffect(e1,tp)
-    end
+    --if c:IsRelateToEffect(e) and c:IsFaceup() then
+     --   local e1=Effect.CreateEffect(c)
+     --   e1:SetType(EFFECT_TYPE_FIELD)
+     --   e1:SetCode(EFFECT_CANNOT_ATTACK)
+     --   e1:SetProperty(EFFECT_FLAG_OATH+EFFECT_FLAG_IGNORE_IMMUNE)
+     --   e1:SetTargetRange(LOCATION_MZONE,0)
+     --   e1:SetReset(RESET_PHASE+PHASE_END)
+     --   Duel.RegisterEffect(e1,tp)
+    --end
 end
 --(2) *2
 function s.sumcon3(e,tp,eg,ep,ev,re,r,rp)

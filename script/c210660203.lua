@@ -24,6 +24,7 @@ function s.initial_effect(c)
     e2:SetCode(EVENT_TO_GRAVE)
     e2:SetRange(LOCATION_HAND)
     e2:SetProperty(EFFECT_FLAG_DELAY)
+	e2:SetCountLimit(1,{id,1})
     e2:SetCondition(s.spcon)
     e2:SetTarget(s.sptg)
     e2:SetOperation(s.spop)
@@ -46,6 +47,7 @@ function s.initial_effect(c)
     e4:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
     e4:SetCode(EVENT_TO_GRAVE)
     e4:SetCountLimit(1,id)
+	e4:SetCondition(s.rmcon)
     e4:SetTarget(s.rmtg)
     e4:SetOperation(s.rmop)
     c:RegisterEffect(e4)
@@ -93,6 +95,9 @@ function s.ssop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Add when sent to GY function
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_WIND),tp,LOCATION_MZONE,0,1,nil)
+end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_DECK,0,2,nil) end
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)

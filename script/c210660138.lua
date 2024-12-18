@@ -16,6 +16,7 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_SPSUMMON_PROC)
     e2:SetRange(LOCATION_HAND)
     e2:SetCondition(s.spcon)
+	e2:SetCountLimit(1,{id,1})
     c:RegisterEffect(e2)
     --gain atk
     local e3=Effect.CreateEffect(c)
@@ -38,13 +39,6 @@ function s.initial_effect(c)
     e4:SetOperation(s.ssop)
     c:RegisterEffect(e4)
 end
---Self Destroy Function
---function s.sdfilter(c)
---    return c:IsMonster() and c:IsAttributeExcept(ATTRIBUTE_WIND)
---end
---function s.sdcon(e)
---    return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
---end
 --Special summon this card function
 function s.spfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)

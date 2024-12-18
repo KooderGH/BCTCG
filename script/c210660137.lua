@@ -25,6 +25,7 @@ function s.initial_effect(c)
     e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e2:SetCode(EFFECT_SPSUMMON_PROC)
     e2:SetRange(LOCATION_HAND)
+	e2:SetCountLimit(1,{id,1})
     e2:SetCondition(s.spcon)
     c:RegisterEffect(e2)
     --Can banish Fairy monsters (3)
@@ -43,6 +44,7 @@ function s.initial_effect(c)
     e4:SetType(EFFECT_TYPE_IGNITION)
     e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e4:SetRange(LOCATION_MZONE)
+	e4:SetProperty(EFFECT_FLAG_NO_TURN_RESET)
     e4:SetCountLimit(1,id)
     e4:SetTarget(s.destg)
     e4:SetOperation(s.desop)
@@ -56,8 +58,8 @@ function s.initial_effect(c)
     e5:SetCode(EVENT_TO_GRAVE)
     e5:SetCountLimit(1,id)
     e5:SetCondition(s.descon)
-    e5:SetTarget(s.destg)
-    e5:SetOperation(s.desop)
+    e5:SetTarget(s.destg2)
+    e5:SetOperation(s.desop2)
     c:RegisterEffect(e5)
 end
 --Self Destroy Function
@@ -89,20 +91,38 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --Target 1 card on the field; destroy that target.
+--4.1
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) end
+    if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+    local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if tc and tc:IsRelateToEffect(e) then
+        Duel.Destroy(tc,REASON_EFFECT)
+    end
+end
+--4.2
 function s.desfilter(c)
     return c:IsMonster() and c:IsAttributeExcept(ATTRIBUTE_WIND)
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
     return not Duel.IsExistingMatchingCard(s.desfilter,tp,LOCATION_MZONE,0,1,nil)
 end
-function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsOnField() end
-    if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+function s.filter(c)
+	return c:IsType(TYPE_SPELL+TYPE_TRAP)
+end
+function s.destg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    if chkc then return chkc:IsOnField() and s.filter(chkc) end
+    if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-    local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+    local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
     Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
-function s.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop2(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) then
 		Duel.Destroy(tc,REASON_EFFECT)

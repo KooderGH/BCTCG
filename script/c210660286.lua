@@ -153,12 +153,15 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
 	g:DeleteGroup()
 end
---If summoned by the above effect, add a card from the GY to the hand
+--If summoned by the above effect, add trap card from the GY to the hand
 function s.recovcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
 end
+function s.filter (c)
+    return c:IsTrap() and c:IsAbleToHand()
+end
 function s.recovtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToHand,tp,LOCATION_GRAVE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_GRAVE,0,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
 end
 function s.recovop(e,tp,eg,ep,ev,re,r,rp)

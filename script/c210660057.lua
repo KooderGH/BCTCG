@@ -70,7 +70,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(3)
 function s.drefilter(c)
-    return c:IsLevelBelow(9) and c:IsMonster() and c:IsAbleToHand()
+    return c:IsAbleToHand() and c:IsCode(210660455) or c:IsCode(210660519) or c:IsCode(210660059) or c:IsCode(210660042) or c:IsCode(210660044) or c:IsCode(210660057) or c:IsCode(210660668) or c:IsCode(210660043) or c:IsCode(210660617) or c:IsCode(210660427) or c:IsCode(210660143)
 end
 function s.drecon(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():IsReason(REASON_EFFECT)

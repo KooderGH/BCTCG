@@ -6,10 +6,11 @@
 -- (1) Cannot be used as Link material.
 -- (2) Cannot be returned to hand or banished.
 -- (3) Cannot be targeted by card effects. This effect cannot be negated.
--- (4) When this card is Special Summoned: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
+-- (4) When this card is Link Summoned using 3 different Attribute: Look at your opponent's hand; Banish 1 card from their hand and all cards with that same name from their hand/deck face-down.
 -- (5) Once while this card is face-up on the field: If it would be destroyed; gain 1000 ATK instead.
 -- (6) This card can attack your opponents monsters once each.
 -- (7) If this card is in your GY: You can banish 3 cards from top of your deck facedown; Add this card to your hand.
+-- (9) "During your opponent's end phase: If this is the only face-up monster you control; Target 1 monster in either player's GY; Special Summon it.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -53,7 +54,8 @@ function s.initial_effect(c)
     local e5=Effect.CreateEffect(c)
     e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetCode(EVENT_SPSUMMON_SUCCESS)
-	  e5:SetCountLimit(1,{id,1},EFFECT_COUNT_CODE_DUEL)
+	e5:SetCountLimit(1,{id,1})
+	e5:SetCondition(s.linkcon)
     e5:SetTarget(s.handtg)
     e5:SetOperation(s.handop)
     c:RegisterEffect(e5)
@@ -83,12 +85,30 @@ function s.initial_effect(c)
     e8:SetTarget(s.thtg)
     e8:SetOperation(s.thop)
     c:RegisterEffect(e8)
+	--SS from either GY if this only card you controll
+	local e9=Effect.CreateEffect(c)
+	e9:SetDescription(aux.Stringid(id,1))
+	e9:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+	e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e9:SetCode(EVENT_PHASE+PHASE_END)
+	e9:SetRange(LOCATION_MZONE)
+	e9:SetCountLimit(1)
+	e9:SetCondition(s.gscon)
+	e9:SetTarget(s.gstg)
+	e9:SetOperation(s.gsop)
+	c:RegisterEffect(e9)
 end
 --(1) functions
 function s.matfilter(c,lc,sumtype,tp)
 	return c:IsMonster() and c:IsFaceup()
 end
 --4
+function s.linkcon(e,tp,eg,ep,ev,re,r,rp)
+    local c = e:GetHandler()
+    if not c:IsSummonType(SUMMON_TYPE_LINK) then return false end
+    local g = c:GetMaterial()
+    return #g==3 and g:GetClassCount(Card.GetAttribute)==3
+end
 function s.handtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,0,1-tp,1)
@@ -146,4 +166,22 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,e:GetHandler())
 	end
+end
+--e9
+function s.gscon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==1-tp
+end
+function s.gstg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then
+        return Duel.IsExistingTarget(aux.NecroValleyFilter(Card.IsCanBeSpecialSummoned),tp,LOCATION_GRAVE,LOCATION_GRAVE,1,nil,e,0,tp,false,false)
+    end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local g=Duel.SelectTarget(tp,aux.NecroValleyFilter(Card.IsCanBeSpecialSummoned),tp,LOCATION_GRAVE,LOCATION_GRAVE,1,1,nil,e,0,tp,false,false)
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
+end
+function s.gsop(e,tp,eg,ep,ev,re,r,rp)
+    local tc=Duel.GetFirstTarget()
+    if tc and tc:IsRelateToEffect(e) then
+        Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
+    end
 end

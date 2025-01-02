@@ -5,11 +5,11 @@
 -- (3) Cannot be targeted by card effects.
 -- (4) This card's Position cannot be changed.
 -- (5) Card's you control cannot be returned to hand or banished.
--- (6) If this card is in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand. You can only activate this effect once per duel.
+-- (6) If this card is in your GY and there is 10 or more EARTH machine monster in your GY: You can set your LP to the same LPs your opponent has; Add this card to your hand. You can only activate this effect once per turn.
 -- (7) This card gains the following effect(s), based on the number of Earth Machine Monster(s) you control except "Mighty Kristul Muu":
 -- * 1+: Monsters your opponent control can only target this card for attacks. During each End Phase; This card gains 1000 DEF.
 -- * 2+: This card becomes uneffected by card effects except from itself.
--- * 3+: All monsters you control gain 500 ATK/DEF for each Machine type monster you control.
+-- * 3+: All monsters you control gain 300 ATK/DEF for each Machine type monster you control.
 -- * 4+: Once per turn (Ignition): You can draw 2 cards.
 -- * 5+: Machine type monsters you control can attack your opponents LP directly.
 local s,id=GetID()
@@ -100,7 +100,7 @@ function s.initial_effect(c)
     e10:SetCategory(CATEGORY_TOHAND)
     e10:SetType(EFFECT_TYPE_IGNITION)
     e10:SetRange(LOCATION_GRAVE)
-    e10:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
+    e10:SetCountLimit(1,id)
     e10:SetCost(s.graverecoverycost)
     e10:SetTarget(s.graverecoverytg)
     e10:SetOperation(s.graverecoveryop)
@@ -174,6 +174,12 @@ function s.initial_effect(c)
     e17:SetCondition(s.emachcountcondition)
     e17:SetTarget(s.dirtg)
     c:RegisterEffect(e17)
+	-- Reduce opponent's damage to 1/4
+	local e18=Effect.CreateEffect(c)
+	e18:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e18:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e18:SetOperation(s.damop)
+	c:RegisterEffect(e18)
 end
 --1
 function s.emachfilter(c)
@@ -201,13 +207,19 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 --(6)
+function s.earthmachinefilter(c)
+    return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE)
+end
 function s.graverecoverycost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLP(tp)~=Duel.GetLP(1-tp) end
 	Duel.SetLP(tp,Duel.GetLP(1-tp))
 end
 function s.graverecoverytg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToHand() end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+    if chk==0 then 
+        return Duel.GetMatchingGroupCount(s.earthmachinefilter,tp,LOCATION_GRAVE,0,nil)>=10 
+            and e:GetHandler():IsAbleToHand() 
+    end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
 function s.graverecoveryop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
@@ -248,7 +260,7 @@ function s.imcon(e,te)
 end
 --Atk Def gain
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE),c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*500
+	return Duel.GetMatchingGroupCount(aux.FaceupFilter(Card.IsRace,RACE_MACHINE),c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*300
 end
 --direct attack
 function s.easymechfilter(c)
@@ -267,4 +279,22 @@ end
 function s.drawop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Draw(p,d,REASON_EFFECT)
+end
+-- Damage reduction operation
+function s.damop(e,tp,eg,ep,ev,re,r,rp)
+    local e1=Effect.CreateEffect(e:GetHandler())
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetCode(EFFECT_CHANGE_DAMAGE)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+    e1:SetTargetRange(0,1)
+    e1:SetValue(s.damval)
+    e1:SetReset(RESET_PHASE+PHASE_END)
+    Duel.RegisterEffect(e1,tp)
+end
+function s.damval(e,re,val,r,rp,rc)
+    if r&REASON_BATTLE+REASON_EFFECT~=0 then
+        return math.floor(val/4)
+    else
+        return val
+    end
 end

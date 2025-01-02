@@ -1,6 +1,6 @@
 --Blue-Eyed Asuka
 --Scripted by Gideon
--- (1) You can discard 1 Spell; Special Summon this card from your hand. (Ignition)
+-- (1) You can discard 1 monster; Special Summon this card from your hand. (Ignition)
 -- (2) During either players turn (Quick): You can target monster your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Blue-Eyed Asuka" once per turn.
 -- (3) When this card is face up on the field. Any battle damage your opponents take became 200.
 -- (4) This card cannot attack the turn it special summoned.
@@ -51,7 +51,7 @@ function s.initial_effect(c)
 end
 --e1
 function s.spcfilter(c)
-	return c:IsSpell() and c:IsDiscardable()
+	return c:IsMonster() and c:IsDiscardable()
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.spcfilter,tp,LOCATION_HAND,0,1,e:GetHandler()) end

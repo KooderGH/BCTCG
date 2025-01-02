@@ -4,11 +4,13 @@
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your hand or GY by controling 3 or more WIND type monsters, Then, move this card to your Extra Monster Zone. You can only activate this effect once per duel.
 -- (2) Cannot be returned to hand, banished, or tributed.
 -- (3) Cannot be targeted by card effects.
--- (4) Once during either players turn (Quick): You can target 1 WIND monster in your GY; Special Summon it.
+-- (4) (Ignition) You can remove 1 Quaking Hammer Counter;SS one WIND monster from your GY.
 -- (5) You can Target 1 card on your field (Ignition); Destroy that target. You can only activate this effect once per turn.
--- (6) This card gains 300 ATK for each WIND monster in your GY.
+-- (6) This card gains 500 DEF for each WIND monster in your GY.
 -- (7) Each time a WIND monster is sent to the GY; Add 1 Quaking Hammer Counter(s) to this card.
--- (8) You can remove 7 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
+-- (8) (Ignition) You can remove 3 Quaking Hammer Counter; Swap this card's current DEF to it's ATK until your next standby phase. 
+-- (9) If this card would be destroyed, you can remove 4 Quaking Hammer Counters from this card instead.
+-- (10) You can remove 7 Quaking Hammer Counter(s) from this card (Ignition); Banish all cards on your opponent's side of the field. Your opponent cannot activate cards or effects in response to this effect. Your opponent cannot Normal Summon/Set next turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -76,17 +78,18 @@ function s.initial_effect(c)
     c:RegisterEffect(e8)
     --(3)Finish
     --(4)Start
-    --Special Summon from GY
-    local e9=Effect.CreateEffect(c)
-    e9:SetDescription(aux.Stringid(id,0))
-    e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
-    e9:SetType(EFFECT_TYPE_QUICK_O)
-    e9:SetCode(EVENT_FREE_CHAIN)
-    e9:SetRange(LOCATION_MZONE)
-    e9:SetCountLimit(1)
-    e9:SetTarget(s.sstg)
-    e9:SetOperation(s.ssop)
-    c:RegisterEffect(e9)
+	-- Remove 1 counter to Special Summon a Wind monster from GY
+    local e16=Effect.CreateEffect(c)
+    e16:SetDescription(aux.Stringid(id,0))
+    e16:SetCategory(CATEGORY_SPECIAL_SUMMON)
+    e16:SetType(EFFECT_TYPE_IGNITION)
+    e16:SetRange(LOCATION_MZONE)
+	e16:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e16:SetCountLimit(1)
+    e16:SetCost(s.spcost)
+    e16:SetTarget(s.sptg)
+    e16:SetOperation(s.spop)
+    c:RegisterEffect(e16)
     --(4)Finish
     --(5)Start
     local e10=Effect.CreateEffect(c)
@@ -100,13 +103,13 @@ function s.initial_effect(c)
     c:RegisterEffect(e10)
     --(5)Finish
     --(6)Start
-    --ATK based on Wind machines on your GY
+	-- 500 defense for each wind monster in GY
     local e11=Effect.CreateEffect(c)
     e11:SetType(EFFECT_TYPE_SINGLE)
     e11:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e11:SetRange(LOCATION_EMZONE)
-    e11:SetCode(EFFECT_UPDATE_ATTACK)
-    e11:SetValue(s.atkval)
+    e11:SetCode(EFFECT_UPDATE_DEFENSE)
+    e11:SetValue(s.defval)
     c:RegisterEffect(e11)
     --(6)Finish
     --(7)Start
@@ -122,7 +125,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e12)
     --(7)Finish
     --(8)Start
-    --add one wind monster from your deck or GY to hand
+    --remove 7 counter, Banish all card your opponents control
     local e13=Effect.CreateEffect(c)
     e13:SetDescription(aux.Stringid(id,2))
     e13:SetCategory(CATEGORY_REMOVE)
@@ -134,6 +137,33 @@ function s.initial_effect(c)
     e13:SetOperation(s.rmop)
     c:RegisterEffect(e13)
     --(8)Finish
+	--Cannot enter the Battle Phase the turn it is Special Summoned
+	local e14=Effect.CreateEffect(c)
+	e14:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e14:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e14:SetRange(LOCATION_MZONE)
+	e14:SetCondition(s.nbpcon)
+	e14:SetOperation(s.nbpop)
+	c:RegisterEffect(e14)
+	-- Swap DEF and ATK by removing 3 Quaking Hammer Counters
+	local e17=Effect.CreateEffect(c)
+	e17:SetDescription(aux.Stringid(id,3))
+	e17:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
+	e17:SetType(EFFECT_TYPE_IGNITION)
+	e17:SetRange(LOCATION_MZONE)
+	e17:SetCountLimit(1)
+	e17:SetCost(s.swapcost)
+	e17:SetOperation(s.swapop)
+	c:RegisterEffect(e17)
+	--destroy replace
+	local e18=Effect.CreateEffect(c)
+	e18:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
+	e18:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e18:SetCode(EFFECT_DESTROY_REPLACE)
+	e18:SetRange(LOCATION_MZONE)
+	e18:SetTarget(s.reptg)
+	e18:SetOperation(s.repop)
+	c:RegisterEffect(e18)
 end
 --(1) functions
 function s.Windfilter(c)
@@ -154,26 +184,33 @@ function s.mvop(e,tp,eg,ep,ev,re,r,rp)
     local lftezm=Duel.CheckLocation(tp,LOCATION_EMZONE,0) and 0x20 or 0
     local rgtemz=Duel.CheckLocation(tp,LOCATION_EMZONE,1) and 0x40 or 0
     if (lftezm>0 or rgtemz>0) then
-        Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
+        Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,4))
         local selected=Duel.SelectFieldZone(tp,1,LOCATION_MZONE,0,~(lftezm|rgtemz))
         selected=selected==0x20 and 5 or 6
         Duel.MoveSequence(c,selected)
     end
 end
 --SS from GY (4)
-function s.specialfilter(c,e,tp)
-    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+-- Remove 1 counter to Special Summon a Wind monster from GY
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return e:GetHandler():GetCounter(0x4002)>=1 end
+    e:GetHandler():RemoveCounter(tp,0x4002,1,REASON_COST)
 end
-function s.sstg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-        and Duel.IsExistingMatchingCard(s.specialfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
+function s.spfilter(c,e,tp)
+    return c:IsAttribute(ATTRIBUTE_WIND) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then 
+        return Duel.GetLocationCount(tp,LOCATION_MZONE) > 0
+            and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) 
+    end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE)
 end
-function s.ssop(e,tp,eg,ep,ev,re,r,rp)
-    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+    if Duel.GetLocationCount(tp,LOCATION_MZONE) <= 0 then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g=Duel.SelectMatchingCard(tp,s.specialfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
-    if #g>0 then
+    local g = Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
+    if #g > 0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
@@ -191,9 +228,9 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Destroy(tc,REASON_EFFECT)
 	end
 end
---ATK gain (6)
-function s.atkval(e,c)
-	return Duel.GetMatchingGroupCount(Card.IsAttribute,c:GetControler(),LOCATION_GRAVE,0,nil,ATTRIBUTE_WIND)*300
+--DEF gain (6)
+function s.defval(e,c)
+	return Duel.GetMatchingGroupCount(Card.IsAttribute,c:GetControler(),LOCATION_GRAVE,0,nil,ATTRIBUTE_WIND)*500
 end
 -- Quaking Hammer (7)
 s.counter_list={0x4002}
@@ -238,4 +275,59 @@ function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.efcon(e)
     return Duel.GetTurnCount()~=e:GetLabel()
+end
+-- Cannot BP
+function s.nbpcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsContains(e:GetHandler()) and e:GetHandler():IsSummonType(SUMMON_TYPE_SPECIAL)
+end
+function s.nbpop(e,tp,eg,ep,ev,re,r,rp)
+    local e1=Effect.CreateEffect(e:GetHandler())
+    e1:SetDescription(aux.Stringid(id,1))
+    e1:SetType(EFFECT_TYPE_FIELD)
+    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH+EFFECT_FLAG_CLIENT_HINT)
+    e1:SetCode(EFFECT_CANNOT_BP)
+    e1:SetTargetRange(1,0)
+    e1:SetReset(RESET_PHASE|PHASE_END)
+    Duel.RegisterEffect(e1,tp)
+end
+-- Remove 3 Quaking Hammer Counters, Swap DEF and ATK
+function s.swapcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return e:GetHandler():GetCounter(0x4002)>=3 end
+    e:GetHandler():RemoveCounter(tp,0x4002,3,REASON_COST)
+end
+function s.swapop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) then
+        local atk=c:GetAttack()
+        local def=c:GetDefense()
+        local e1=Effect.CreateEffect(c)
+        e1:SetType(EFFECT_TYPE_SINGLE)
+        e1:SetCode(EFFECT_SET_ATTACK_FINAL)
+        e1:SetValue(def)
+        e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_STANDBY+RESET_SELF_TURN)
+        c:RegisterEffect(e1)
+        local e2=e1:Clone()
+        e2:SetCode(EFFECT_SET_DEFENSE_FINAL)
+        e2:SetValue(atk)
+        c:RegisterEffect(e2)
+    end
+end
+--destroy replace
+function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local c=e:GetHandler()
+    if chk==0 then
+        return c:IsReason(REASON_BATTLE+REASON_EFFECT) 
+            and c:IsCanRemoveCounter(tp,0x4002,4,REASON_COST)
+    end
+    if Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
+        return true
+    else
+        return false
+    end
+end
+function s.repop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    if c:IsCanRemoveCounter(tp,0x4002,4,REASON_COST) then
+        c:RemoveCounter(tp,0x4002,4,REASON_COST)
+    end
 end

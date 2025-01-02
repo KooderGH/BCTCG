@@ -1,9 +1,10 @@
 --Kasli the Scourge
 --Scripted by Gideon
 -- (1) You can Discard 1 card to Special Summon this card from your hand.
--- (2) You can target 1 card your opponent controls; negate its effects, if the target was a monster, also halve that target's ATK.
+-- (2) You can target 1 monster your opponent controls; negate its effects.
 -- (3) If this card is sent from the field to the GY: Target 1 Trap Card in your GY; Set that target. That Set card cannot be activated this turn.
--- (4) You can only use each of the previous effects of "Kasli the Scourge" once per turn.
+-- (4) Cannot attack directly
+-- (5) You can only use each of the previous effects of "Kasli the Scourge" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon
@@ -41,6 +42,18 @@ function s.initial_effect(c)
     e3:SetTarget(s.settg)
     e3:SetOperation(s.setop)
     c:RegisterEffect(e3)
+	-- Cannot attack the turn it is Special Summoned
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e4:SetOperation(s.atklimit)
+	c:RegisterEffect(e4)
+	-- Cannot direct attack
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
+	c:RegisterEffect(e5)
 end
 --e1
 function s.spcon(e,c)
@@ -66,18 +79,19 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	Duel.SendtoGrave(g,REASON_DISCARD+REASON_COST)
 	g:DeleteGroup()
 end
---e3
+--e2
 function s.negtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,nil) end
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) and chkc:IsNegatable() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_NEGATE)
-	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,1,nil)
+	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_MZONE,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
 end
+
 function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local tc=Duel.GetFirstTarget()
-	if tc and ((tc:IsFaceup() and not tc:IsDisabled()) or tc:IsType(TYPE_TRAPMONSTER)) and tc:IsRelateToEffect(e) then
+	if tc and tc:IsFaceup() and not tc:IsDisabled() and tc:IsRelateToEffect(e) then
 		Duel.NegateRelatedChain(tc,RESET_TURN_SET)
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
@@ -92,25 +106,9 @@ function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetValue(RESET_TURN_SET)
 		e2:SetReset(RESET_EVENT+RESETS_STANDARD)
 		tc:RegisterEffect(e2)
-		if tc:IsType(TYPE_MONSTER) then
-				local e3=Effect.CreateEffect(c)
-				e3:SetType(EFFECT_TYPE_SINGLE)
-				e3:SetCode(EFFECT_SET_ATTACK_FINAL)
-				e3:SetValue(tc:GetAttack()/2)
-				e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-				tc:RegisterEffect(e3)
-		end
-		if tc:IsType(TYPE_TRAPMONSTER) then
-			local e3=Effect.CreateEffect(c)
-			e3:SetType(EFFECT_TYPE_SINGLE)
-			e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-			e3:SetCode(EFFECT_DISABLE_TRAPMONSTER)
-			e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-			tc:RegisterEffect(e3)
-		end
 	end
 end
---e4
+--e3
 function s.setcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
 end
@@ -135,4 +133,12 @@ function s.setop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e1)
 	end
+end
+-- Cannot attack the turn it is Special Summoned
+function s.atklimit(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_CANNOT_ATTACK)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+	e:GetHandler():RegisterEffect(e1)
 end

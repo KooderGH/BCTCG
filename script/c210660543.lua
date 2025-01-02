@@ -1,8 +1,10 @@
 --Kasli the Bane
 --Scripted by Gideon
 -- (1) You can Discard 1 card to Special Summon this card from your hand. You can only use this effect of "Kasli the Bane" once per turn.
--- (2) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Kasli the Bane" once per turn.
+-- (2) During either players turn (Quick): You can target one spell/traps your opponent controls; negate it's effects. You can only active this effect of "Kasli the Bane" once per turn.
 -- (3) If this card is sent from the field to the GY: Target 1 Spell Card in your GY; Set that target. That Set card cannot be activated this turn. You can only use this effect of "Kasli the Bane" once per turn
+-- (4) cannot attack monsters
+-- (5) cannot attack the turn it special summoned
 local s,id=GetID()
 function s.initial_effect(c)
     --special summon
@@ -16,7 +18,7 @@ function s.initial_effect(c)
     e1:SetOperation(s.spop)
     e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
     c:RegisterEffect(e1)
-    --Negate effects
+    --Negate spell/traps effects
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_DISABLE)
@@ -40,6 +42,20 @@ function s.initial_effect(c)
     e3:SetTarget(s.settg)
     e3:SetOperation(s.setop)
     c:RegisterEffect(e3)
+	-- Cannot attack the turn it is Special Summoned
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e4:SetOperation(s.atklimit)
+	c:RegisterEffect(e4)
+	-- Cannot attack monsters
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
+	e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_IGNORE_IMMUNE)
+	e5:SetValue(1)
+	c:RegisterEffect(e5)
 end
 --e1
 function s.spcon(e,c)
@@ -67,10 +83,10 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --e3
 function s.negtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,nil) end
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatableSpellTrap() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatableSpellTrap,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_NEGATE)
-	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,1,nil)
+	local g=Duel.SelectTarget(tp,Card.IsNegatableSpellTrap,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
 end
 function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
@@ -91,14 +107,6 @@ function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetValue(RESET_TURN_SET)
 		e2:SetReset(RESET_EVENT+RESETS_STANDARD)
 		tc:RegisterEffect(e2)
-		if tc:IsType(TYPE_MONSTER) then
-				local e3=Effect.CreateEffect(c)
-				e3:SetType(EFFECT_TYPE_SINGLE)
-				e3:SetCode(EFFECT_SET_ATTACK_FINAL)
-				e3:SetValue(tc:GetAttack()/2)
-				e3:SetReset(RESET_EVENT+RESETS_STANDARD)
-				tc:RegisterEffect(e3)
-		end
 		if tc:IsType(TYPE_TRAPMONSTER) then
 			local e3=Effect.CreateEffect(c)
 			e3:SetType(EFFECT_TYPE_SINGLE)
@@ -134,4 +142,12 @@ function s.setop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e1)
 	end
+end
+-- Cannot attack the turn it is Special Summoned
+function s.atklimit(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_CANNOT_ATTACK)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+	e:GetHandler():RegisterEffect(e1)
 end

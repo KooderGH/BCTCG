@@ -1,7 +1,9 @@
 --Blue-Eyed Asuka
 --Scripted by Gideon
 -- (1) You can discard 1 Spell; Special Summon this card from your hand. (Ignition)
--- (2) During either players turn (Quick): You can target one card your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Blue-Eyed Asuka" once per turn.
+-- (2) During either players turn (Quick): You can target monster your opponent controls; negate it's effects and reduce the monsters ATK by half. You can only active this effect of "Blue-Eyed Asuka" once per turn.
+-- (3) When this card is face up on the field. Any battle damage your opponents take became 200.
+-- (4) This card cannot attack the turn it special summoned.
 -- (3) You can only control one "Blue-Eyed Asuka".
 local s,id=GetID()
 function s.initial_effect(c)
@@ -30,6 +32,22 @@ function s.initial_effect(c)
 	e2:SetTarget(s.negtarget)
 	e2:SetOperation(s.negoperation)
 	c:RegisterEffect(e2)
+	-- any battle damage to opponents changed to 200
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_CHANGE_BATTLE_DAMAGE)
+	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetTargetRange(0,1)
+	e3:SetValue(200)
+	c:RegisterEffect(e3)
+	-- Cannot attack the turn it is Special Summoned
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e4:SetOperation(s.atklimit)
+	c:RegisterEffect(e4)
 end
 --e1
 function s.spcfilter(c)
@@ -53,10 +71,10 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e3
 function s.negtarget(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,nil) end
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) and chkc:IsNegatable() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsNegatable,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_NEGATE)
-	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_ONFIELD,1,1,nil)
+	local g=Duel.SelectTarget(tp,Card.IsNegatable,tp,0,LOCATION_MZONE,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
 end
 function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
@@ -93,4 +111,12 @@ function s.negoperation(e,tp,eg,ep,ev,re,r,rp)
 			tc:RegisterEffect(e3)
 		end
 	end
+end
+-- Cannot attack the turn it is Special Summoned
+function s.atklimit(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_CANNOT_ATTACK)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+	e:GetHandler():RegisterEffect(e1)
 end

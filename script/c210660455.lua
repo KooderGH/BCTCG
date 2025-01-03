@@ -1,6 +1,6 @@
 --Wonder MOMOCO
 --Scripted by Gideon. Got help from naim and pyrQ.
--- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your Hand, GY, or Banish Zone when there is 5 or more Monster's banished in your Banish Zone with different monster types. Then move this card to your Extra Monster Zone. You can only activate this effect once per duel.
+-- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card Summon cannot be negated. You can Special Summon this card from your Hand, GY, or Banish Zone when there is 5 or more Monster's banished in your Banish Zone with different monster types. Then move this card to your Extra Monster Zone. You can only activate this effect once per turn.
 -- (2) Cannot be returned to hand.
 -- (3) Cannot be targeted by card effects.
 -- (4) Once per your turn (Quick): You can negate all face-up card effects on your opponent side of the field until the End Phase.
@@ -8,6 +8,7 @@
 -- (6) Once per turn (Igntion): You can banish 4 cards from your GY: Draw 1 card.
 -- (7) If there is 35 or more card's total counting from both player's Banish Zone's, You can activate this effect (Igntion): Set your opponent's LP to 0.
 -- (8) When this card is destroyed and set to the GY; Add 4 cards from your Banish Zone to your Deck, shuffle the deck, then draw 1 card.
+-- (9) Cannot be destroyed by battle, if you control 3 monster with different Type
 local s,id=GetID()
 function s.initial_effect(c)
     --(1)Start
@@ -42,12 +43,18 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_CANNOT_DISABLE_SPSUMMON)
     e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
     c:RegisterEffect(e3)
+	-- Negate effect on summon
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e11:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e11:SetOperation(s.negateop)
+	c:RegisterEffect(e11)
     --(1)Finish
     --(2)Start
     --Cannot be returned to hand
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
     e4:SetCode(EFFECT_CANNOT_TO_HAND)
     e4:SetRange(LOCATION_MZONE)
     e4:SetValue(1)
@@ -81,8 +88,7 @@ function s.initial_effect(c)
     local e7=Effect.CreateEffect(c)
     e7:SetDescription(aux.Stringid(id,1))
     e7:SetCategory(CATEGORY_REMOVE)
-    e7:SetType(EFFECT_TYPE_QUICK_O)
-    e7:SetCode(EVENT_FREE_CHAIN)
+    e7:SetType(EFFECT_TYPE_IGNITION)
     e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e7:SetRange(LOCATION_MZONE)
     e7:SetTarget(s.rmtg)
@@ -126,6 +132,16 @@ function s.initial_effect(c)
     e10:SetOperation(s.shuffop)
     c:RegisterEffect(e10)
     --(8)Finish
+	--(9) Start
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_SINGLE)
+	e11:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e11:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e11:SetRange(LOCATION_MZONE)
+	e11:SetCondition(s.indcon)
+	e11:SetValue(1)
+	c:RegisterEffect(e11)
+	--(9) Finish
 end
 --(1) functions
 function s.banishfilter(c)
@@ -253,4 +269,26 @@ function s.shuffop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.BreakEffect()
 		Duel.Draw(tp,1,REASON_EFFECT)
 	end
+end
+--(1) negate effect on summon
+function s.negateop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetCode(EFFECT_DISABLE)
+	e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CANNOT_DISABLE)
+    e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    c:RegisterEffect(e1)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_DISABLE_EFFECT)
+    e2:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_CANNOT_DISABLE)
+    e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+    c:RegisterEffect(e2)
+end
+--(9)
+function s.indcon(e)
+    local tp=e:GetHandlerPlayer()
+    local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
+    return g:GetClassCount(Card.GetRace)>=3
 end

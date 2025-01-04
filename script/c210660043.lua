@@ -1,12 +1,13 @@
 --Cat Machine
---Scripted by Konstak
+--Scripted by Konstak & poka-poka (e10-13)
 --Effect:
 -- (1) When summoned, place in defense. 
 -- (2) Twice per turn; cannot be destroyed. 
 -- (3) Cannot be targeted for attacks by Warrior monsters.
 -- (4) Cannot be returned to hand.
--- (5) Cannot be tributed.
+-- (5) Cannot be tributed. Cannot be used as link material.
 -- (6) During your opponent's end phase, you can banish this face-up card on the field; You can search and add one monster from your deck to your hand. Skip your next draw phase when you use this effect.
+-- (7) effect If you control a fiend monster; Banish this card from the field then end the turn (mandatory).
 local s,id=GetID()
 function s.initial_effect(c)
     --to defense (1)
@@ -52,6 +53,9 @@ function s.initial_effect(c)
     local e7=e6:Clone()
     e7:SetCode(EFFECT_UNRELEASABLE_NONSUM)
     c:RegisterEffect(e7)
+	local e13=e6:Clone()
+    e13:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+    c:RegisterEffect(e13)
     --Cannot be returned to hand (5)
     local e8=e6:Clone()
     e8:SetCode(EFFECT_CANNOT_TO_HAND)
@@ -68,6 +72,29 @@ function s.initial_effect(c)
     e9:SetCost(aux.selfbanishcost)
     e9:SetOperation(s.banop)
     c:RegisterEffect(e9)
+	-- If control fiend, Self banish then End turn
+	local e10=Effect.CreateEffect(c)
+	e10:SetType(EFFECT_TYPE_SINGLE)
+	e10:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e10:SetCode(EFFECT_SELF_DESTROY)
+	e10:SetRange(LOCATION_MZONE)
+	e10:SetCondition(s.etcon)
+	c:RegisterEffect(e10)
+	-- Redirection to banish zone
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_SINGLE)
+	e11:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
+	e11:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e11:SetValue(LOCATION_REMOVED)
+	e11:SetCondition(s.etredir)
+	c:RegisterEffect(e11)
+	-- End turn
+	local e12=Effect.CreateEffect(c)
+	e12:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e12:SetCode(EVENT_DESTROYED)
+	e12:SetCondition(s.endturncon)
+	e12:SetOperation(s.endturnop)
+	c:RegisterEffect(e12)
 end
 --(1)
 function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -103,16 +130,33 @@ function s.banop(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
-        local e1=Effect.CreateEffect(e:GetHandler())
-        e1:SetType(EFFECT_TYPE_FIELD)
-        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-        e1:SetCode(EFFECT_SKIP_DP)
-        e1:SetTargetRange(1,0)
-        if Duel.GetTurnPlayer()==tp and Duel.GetCurrentPhase()==PHASE_DRAW then
-            e1:SetReset(RESET_PHASE+PHASE_DRAW+RESET_SELF_TURN,2)
-        else
-            e1:SetReset(RESET_PHASE+PHASE_DRAW+RESET_SELF_TURN)
-        end
-        Duel.RegisterEffect(e1,tp)
     end
+end
+-- Self Banish End turn
+function s.sdfilter(c)
+    return c:IsMonster() and c:IsRace(RACE_FIEND)
+end
+function s.etcon(e)
+    return Duel.IsExistingMatchingCard(s.sdfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+--leave field redirect
+function s.etredir(e)
+    local c = e:GetHandler()
+    return c:IsReason(REASON_DESTROY) and c:IsReason(REASON_EFFECT) and c:GetReasonEffect():GetCode()==EFFECT_SELF_DESTROY
+end
+--end turn
+function s.endturncon(e,tp,eg,ep,ev,re,r,rp)
+    local c = e:GetHandler()
+    return c:IsReason(REASON_DESTROY) and c:IsReason(REASON_EFFECT) and re and re:GetCode()==EFFECT_SELF_DESTROY
+end
+function s.endturnop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.BreakEffect()
+	Duel.SkipPhase(tp,PHASE_MAIN1,RESET_PHASE+PHASE_END,1)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetTargetRange(1,0)
+	e1:SetCode(EFFECT_CANNOT_BP)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
 end

@@ -2,7 +2,7 @@
 --Scripted by Gideon
 -- (1) While face-up on the field, this card is also FIRE-Attribute.
 -- (2) Before damage calulation: If this card battles a monster that doesn't share the same Attribute of this card; return that monster to the hand.
--- (3) You can Tribute this card; Add 1 monster from your deck to your hand but for the rest of this turn, you cannot Normal Summon/Set or Special Summon monsters with that name, nor activate their monster effects. You can only use this effect of "Cat Tengu" once per turn.
+-- (3) You can Tribute this card; Add 1 "Dynamites" Banner monster from your deck to your hand but for the rest of this turn, you cannot Normal Summon/Set or Special Summon monsters with that name, nor activate their monster effects. You can only use this effect of "Cat Tengu" once per turn.
 -- (4) You cannot activate this effect the turn this card was sent to the GY. While this card is in the GY: You can banish this card from your GY and Target 1 monster your opponent controls; it loses 1000 ATK.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -73,7 +73,7 @@ function s.tcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Release(e:GetHandler(),REASON_COST)
 end
 function s.filter(c)
-	return c:IsAbleToHand() and c:IsMonster()
+    return c:IsAbleToHand() and c:IsCode(210660455) or c:IsCode(210660519) or c:IsCode(210660059) or c:IsCode(210660042) or c:IsCode(210660044) or c:IsCode(210660057) or c:IsCode(210660668) or c:IsCode(210660043) or c:IsCode(210660617) or c:IsCode(210660427) or c:IsCode(210660143)
 end
 function s.ttarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end

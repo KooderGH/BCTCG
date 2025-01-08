@@ -1,10 +1,13 @@
 --Nurse Cat
---Scripted by Gideon
+--Scripted by Gideon & 6,7 by poka-poka
 -- (1) During either player's turn (Quick): You can banish this card from your hand; Gain 500 LP for each card in your hand.
--- (2) Once per turn, you can activate this effect: Gain 400 LP for each card on the field.
+-- (2) Once per turn(ignition): you can activate this effect: Gain 400 LP for each card on the field.
 -- (3) You take no Battle Damage from Battles involving this card.
 -- (4) You can banish this card from your GY (Quick); Gain 300 LP for each card in your GY.
 -- (5) If a monster(s) you control would be destroyed by battle or card effect, you can discard this card instead. You can only use this effect of "Nurse Cat" once per duel.
+-- (6) effect that cannot be destroyed by battle. If opponent controls 4 or more monsters, negate this effect. 
+-- (7) if this card destroy's a monster by battle, add 1 card from gy to hand.
+
 local s,id=GetID()
 function s.initial_effect(c)
 	--recover banish hand (1)
@@ -21,7 +24,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--Once per turn 400 recovery (2)
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCategory(CATEGORY_RECOVER)
 	e2:SetType(EFFECT_TYPE_IGNITION)
@@ -38,7 +41,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--Banish recovery (4)
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
+	e4:SetDescription(aux.Stringid(id,2))
 	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e4:SetCategory(CATEGORY_RECOVER)
 	e4:SetType(EFFECT_TYPE_QUICK_O)
@@ -58,6 +61,27 @@ function s.initial_effect(c)
 	e5:SetOperation(s.repop)
 	e5:SetCountLimit(1,id,EFFECT_COUNT_CODE_DUEL)
 	c:RegisterEffect(e5)
+	-- Cannot be destroyed by battle
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e6:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetCondition(s.indcon)
+	e6:SetValue(1)
+	c:RegisterEffect(e6)
+	--destroy opponents monster, sent 1 card from gy to hand
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,3))
+	e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e7:SetCode(EVENT_BATTLE_DESTROYING)
+	e7:SetCountLimit(1)
+	e7:SetCondition(s.atkcon2)
+	e7:SetTarget(s.atktg2)
+	e7:SetOperation(s.atkop2)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.btarget(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -106,4 +130,30 @@ function s.repval(e,c)
 end
 function s.repop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.SendtoGrave(e:GetHandler(),REASON_EFFECT+REASON_DISCARD)
+end
+--e6
+function s.indcon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)<4
+end
+--e7
+function s.filter2(c)
+    return c:IsAbleToHand()
+end
+function s.atkcon2(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local bc=c:GetBattleTarget()
+    return c:IsRelateToBattle() and bc:IsMonster()
+end
+function s.atktg2(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_GRAVE,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.atkop2(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_GRAVE,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

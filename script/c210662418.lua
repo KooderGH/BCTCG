@@ -29,6 +29,14 @@ function s.initial_effect(c)
     e4:SetTarget(s.warptg)
     e4:SetOperation(s.warpop)
     c:RegisterEffect(e4)
+    --Immune to Wave, Surge, Single Attack
+    local e5=Effect.CreateEffect(c)
+    e5:SetType(EFFECT_TYPE_SINGLE)
+    e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e5:SetRange(LOCATION_MZONE)
+    e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+    e5:SetValue(1)
+    c:RegisterEffect(e5)
 end
 --Hide Function
 function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)

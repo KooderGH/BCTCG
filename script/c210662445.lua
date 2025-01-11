@@ -63,7 +63,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
-end
 --Wave on Battle Function
 function s.wavecon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetTurnPlayer()==tp and e:GetHandler():GetBattleTarget()~=nil
@@ -79,7 +78,6 @@ function s.waveop(e,tp,eg,ep,ev,re,r,rp)
         d1=Duel.TossDice(tp,1)
     end
     local tc=Duel.GetFieldCard(1-tp,LOCATION_MZONE,d1)
-    Duel.NegateAttack()
     if tc then
         Duel.Destroy(tc,REASON_EFFECT)
     end

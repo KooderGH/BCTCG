@@ -21,7 +21,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.filter(c)
-    return c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsFaceup()
+    return c:IsAttribute(ATTRIBUTE_WATER) and c:IsFaceup()
 end
 function s.ccon(e)
     local tp=e:GetHandlerPlayer()

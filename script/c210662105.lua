@@ -3,36 +3,33 @@
 local s,id=GetID()
 function s.initial_effect(c)
     aux.AddEquipProcedure(c)
-    --remove
-    local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCategory(CATEGORY_REMOVE)
-    e1:SetCode(EVENT_BATTLED)
-    e1:SetRange(LOCATION_SZONE)
-    e1:SetCondition(s.rmcon)
-    e1:SetTarget(s.rmtg)
-    e1:SetOperation(s.rmop)
-    c:RegisterEffect(e1)
+    --destroy
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_TOGRAVE)
+    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_DAMAGE_STEP_END)
+    e3:SetRange(LOCATION_SZONE)
+    e3:SetCondition(s.descon)
+    e3:SetTarget(s.destg)
+    e3:SetOperation(s.desop)
+    c:RegisterEffect(e3)
 end
-function s.filter(c)
-    return c:IsAttribute(ATTRIBUTE_LIGHT)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+    local ec=e:GetHandler():GetEquipTarget()
+    local dt=nil
+    if ec==Duel.GetAttacker() then dt=Duel.GetAttackTarget()
+    elseif ec==Duel.GetAttackTarget() then dt=Duel.GetAttacker() end
+    e:SetLabelObject(dt)
+    return dt and dt:IsRelateToBattle()
 end
-function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
-    local a=Duel.GetAttacker()
-    local d=Duel.GetAttackTarget()
-    local c=e:GetHandler():GetEquipTarget()
-    return d and (a==c or d==c)
-end
-function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
-    local tc=e:GetHandler():GetEquipTarget():GetBattleTarget()
-    Duel.SetTargetCard(tc)
-    Duel.SetOperationInfo(0,CATEGORY_REMOVE,tc,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,e:GetLabelObject(),1,0,0)
 end
-function s.rmop(e,tp,eg,ep,ev,re,r,rp)
-    local tc=Duel.GetFirstTarget()
-    if tc:IsRelateToEffect(e) then
-        Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+    local dt=e:GetLabelObject()
+    if dt:IsRelateToBattle() then
+        Duel.SendtoGrave(dt,REASON_EFFECT)
     end
 end

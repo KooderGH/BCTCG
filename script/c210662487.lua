@@ -33,7 +33,7 @@ function s.warpop(e,tp,eg,ep,ev,re,r,rp)
     local g=Duel.SelectMatchingCard(tp,s.warpfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
     local tc=g:GetFirst()
     local c=e:GetHandler()
-    if tc then
+    if tc and Duel.TossCoin(tp,1)==COIN_HEADS then
         Duel.HintSelection(g)
         if Duel.Remove(tc,tc:GetPosition(),REASON_EFFECT+REASON_TEMPORARY)>0 then
             local e1=Effect.CreateEffect(e:GetHandler())

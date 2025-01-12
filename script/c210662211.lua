@@ -49,10 +49,10 @@ function s.alienfilter(c)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)

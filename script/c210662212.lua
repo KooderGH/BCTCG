@@ -29,5 +29,5 @@ function s.ccon(e)
 end
 --Atk/Def gain
 function s.adval(e,c)
-	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*200
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*100
 end

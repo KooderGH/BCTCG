@@ -126,7 +126,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e6
 function s.spellfilter(c)
-	return c:IsRace(RACE_SPELLCASTER)
+	return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
 function s.reltg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end

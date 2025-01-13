@@ -2,6 +2,8 @@
 --Scripted by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	-- Can Only control 1
+	c:SetUniqueOnField(1,0,id)
     -- Special Summon
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -47,6 +49,7 @@ function s.initial_effect(c)
     e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e7:SetCode(EFFECT_CANNOT_ACTIVATE)
     e7:SetRange(LOCATION_MZONE)
+	e7:SetCondition(s.selfnegcon)
     e7:SetTargetRange(1,1)
     e7:SetValue(s.aclimit)
     c:RegisterEffect(e7)
@@ -57,6 +60,14 @@ function s.initial_effect(c)
     e8:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e8:SetValue(LOCATION_REMOVED)
     c:RegisterEffect(e8)
+	--Cannot be special summoned from the GY
+	local e9=Effect.CreateEffect(c)
+	e9:SetType(EFFECT_TYPE_SINGLE)
+	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e9:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e9:SetCondition(s.splimcon)
+	e9:SetValue(aux.FALSE)
+	c:RegisterEffect(e9)
 end
 -- Special Summon condition
 function s.spcon(e,c)
@@ -75,4 +86,13 @@ end
 function s.aclimit(e,re,tp)
     local rc=re:GetHandler()
     return (rc and (rc:IsLocation(LOCATION_HAND) or rc:IsLocation(LOCATION_MZONE))) and re:IsMonsterEffect()
+end
+-- Disable above effect if opponents control 5 or more monster
+function s.selfnegcon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)<5
+end
+--no sp GY
+function s.splimcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsLocation(LOCATION_GRAVE)
 end

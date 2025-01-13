@@ -2,7 +2,7 @@
 --Queen Reika
 local s,id=GetID()
 function s.initial_effect(c)
-	--Negate effects of a Special Summoned monster and inflict damage if it leaves the field this turn
+	--When Opponents SS, SS this card then Flip Opponents SSed monster
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
@@ -10,9 +10,9 @@ function s.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(s.negcost)
-	e1:SetTarget(s.negtg)
-	e1:SetOperation(s.negop)
+	e1:SetCondition(s.getflippedcon)
+	e1:SetTarget(s.getflippedtg)
+	e1:SetOperation(s.getflippedop)
 	c:RegisterEffect(e1)
 	-- Effect damage would heal the same amount instead
 	local e2=Effect.CreateEffect(c)
@@ -40,53 +40,37 @@ function s.initial_effect(c)
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e4:SetCode(EVENT_DESTROYED)
+	e4:SetCountLimit(1,{id,1})
 	e4:SetCondition(s.spcon)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	-- Special Summon if Tributed
+	-- Special Summon if Tributed then draw a card
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e5:SetCode(EVENT_RELEASE)
+	e5:SetCountLimit(1,{id,2})
 	e5:SetTarget(s.sptg)
 	e5:SetOperation(s.spop)
 	c:RegisterEffect(e5)
 end
 --E1
-function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsDiscardable() end
-	Duel.SendtoGrave(e:GetHandler(),REASON_COST|REASON_DISCARD)
+function s.getflippedcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:GetCount()==1 and eg:GetFirst():IsControler(1-tp)
 end
-function s.negfilter(c,p,eg)
-	return c:IsSummonPlayer(p) and eg:IsContains(c) and (c:HasNonZeroAttack() or c:IsNegatableMonster())
+function s.getflippedtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    local tc=eg:GetFirst()
+    if chk==0 then return tc and tc:IsLocation(LOCATION_MZONE) and tc:IsFaceup() end
+    Duel.SetTargetCard(tc)
 end
-function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.negfilter(chkc,1-tp,eg) end
-	if chk==0 then return Duel.IsExistingTarget(s.negfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil,1-tp,eg) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_NEGATE)
-	local g=Duel.SelectTarget(tp,s.negfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil,1-tp,eg)
-	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
-end
-function s.negop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		if tc:IsNegatableMonster() then
-			tc:NegateEffects(c,RESET_PHASE|PHASE_END)
-		end
-		if tc:IsFaceup() then
-			local fid=c:GetFieldID()
-			tc:RegisterFlagEffect(id,RESET_EVENT|RESET_MSCHANGE|RESET_OVERLAY|RESET_TURN_SET|RESET_PHASE|PHASE_END,0,1,fid)
-			local e1=Effect.CreateEffect(c)
-			e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-			e1:SetCode(EVENT_LEAVE_FIELD)
-			e1:SetLabel(fid)
-			e1:SetLabelObject(tc)
-			e1:SetOperation(s.leaveop)
-			e1:SetReset(RESET_PHASE|PHASE_END)
-			Duel.RegisterEffect(e1,tp)
-		end
-	end
+function s.getflippedop(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    local tc=Duel.GetFirstTarget()
+    if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP) ~= 0 then
+        if tc and tc:IsRelateToEffect(e) and tc:IsFaceup() then
+            Duel.ChangePosition(tc,POS_FACEDOWN_DEFENSE)
+        end
+    end
 end
 function s.leaveop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=e:GetLabelObject()
@@ -142,8 +126,8 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
-	end
+    local c=e:GetHandler()
+    if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)>0 then
+        Duel.Draw(tp,1,REASON_EFFECT)
+    end
 end

@@ -2,6 +2,8 @@
 --Scripted by poka-poka
 local s,id=GetID()
 function s.initial_effect(c)
+	-- Can Only control 1
+	c:SetUniqueOnField(1,0,id)
     -- Special Summon
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -47,6 +49,7 @@ function s.initial_effect(c)
     e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
     e7:SetCode(EFFECT_CANNOT_ACTIVATE)
     e7:SetRange(LOCATION_MZONE)
+	e7:SetCondition(s.selfnegcon)
     e7:SetTargetRange(1,1)
     e7:SetValue(s.aclimit)
     c:RegisterEffect(e7)
@@ -58,7 +61,6 @@ function s.initial_effect(c)
     e8:SetValue(LOCATION_REMOVED)
     c:RegisterEffect(e8)
 	--Necrovalley Monster Version
-    -- Activate
     local e9=Effect.CreateEffect(c)
     e9:SetType(EFFECT_TYPE_FIELD)
     e9:SetCode(EFFECT_NECRO_VALLEY)
@@ -87,6 +89,7 @@ function s.initial_effect(c)
     e13:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
     e13:SetCode(EVENT_CHAIN_SOLVING)
     e13:SetRange(LOCATION_MZONE)
+	e13:SetCondition(s.selfnegcon)
     e13:SetOperation(s.disop)
     c:RegisterEffect(e13)
     -- Prevent non-activated effects from Special Summoning from the GY (e.g., unclassified summoning effects or delayed effects)
@@ -96,8 +99,17 @@ function s.initial_effect(c)
     e14:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
     e14:SetRange(LOCATION_MZONE)
     e14:SetTargetRange(1,1)
+	e14:SetCondition(s.selfnegcon)
     e14:SetTarget(s.cannotsptg)
     c:RegisterEffect(e14)
+	--Cannot be special summoned from the GY
+	local e15=Effect.CreateEffect(c)
+	e15:SetType(EFFECT_TYPE_SINGLE)
+	e15:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e15:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e15:SetCondition(s.splimcon)
+	e15:SetValue(aux.FALSE)
+	c:RegisterEffect(e15)
 end
 -- Special Summon condition
 function s.spcon(e,c)
@@ -117,12 +129,21 @@ function s.aclimit(e,re,tp)
     local rc=re:GetHandler()
     return (rc and (rc:IsLocation(LOCATION_REMOVED) or rc:IsLocation(LOCATION_GRAVE))) and re:IsMonsterEffect()
 end
+-- Disable above effect if opponents control 5 or more monster
+function s.selfnegcon(e)
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)<5
+end
 -- Necrovalley
 function s.contp(e)
+    local tp=e:GetHandlerPlayer()
     return not Duel.IsPlayerAffectedByEffect(e:GetHandler():GetControler(),EFFECT_NECRO_VALLEY_IM)
+	and Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)<5
 end
 function s.conntp(e)
+    local tp=e:GetHandlerPlayer()
     return not Duel.IsPlayerAffectedByEffect(1-e:GetHandler():GetControler(),EFFECT_NECRO_VALLEY_IM)
+	and Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)<5
 end
 function s.disfilter(c,not_im0,not_im1,re)
     if c:IsControler(0) then return not_im0 and c:IsHasEffect(EFFECT_NECRO_VALLEY) and c:IsRelateToEffect(re)
@@ -163,4 +184,8 @@ function s.cannotsptg(e,c,sp,sumtype,sumpos,target_p,sumeff)
     return c:IsLocation(LOCATION_GRAVE) and sumeff and not sumeff:IsActivated() and not sumeff:IsHasProperty(EFFECT_FLAG_CANNOT_DISABLE)
         and not Duel.IsPlayerAffectedByEffect(c:GetControler(),EFFECT_NECRO_VALLEY_IM) and not c:IsHasEffect(EFFECT_NECRO_VALLEY_IM)
         and not sumeff:GetHandler():IsHasEffect(EFFECT_NECRO_VALLEY_IM)
+end
+--no sp GY
+function s.splimcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsLocation(LOCATION_GRAVE)
 end

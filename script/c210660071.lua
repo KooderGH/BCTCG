@@ -24,7 +24,7 @@ function s.initial_effect(c)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e3:SetCode(EVENT_SUMMON_SUCCESS)
     e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e3:SetCondition(s.descon)
+--    e3:SetCondition(s.descon)
     e3:SetTarget(s.destg)
     e3:SetOperation(s.desop)
     c:RegisterEffect(e3)
@@ -52,6 +52,17 @@ function s.initial_effect(c)
     e5:SetCondition(s.batcon)
     e5:SetOperation(s.batop)
     c:RegisterEffect(e5)
+	--
+	local e6=Effect.CreateEffect(c)
+    e6:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+    e6:SetCode(EVENT_EQUIP)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetCountLimit(1,id)
+    e6:SetCondition(s.eqcon)
+    e6:SetTarget(s.eqtg)
+    e6:SetOperation(s.eqop)
+    c:RegisterEffect(e6)
 end
 
 -- Condition for Special Summon
@@ -89,14 +100,14 @@ function s.summon_limit(e,c,sump,sumtype,sumpos,targetp,se)
     return not c:IsAttribute(ATTRIBUTE_FIRE) or not c:IsRace(RACE_WARRIOR)
 end
 -- Destroy 1 opponent monster on summon
-function s.descon(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_GRAVE,0,nil,TYPE_MONSTER)
-    if g:IsExists(function(c) return not c:IsAttribute(ATTRIBUTE_FIRE) end,1,nil) then
-        return false
-    else
-        return true
-    end
-end
+--function s.descon(e,tp,eg,ep,ev,re,r,rp)
+--    local g=Duel.GetMatchingGroup(Card.IsType,tp,LOCATION_GRAVE,0,nil,TYPE_MONSTER)
+--    if g:IsExists(function(c) return not c:IsAttribute(ATTRIBUTE_FIRE) end,1,nil) then
+--        return false
+--    else
+--        return true
+--    end
+--end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingTarget(Card.IsDestructable,tp,0,LOCATION_MZONE,1,nil) end
     local g=Duel.SelectTarget(tp,Card.IsDestructable,tp,0,LOCATION_MZONE,1,1,nil)
@@ -106,6 +117,14 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFirstTarget()
     if tc:IsRelateToEffect(e) then
         Duel.Destroy(tc,REASON_EFFECT)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetTargetRange(0,1)
+	e1:SetValue(1)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
     end
 end
 -- Send 1 FIRE Warrior from Deck to GY
@@ -134,5 +153,32 @@ function s.batop(e,tp,eg,ep,ev,re,r,rp)
     if c:IsFaceup() then
         local ct = eg:FilterCount(Card.IsType, nil, TYPE_MONSTER)
         c:UpdateAttack(ct * 400)
+    end
+end
+-- Condition: Check if this card is being equipped with an Equip Spell
+function s.equiptothiscard(c,tc)
+    return c:IsType(TYPE_SPELL) and c:IsType(TYPE_EQUIP) and c:GetEquipTarget()==tc
+end
+function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsExists(s.equiptothiscard,1,nil,e:GetHandler())
+end
+-- Target: Search for an Equip Spell in the Deck
+function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then
+        return Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_DECK,0,1,nil)
+    end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+-- Filter: Find Equip Spells in the Deck
+function s.eqfilter(c)
+    return c:IsType(TYPE_EQUIP) and c:IsAbleToHand()
+end
+-- Operation: Add the Equip Spell to the hand
+function s.eqop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_ATOHAND)
+    local g = Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

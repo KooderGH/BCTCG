@@ -2,8 +2,9 @@
 --Scripted by Gideon with some help from Naim. Opperations are a pain sometimes!
 --Effect
 -- (1) Can't be destroyed by battle.
--- (2) Any monster on your opponents side of the field that is Normal Summoned, Flip Summoned or Special Summoned is changed to Defense Position.
--- (3) When this card is Summoned; You can add one Fiend monster with 1000 or less ATK from your deck to your hand.
+-- (2) If you control no monsters; You can Special Summon this card from your hand. If summoned this way, this card cannot be used as link material.
+-- (3) Any monster on your opponents side of the field that is Normal Summoned, Flip Summoned or Special Summoned is changed to Defense Position.
+-- (4) When this card is Summoned; You can add one Fiend monster with 1000 or less ATK from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
 	--Cannot be destroyed by Battle
@@ -46,6 +47,15 @@ function s.initial_effect(c)
 	local e7=e5:Clone()
 	e7:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e7)
+	--sp summon when control no monster(2)
+    local e8=Effect.CreateEffect(c)
+    e8:SetType(EFFECT_TYPE_FIELD)
+    e8:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e8:SetCode(EFFECT_SPSUMMON_PROC)
+    e8:SetRange(LOCATION_HAND)
+    e8:SetCondition(s.spcon)
+    e8:SetOperation(s.spop)
+    c:RegisterEffect(e8)
 end
 --E2-E4 Functions
 function s.hcondition(e,tp,eg,ep,ev,re,r,rp)
@@ -80,4 +90,20 @@ function s.op(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--e8
+function s.spcon(e,c)
+    if c==nil then return true end
+    local tp=e:GetHandlerPlayer()
+    return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0,nil)==0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+    e1:SetRange(LOCATION_MZONE)
+    e1:SetValue(1)
+    c:RegisterEffect(e1)
 end

@@ -3,10 +3,15 @@
 --Effect:
 -- (1) Cannot be Normal Summoned/Set. Must be Special Summoned (from your hand) by having exactly 3 DARK monsters in your GY.
 -- (2) You can banish 1 DARK monster from your GY, then target 1 card on the field (Igniton); Destroy that target.
--- (3) Level 8 or higher monster's cannot target this card with card effects.
+-- (3) Level 6 or higher monster's cannot target this card with card effects.
 -- (4) When this card is Banished; You can add 1 DARK monster from your deck to your hand.
+-- (5) Cannot be tributed or used as Link Material
+-- (6) You can only control one "Iz the Dancer"
 local s,id=GetID()
 function s.initial_effect(c)
+	-- Can Only control 1
+	c:SetUniqueOnField(1,0,id)
+	c:EnableUnsummonable()
     --cannot special summon (1)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -55,6 +60,20 @@ function s.initial_effect(c)
     e5:SetTarget(s.bntg)
     e5:SetOperation(s.bnop)
     c:RegisterEffect(e5)
+	-- (5) Cannot be tributed. Cannot be used as link material.
+	local e6=Effect.CreateEffect(c)
+    e6:SetType(EFFECT_TYPE_SINGLE)
+    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e6:SetCode(EFFECT_UNRELEASABLE_SUM)
+    e6:SetRange(LOCATION_MZONE)
+    e6:SetValue(1)
+    c:RegisterEffect(e6)
+    local e7=e6:Clone()
+    e7:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+    c:RegisterEffect(e7)
+	local e8=e6:Clone()
+    e8:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+    c:RegisterEffect(e8)
 end
 --(1)
 function s.spcon(e,c)
@@ -87,7 +106,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --(3)
 function s.levelval(e,c)
-    return c:IsLevelAbove(8)
+    return c:IsLevelAbove(6)
 end
 --(4)
 function s.banishfilter(c)

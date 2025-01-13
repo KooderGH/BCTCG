@@ -2,10 +2,14 @@
 --Scripted by Gideon
 --Effect
 -- (1) You can destroy one LIGHT monster from your hand to Special Summon this card from your Hand or GY. You can only activate this effect of "Child of Destiny Phono" Once per turn during your turn.
--- (2) If this card battles, your opponent cannot activate cards or effects until the end of the Damage Step. 
--- (3) During damage calulation, if this card battles an opponent's monster, you can banish one LIGHT monster from your graveyard, this card ATK becomes 5000 during that damage calculation only.
+-- (2) Cannot be Special Summoned from the GY except by its own effect.
+-- (3) If this card battles, your opponent cannot activate cards or effects until the end of the Damage Step. 
+-- (4) During damage calulation, if this card battles an opponent's monster, you can banish one LIGHT monster from your graveyard, this card ATK becomes 5000 during that damage calculation only.
+-- (5) You can only control one "Child of Destiny Phono"
 local s,id=GetID()
 function s.initial_effect(c)
+	-- Can Only control 1
+	c:SetUniqueOnField(1,0,id)
 	--SS destroy (1)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -40,6 +44,14 @@ function s.initial_effect(c)
 	e3:SetCost(s.atkcost)
 	e3:SetOperation(s.atkop)
 	c:RegisterEffect(e3)
+	--canot SS from gy except by its own Effect
+	local e4=Effect.CreateEffect(c)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e4:SetType(EFFECT_TYPE_SINGLE)
+	e4:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e4:SetRange(LOCATION_HAND)
+	e4:SetValue(s.splimit)
+	c:RegisterEffect(e4)
 end
 --(1) Functions
 function s.desfilter(c)
@@ -93,4 +105,12 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetValue(5000)
 		c:RegisterEffect(e1)
 	end
+end
+--canot SS from gy except by its own Effect
+function s.splimit(e,se,sp,st)
+    local c=e:GetHandler()
+    if c:IsLocation(LOCATION_GRAVE) then
+        return se:GetHandler()==c
+    end
+    return true
 end

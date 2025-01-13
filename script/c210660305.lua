@@ -1,7 +1,7 @@
 --Mighty Drednot
 --Scripted by Konstak
 --Effect
--- (1) You can pay 300 LP to Special Summon this card from your hand.
+-- (1) You can pay 500 LP to Special Summon this card from your hand.
 -- (2) Cannot be tributed.
 -- (3) When this card is Summoned: You can target one EARTH Machine monster from your GY; Special Summon it.
 -- (4) You can only activate each effect of "Mighty Drednot" once per turn.
@@ -32,7 +32,7 @@ function s.initial_effect(c)
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CARD_TARGET)
 	e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e4:SetCode(EVENT_SUMMON_SUCCESS)
 	e4:SetTarget(s.tg)
@@ -53,7 +53,7 @@ function s.spcon(e,c)
 		Duel.CheckLPCost(c:GetControler(),500)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	Duel.PayLPCost(tp,300)
+	Duel.PayLPCost(tp,500)
 end
 --Once summoned function & filter for both 3 & 4
 function s.filter(c,e,tp)

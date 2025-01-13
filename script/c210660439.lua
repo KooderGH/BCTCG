@@ -3,8 +3,9 @@
 -- (1) You can discard 1 Spell; Special Summon this card from your hand. (Ignition)
 -- (2) You and your opponent take no battle damage from battles involving this card.
 -- (3) When this card battles your opponent's monster; Both this card and that monster cannot be destroyed by battle.
--- (4) After damage calulation; The monster that battled this card effects are negated and can no longer attack while this card is face-up on the field.
--- (5) During your opponent's end phase: If this card is the only face-up monster on the field; Draw 1 card.
+-- (4) After damage calulation; The monster that battled this card effects are negated, cannot activate it's effect and can no longer attack while this card is face-up on the field.
+-- (5) During your opponent's end phase: Draw 2 card.
+-- (6) When this card is banished; Add 1 Creator God from your deck to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
 --special summon
@@ -38,7 +39,7 @@ function s.initial_effect(c)
 	e4:SetTarget(s.btarget)
 	e4:SetOperation(s.boperation)
 	c:RegisterEffect(e4)
-	--Draw cards during the opponent's End Phase
+	--Draw 2 cards during the opponent's End Phase
 	local e5=Effect.CreateEffect(c)
 	e5:SetCategory(CATEGORY_DRAW)
 	e5:SetDescription(aux.Stringid(id,1))
@@ -63,6 +64,18 @@ function s.initial_effect(c)
 	e6:SetTarget(s.battletg)
 	e6:SetValue(1)
 	c:RegisterEffect(e6)
+	--banish and add 1 Creator God card from deck (6)
+    local e7=Effect.CreateEffect(c)
+    e7:SetDescription(aux.Stringid(id,2))
+    e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e7:SetCode(EVENT_REMOVE)
+    e7:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+    e7:SetCountLimit(1)
+    e7:SetRange(LOCATION_REMOVED)
+    e7:SetTarget(s.bntg)
+    e7:SetOperation(s.bnop)
+    c:RegisterEffect(e7)
 end
 --e1
 function s.spcfilter(c)
@@ -108,6 +121,9 @@ function s.boperation(e,tp,eg,ep,ev,re,r,rp)
 		local e2=e1:Clone()
 		e2:SetCode(EFFECT_CANNOT_ATTACK)
 		tc:RegisterEffect(e2)
+		local e3=e1:Clone()
+		e3:SetCode(EFFECT_CANNOT_TRIGGER)
+		tc:RegisterEffect(e3)
 	end
 end
 function s.rcon(e)
@@ -115,13 +131,13 @@ function s.rcon(e)
 end
 --e5
 function s.drc(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)<=1 and Duel.IsTurnPlayer(1-tp)
+	return Duel.IsTurnPlayer(1-tp)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
+	if chk==0 then return Duel.IsPlayerCanDraw(tp,2) end
 	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(1)
-	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
+	Duel.SetTargetParam(2)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
@@ -134,4 +150,20 @@ function s.battlecon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.battletg(e,c)
 	return Duel.GetAttacker() and Duel.GetAttackTarget()
+end
+--e7
+function s.banishfilter(c)
+    return c:IsRace(RACE_CREATORGOD) and c:IsAbleToHand()
+end
+function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.banishfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.bnop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.banishfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end

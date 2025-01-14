@@ -10,13 +10,8 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE + EFFECT_FLAG_CANNOT_DISABLE)
     e1:SetRange(LOCATION_HAND)
     e1:SetCondition(s.spcon)
+	e1:SetOperation (s.spop)
     c:RegisterEffect(e1)
-    -- Effect 2: Restrict other summons if Special Summoned by the specified condition
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-    e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-    e2:SetOperation(s.spsummon_success)
-    c:RegisterEffect(e2)
     -- Effect 3: Destroy 1 monster your opponent controls when this card is Summoned
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
@@ -73,9 +68,8 @@ function s.spcon(e, c)
     return Duel.GetFieldGroupCount(tp, LOCATION_MZONE, 0) == 0 or not hasNonFireMonster
 end
 -- Operation function to restrict other summons
-function s.spsummon_success(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if not c:IsSummonType(SUMMON_TYPE_SPECIAL) then return end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
     -- Apply restriction for FIRE Warrior Monsters only
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
@@ -86,11 +80,9 @@ function s.spsummon_success(e,tp,eg,ep,ev,re,r,rp)
     e1:SetTarget(s.summon_limit)
     e1:SetReset(RESET_PHASE+PHASE_END)
     c:RegisterEffect(e1)
-
     local e2=e1:Clone()
     e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
     c:RegisterEffect(e2)
-
     local e3=e1:Clone()
     e3:SetCode(EFFECT_CANNOT_MSET)
     c:RegisterEffect(e3)

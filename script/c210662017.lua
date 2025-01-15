@@ -21,7 +21,7 @@ function s.initial_effect(c)
     e2:SetCode(EFFECT_UPDATE_ATTACK)
     e2:SetCondition(s.con)
     e2:SetTarget(s.tg)
-    e2:SetValue(500)
+    e2:SetValue(250)
     c:RegisterEffect(e2)
     --Damage LP
     local e3=Effect.CreateEffect(c)
@@ -59,7 +59,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --Attack Up function
 function s.con(e)
-	return e:GetHandler():IsDefensePos()
+	return e:GetHandler():IsAttackPos()
 end
 function s.tg(e,c)
 	return c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_PYRO)

@@ -2,7 +2,7 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    aux.AddUnionProcedure(c,s.floatingfilter)
+    aux.AddUnionProcedure(c,s.unfilter)
     --Opponent No Battle Damage
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
@@ -27,8 +27,8 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
 end
 --Union filter
-function s.floatingfilter(c)
-    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+function s.unfilter(c)
+    return c:IsMonster() and c:IsFaceup()
 end
 --Pos Changer
 function s.postg(e,tp,eg,ep,ev,re,r,rp,chk)

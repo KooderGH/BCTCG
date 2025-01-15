@@ -2,29 +2,42 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --draw
+    aux.AddUnionProcedure(c,s.floatingfilter)
+    --Atk up
     local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_DRAW)	
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_TO_GRAVE)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetCountLimit(1,id)
-    e1:SetOperation(s.drop)
+    e1:SetType(EFFECT_TYPE_EQUIP)
+    e1:SetCode(EFFECT_UPDATE_ATTACK)
+    e1:SetValue(150)
+    e1:SetCondition(aux.IsUnionState)
     c:RegisterEffect(e1)
+    --Def up
+    local e2=e1:Clone()
+    e2:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e2)
+    --pos change
+    local e3=Effect.CreateEffect(c)
+    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetCategory(CATEGORY_POSITION)
+    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetRange(LOCATION_SZONE)
+    e3:SetCondition(aux.IsUnionState)
+    e3:SetTarget(s.postg)
+    e3:SetOperation(s.posop)
+    c:RegisterEffect(e3)
 end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
+--Union filter
+function s.floatingfilter(c)
+    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+end
+--Pos Changer
+function s.postg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
+    Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler():GetEquipTarget(),1,0,0)
+end
+function s.posop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
-    if Duel.IsPlayerCanDraw(1-tp,1) then
-    local e1=Effect.CreateEffect(c)
-    e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-    e1:SetRange(LOCATION_GRAVE)
-    e1:SetCode(EVENT_PHASE+PHASE_DRAW)
-	e1:SetReset(RESET_PHASE+PHASE_END,2)
-    e1:SetCountLimit(1)
-    e1:SetOperation(s.drawop)
-    c:RegisterEffect(e1)
+    if c:IsRelateToEffect(e) then
+        Duel.ChangePosition(c:GetEquipTarget(),POS_FACEUP_DEFENSE,0,POS_FACEUP_ATTACK,0)
     end
-end
-function s.drawop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Draw(tp,1,REASON_EFFECT)
 end

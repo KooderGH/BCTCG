@@ -83,7 +83,7 @@ function s.tsop(e,tp,eg,ep,ev,re,r,rp)
     end
     -- Optional Normal Summon 1 monster from hand
     if Duel.IsExistingMatchingCard(Card.IsSummonable,tp,LOCATION_HAND,0,1,nil,true,nil)
-        and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
+        and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
         local sg=Duel.SelectMatchingCard(tp,Card.IsSummonable,tp,LOCATION_HAND,0,1,1,nil,true,nil)
         if #sg>0 then

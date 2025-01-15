@@ -17,7 +17,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
     --pos change
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,2))
+    e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_POSITION)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_SZONE)

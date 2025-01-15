@@ -27,7 +27,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e3)
 end
 --Union filter
-function s.crabfilter(c)
+function s.floatingfilter(c)
     return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
 end
 --Pos Changer

@@ -22,7 +22,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 --Union filter
-function s.crabfilter(c)
+function s.floatingfilter(c)
     return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
 end
 --Destroy and add function

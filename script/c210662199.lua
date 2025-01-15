@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    aux.AddUnionProcedure(c,s.floatingfilter)
+    aux.AddUnionProcedure(c,s.unfilter)
     --Atk up
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_EQUIP)
@@ -22,8 +22,8 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 --Union filter
-function s.floatingfilter(c)
-    return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_WIND)
+function s.unfilter(c)
+    return c:IsMonster() and c:IsFaceup()
 end
 --Destroy and add function
 function s.addfilter(c)

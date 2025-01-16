@@ -20,6 +20,7 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_IGNITION)
     e2:SetRange(LOCATION_SZONE)
     e2:SetCountLimit(1)
+    e2:SetCondition(aux.IsUnionState)
     e2:SetOperation(s.freezeop)
     c:RegisterEffect(e2)
 end

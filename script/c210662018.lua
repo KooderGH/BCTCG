@@ -26,6 +26,7 @@ end
 function s.unfilter(c)
 	return c:IsMonster() and c:IsFaceup()
 end
+--Summon Requirement Function
 function s.floatingfilter(c)
 	return c:IsAttribute(ATTRIBUTE_WIND) and c:IsFaceup()
 end

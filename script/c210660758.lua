@@ -186,17 +186,18 @@ function s.diceop(e,tp,eg,ep,ev,re,r,rp)
 end
 --7
 function s.coinop(e,tp,eg,ep,ev,re,r,rp)
-    local ct=Duel.GetCoinResult()
-    if ct==0 then return end 
+    local results={Duel.GetCoinResult()}
+    local ct=#results
+    if ct==0 then return end
     local CancelCoins={}
     for i=1,ct do
-        CancelCoins[i]=0
+        CancelCoins[i]=0 
     end
     Duel.SetCoinResult(table.unpack(CancelCoins))
     local newResults={}
     for i=1,ct do
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_COIN)
-        local sel=Duel.AnnounceCoin(tp)
+        local sel=Duel.AnnounceCoin(tp) 
         table.insert(newResults, sel)
     end
     Duel.SetCoinResult(table.unpack(newResults))

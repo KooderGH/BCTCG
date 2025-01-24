@@ -91,6 +91,7 @@ function s.initial_effect(c)
     e7:SetType(EFFECT_TYPE_IGNITION)
     e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e7:SetRange(LOCATION_MZONE)
+	e7:SetCondition(s.rmcon)
     e7:SetTarget(s.rmtg)
     e7:SetOperation(s.rmop)
     e7:SetCountLimit(1)
@@ -198,13 +199,16 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --(5)
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0) >= 2
+end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+    local gt=math.floor(Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0)/2)
     if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToRemove() end
-    local gt=Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0)//2
     if chk==0 then return gt>0 and Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,nil) end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
     local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,gt,nil)
-    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
     local tg=Duel.GetTargetCards(e)

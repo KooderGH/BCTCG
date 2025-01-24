@@ -169,7 +169,7 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e9
 function s.gscon(e,tp,eg,ep,ev,re,r,rp)
-    return Duel.GetTurnPlayer()==1-tp
+    return Duel.GetTurnPlayer()==1-tp and Duel.GetMatchingGroupCount(Card.IsFaceup,tp,LOCATION_MZONE,0,e:GetHandler())==0
 end
 function s.gstg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then

@@ -77,7 +77,7 @@ function s.initial_effect(c)
 end
 --(1)
 function s.splimcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsLocation(LOCATION_HAND+LOCATION_DECK)
+    return e:GetHandler():IsLocation(LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE)
 end
 --(2)
 function s.unaffectedval(e,te)

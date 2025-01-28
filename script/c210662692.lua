@@ -15,8 +15,6 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.lpdrainop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
-		Duel.Damage(1-tp,250,REASON_EFFECT)
-		Duel.Damage(1-tp,250,REASON_EFFECT)
-		Duel.Damage(1-tp,250,REASON_EFFECT)
+		Duel.Damage(1-tp,750,REASON_EFFECT)
 	end
 end

@@ -30,15 +30,13 @@ function s.initial_effect(c)
     local e4=e2:Clone()
     e4:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e4)
-    --Change battle damage (LP drain ability)
+    --Freeze Ability
     local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_FIELD)
-    e5:SetCode(EFFECT_CHANGE_BATTLE_DAMAGE)
+    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetType(EFFECT_TYPE_IGNITION)
     e5:SetRange(LOCATION_MZONE+LOCATION_SZONE)
-    e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e5:SetTargetRange(0,1)
-    e5:SetCondition(s.con)
-    e5:SetValue(1000)
+    e5:SetCountLimit(1)
+    e5:SetOperation(s.freezeop)
     c:RegisterEffect(e5)
 end
 function s.firefilter(c)
@@ -79,7 +77,43 @@ function s.spellop(e,tp,eg,ep,ev,re,r,rp)
     e1:SetValue(TYPE_SPELL+TYPE_CONTINUOUS)
     c:RegisterEffect(e1)
 end
---Change Battle Damage Ability
-function s.con(e)
-	return e:GetHandler():IsAttackPos()
+--Freeze Function
+function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_SKIP_DP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetCategory(CATEGORY_DRAW)
+        e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        e2:SetCode(EVENT_PHASE+PHASE_END)
+        e2:SetCondition(s.retcon)
+        e2:SetLabel(Duel.GetTurnCount())
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        e2:SetCountLimit(1)
+        e2:SetOperation(s.droperation)
+        Duel.RegisterEffect(e2,effp)
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
+end
+function s.retcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()~=tp
+end
+function s.droperation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_CARD,0,id)
+	Duel.Draw(1-tp,2,REASON_EFFECT)
 end

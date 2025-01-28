@@ -43,7 +43,7 @@ function s.initial_effect(c)
     c:RegisterEffect(e4)
     --Slow Ability
     local e5=Effect.CreateEffect(c)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e5:SetCode(EVENT_ATTACK_ANNOUNCE)
     e5:SetCondition(s.slowcon)
     e5:SetOperation(s.slowop)
@@ -54,10 +54,10 @@ function s.zombiefilter(c)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -99,6 +99,7 @@ function s.slowop(e,tp,eg,ep,ev,re,r,rp)
     local effp=e:GetHandler():GetControler()
     local c=e:GetHandler()
     if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        Duel.NegateAttack()
         local e1=Effect.CreateEffect(e:GetHandler())
         e1:SetType(EFFECT_TYPE_FIELD)
         e1:SetCode(EFFECT_CANNOT_BP)

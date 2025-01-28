@@ -39,36 +39,28 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Unnafected by other cards' effects
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_IMMUNE_EFFECT)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetValue(s.immunefilter)
-    c:RegisterEffect(e4)
     --Haniwanwan Battle
-    local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,1))
-    e5:SetCategory(CATEGORY_DISABLE)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e5:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e5:SetRange(LOCATION_MZONE)
-    e5:SetCountLimit(1)
-    e5:SetCondition(s.hwwcon)
-    e5:SetTarget(s.hwwtg)
-    e5:SetOperation(s.hwwop)
-    c:RegisterEffect(e5)
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetCategory(CATEGORY_DISABLE)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetCondition(s.hwwcon)
+    e4:SetTarget(s.hwwtg)
+    e4:SetOperation(s.hwwop)
+    c:RegisterEffect(e4)
 end
 function s.filter(c)
 	return c:IsFaceup() and c:IsCode(210662612)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.filter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.filter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.filter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.filter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -119,9 +111,6 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
-end
-function s.immunefilter(e,te)
-    return te:GetOwner()~=e:GetOwner()
 end
 --Haniwanwan Battle Function
 function s.hwwcon(e,tp,eg,ep,ev,re,r,rp)

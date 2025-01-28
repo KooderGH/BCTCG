@@ -39,43 +39,35 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Unnafected by other cards' effects
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_IMMUNE_EFFECT)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetValue(s.immunefilter)
-    c:RegisterEffect(e4)
     --Slow Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetOperation(s.slowop)
+    c:RegisterEffect(e4)
+    --Knockback ability
     local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,1))
+    e5:SetDescription(aux.Stringid(id,0))
+    e5:SetCategory(CATEGORY_DISABLE)
+    e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e5:SetType(EFFECT_TYPE_IGNITION)
     e5:SetRange(LOCATION_MZONE)
     e5:SetCountLimit(1)
-    e5:SetOperation(s.slowop)
+    e5:SetTarget(s.knockbacktg)
+    e5:SetOperation(s.knockbackop)
     c:RegisterEffect(e5)
-    --Knockback ability
-    local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,0))
-    e6:SetCategory(CATEGORY_DISABLE)
-    e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e6:SetType(EFFECT_TYPE_IGNITION)
-    e6:SetRange(LOCATION_MZONE)
-    e6:SetCountLimit(1)
-    e6:SetTarget(s.knockbacktg)
-    e6:SetOperation(s.knockbackop)
-    c:RegisterEffect(e6)
 end
 function s.alienfilter(c)
 	return c:IsFaceup() and c:IsCode(210662169)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.alienfilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.alienfilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -126,9 +118,6 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
-end
-function s.immunefilter(e,te)
-    return te:GetOwner()~=e:GetOwner()
 end
 --Slow Ability Function
 function s.slowop(e,tp,eg,ep,ev,re,r,rp)

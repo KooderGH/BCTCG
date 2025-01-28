@@ -9,20 +9,11 @@ function s.initial_effect(c)
     e1:SetCategory(CATEGORY_DISABLE)
     e1:SetType(EFFECT_TYPE_IGNITION)
     e1:SetRange(LOCATION_SZONE)
-    e1:SetCountLimit(2)
+    e1:SetCountLimit(1)
     e1:SetCondition(aux.IsUnionState)
     e1:SetTarget(s.weakentg)
     e1:SetOperation(s.weakenop)
     c:RegisterEffect(e1)
-    --return hand (Peon Ability)
-    local e2=Effect.CreateEffect(c)
-    e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-    e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e2:SetCode(EVENT_DESTROYED)
-    e2:SetTarget(s.destg)
-    e2:SetOperation(s.desop)
-    c:RegisterEffect(e2)
 end
 --Union filter
 function s.unfilter(c)
@@ -45,16 +36,5 @@ function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
         e1:SetValue(-tc:GetAttack()/4)
         tc:RegisterEffect(e1)
-    end
-end
---Peon Ability
-function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
-end
-function s.desop(e,tp,eg,ev,ep,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
 end

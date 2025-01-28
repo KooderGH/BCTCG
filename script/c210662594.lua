@@ -51,33 +51,25 @@ function s.initial_effect(c)
     e5:SetCode(EFFECT_SELF_DESTROY)
     e5:SetCondition(s.sdcon)
     c:RegisterEffect(e5)
-    --Unnafected by other cards' effects
-    local e6=Effect.CreateEffect(c)
-    e6:SetType(EFFECT_TYPE_SINGLE)
-    e6:SetCode(EFFECT_IMMUNE_EFFECT)
-    e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e6:SetRange(LOCATION_MZONE)
-    e6:SetValue(s.immunefilter)
-    c:RegisterEffect(e6)
     --Toxic Ability
-    local e7=Effect.CreateEffect(c)
-    e7:SetCategory(CATEGORY_ATKCHANGE)
-    e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e7:SetCode(EVENT_ATTACK_ANNOUNCE)
-    e7:SetCondition(s.toxiccon)
-    e7:SetTarget(s.toxictg)
-    e7:SetOperation(s.toxicop)
-    c:RegisterEffect(e7)
+    local e6=Effect.CreateEffect(c)
+    e6:SetCategory(CATEGORY_ATKCHANGE)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e6:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e6:SetCondition(s.toxiccon)
+    e6:SetTarget(s.toxictg)
+    e6:SetOperation(s.toxicop)
+    c:RegisterEffect(e6)
 end
 function s.zombiefilter(c)
 	return c:IsFaceup() and c:IsCode(210662469)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.zombiefilter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.zombiefilter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -154,9 +146,6 @@ function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
 end
-function s.immunefilter(e,te)
-    return te:GetOwner()~=e:GetOwner()
-end
 --Toxic on Battle function
 function s.filter(c)
     return c:IsFaceup()
@@ -172,6 +161,7 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tc=sg:GetFirst()
     for tc in aux.Next(sg) do
+        Duel.NegateAttack()
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)

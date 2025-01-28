@@ -85,17 +85,17 @@ function s.initial_effect(c)
     --(4)Finish
     --(5)Start
     --Banish
-    local e7=Effect.CreateEffect(c)
-    e7:SetDescription(aux.Stringid(id,1))
-    e7:SetCategory(CATEGORY_REMOVE)
-    e7:SetType(EFFECT_TYPE_IGNITION)
-    e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
-    e7:SetRange(LOCATION_MZONE)
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,1))
+	e7:SetCategory(CATEGORY_REMOVE)
+	e7:SetType(EFFECT_TYPE_IGNITION)
+	e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e7:SetRange(LOCATION_MZONE)
 	e7:SetCondition(s.rmcon)
-    e7:SetTarget(s.rmtg)
-    e7:SetOperation(s.rmop)
-    e7:SetCountLimit(1)
-    c:RegisterEffect(e7)
+	e7:SetTarget(s.rmtg)
+	e7:SetOperation(s.rmop)
+	e7:SetCountLimit(1)
+	c:RegisterEffect(e7)
     --(5)Finish
     --(6)Start
     --Banish 3 GY Draw 1
@@ -203,12 +203,12 @@ function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0) >= 2
 end
 function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    local gt=math.floor(Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0)/2)
+    local gt = math.floor(Duel.GetFieldGroupCount(tp, LOCATION_REMOVED, 0) / 2)
     if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToRemove() end
-    if chk==0 then return gt>0 and Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,nil) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-    local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,gt,gt,nil)
-    Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+    if chk==0 then return gt > 0 and Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+    Duel.Hint(HINT_SELECTMSG, tp, HINTMSG_REMOVE)
+    local g = Duel.SelectTarget(tp, Card.IsAbleToRemove,tp,LOCATION_ONFIELD, LOCATION_ONFIELD,1,gt,nil)
+    Duel.SetOperationInfo(0, CATEGORY_REMOVE,g,#g,0,0)
 end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
     local tg=Duel.GetTargetCards(e)

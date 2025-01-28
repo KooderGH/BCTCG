@@ -2,29 +2,28 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --activate
-    local e0=Effect.CreateEffect(c)
-    e0:SetType(EFFECT_TYPE_ACTIVATE)
-    e0:SetCode(EVENT_FREE_CHAIN)
-    c:RegisterEffect(e0)
-    --Reveal
-    local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetType(EFFECT_TYPE_IGNITION)
-    e1:SetRange(LOCATION_SZONE)
-    e1:SetCountLimit(2)
-    e1:SetTarget(s.cftg)
-    e1:SetOperation(s.cfop)
-    c:RegisterEffect(e1)
+	--Activate
+	local e1=Effect.CreateEffect(c)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
+	e1:SetCondition(s.condition)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
+	c:RegisterEffect(e1)
 end
-function s.cftg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 end
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	return tp~=Duel.GetTurnPlayer()
 end
-function s.cfop(e,tp,eg,ep,ev,re,r,rp)
-    if not e:GetHandler():IsRelateToEffect(e) then return end
-    local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
-    if #g==0 then return end
-    local sg=g:RandomSelect(tp,1)
-    Duel.ConfirmCards(tp,sg)
-    Duel.ShuffleHand(1-tp)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	local tg=Duel.GetAttacker()
+	if chkc then return chkc==tg end
+	if chk==0 then return tg:IsOnField() and tg:IsCanBeEffectTarget(e) end
+	Duel.SetTargetCard(tg)
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetAttacker()
+	if tc:IsRelateToEffect(e) and Duel.NegateAttack() then
+		Duel.SkipPhase(1-tp,PHASE_BATTLE,RESET_PHASE+PHASE_BATTLE_STEP,1)
+	end
 end

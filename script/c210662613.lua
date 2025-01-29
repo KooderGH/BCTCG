@@ -24,7 +24,8 @@ function s.initial_effect(c)
     e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_DESTROY)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e3:SetCode(EVENT_BATTLE_START)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.wavecon)
     e3:SetTarget(s.wavetg)
     e3:SetOperation(s.waveop)
     c:RegisterEffect(e3)
@@ -60,6 +61,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     g:DeleteGroup()
 end
 --Guaranteed Wave Function
+function s.wavecon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()==tp and e:GetHandler():GetBattleTarget()~=nil
+end
 function s.wavetg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_DICE,nil,0,tp,1)

@@ -25,15 +25,6 @@ function s.initial_effect(c)
     e3:SetTarget(s.weakentg)
     e3:SetOperation(s.weakenop)
     c:RegisterEffect(e3)
-    --return hand (Peon Ability)
-    local e4=Effect.CreateEffect(c)
-    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e4:SetCode(EVENT_DESTROYED)
-    e4:SetTarget(s.destg)
-    e4:SetOperation(s.desop)
-    c:RegisterEffect(e4)
 end
 --When NS add function
 function s.dfilter(c)
@@ -68,16 +59,5 @@ function s.weakenop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
         e1:SetValue(-tc:GetAttack()/4)
         tc:RegisterEffect(e1)
-    end
-end
---Peon Ability
-function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
-end
-function s.desop(e,tp,eg,ev,ep,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
     end
 end

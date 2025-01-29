@@ -103,6 +103,7 @@ function s.toxicop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     local tc=sg:GetFirst()
     for tc in aux.Next(sg) do
+        Duel.NegateAttack()
         local e1=Effect.CreateEffect(c)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_UPDATE_ATTACK)

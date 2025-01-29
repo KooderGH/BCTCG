@@ -43,7 +43,7 @@ function s.initial_effect(c)
     --Weaken Ability
     local e6=Effect.CreateEffect(c)
     e6:SetDescription(aux.Stringid(id,3))
-    e6:SetCategory(CATEGORY_DISABLE)
+    e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e6:SetType(EFFECT_TYPE_IGNITION)
     e6:SetRange(LOCATION_MZONE+LOCATION_SZONE)
     e6:SetCountLimit(1)

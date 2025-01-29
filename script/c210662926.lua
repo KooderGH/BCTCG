@@ -23,6 +23,13 @@ function s.initial_effect(c)
     e2:SetTarget(s.sptg2)
     e2:SetOperation(s.spop2)
     c:RegisterEffect(e2)
+    --Slow Ability
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.slowcon)
+    e3:SetOperation(s.slowop)
+    c:RegisterEffect(e3)
     --Opponent drop Money draw
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,3))
@@ -61,6 +68,33 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp,c)
     if not g then return end
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
+end
+--Slow Ability Function
+function s.slowcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsRelateToBattle()
+end
+function s.slowop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_CANNOT_BP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        Duel.NegateAttack()
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
 end
 --Draw Function
 function s.drop(e,tp,eg,ep,ev,re,r,rp)

@@ -31,15 +31,14 @@ function s.initial_effect(c)
     e4:SetCode(EFFECT_SELF_DESTROY)
     e4:SetCondition(s.sdcon)
     c:RegisterEffect(e4)
-    --return hand (Peon Ability)
-    local e5=Effect.CreateEffect(c)
-    e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-    e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e5:SetCode(EVENT_DESTROYED)
-    e5:SetTarget(s.destg)
-    e5:SetOperation(s.desop)
-    c:RegisterEffect(e5)
+    --Cannot be targeted (Metal Coat)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE)
+    e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetValue(1)
+    c:RegisterEffect(e3)
 end
 --Excavate Search Ability
 function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -88,15 +87,4 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetDefense()<=0
-end
---Peon Ability
-function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
-end
-function s.desop(e,tp,eg,ev,ep,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
-    end
 end

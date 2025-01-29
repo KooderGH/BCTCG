@@ -22,15 +22,20 @@ function s.initial_effect(c)
     e1:SetTarget(s.wavetg)
     e1:SetOperation(s.waveop)
     c:RegisterEffect(e1)
-    --No battle damage
+    --Freeze Ability
     local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetCode(EFFECT_NO_BATTLE_DAMAGE)
+    e2:SetDescription(aux.Stringid(id,1))
+    e2:SetType(EFFECT_TYPE_IGNITION)
+    e2:SetRange(LOCATION_MZONE)
+    e2:SetCountLimit(2)
+    e2:SetOperation(s.freezeop)
     c:RegisterEffect(e2)
-    --Avoid Battle damage
+    --Cannot be targeted (Metal Coat)
     local e3=Effect.CreateEffect(c)
     e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+    e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetRange(LOCATION_MZONE)
     e3:SetValue(1)
     c:RegisterEffect(e3)
     --Metal Mechanic
@@ -50,6 +55,7 @@ function s.initial_effect(c)
     e5:SetCondition(s.sdcon)
     c:RegisterEffect(e5)
 end
+--Special Summon Requirement
 function s.cffilter(c)
     return c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and c:IsFaceup()
 end
@@ -87,6 +93,46 @@ function s.waveop(e,tp,eg,ep,ev,re,r,rp)
     if tc then
         Duel.Destroy(tc,REASON_EFFECT)
     end
+end
+--Freeze Function
+function s.freezeop(e,tp,eg,ep,ev,re,r,rp)
+    local effp=e:GetHandler():GetControler()
+    local c=e:GetHandler()
+    if c:IsFaceup() and c:IsRelateToEffect(e) and Duel.TossCoin(tp,1)==COIN_HEADS then
+        local e1=Effect.CreateEffect(e:GetHandler())
+        e1:SetType(EFFECT_TYPE_FIELD)
+        e1:SetCode(EFFECT_SKIP_DP)
+        e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e1:SetTargetRange(0,1)
+        if Duel.GetTurnPlayer()==effp then
+            e1:SetLabel(Duel.GetTurnCount())
+            e1:SetCondition(s.skipcon)
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,2)
+        else
+            e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN,1)
+        end
+        Duel.RegisterEffect(e1,effp)
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetCategory(CATEGORY_DRAW)
+        e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+        e2:SetCode(EVENT_PHASE+PHASE_END)
+        e2:SetCondition(s.retcon)
+        e2:SetLabel(Duel.GetTurnCount())
+        e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+        e2:SetCountLimit(1)
+        e2:SetOperation(s.droperation)
+        Duel.RegisterEffect(e2,effp)
+    end
+end
+function s.skipcon(e)
+    return Duel.GetTurnCount()~=e:GetLabel()
+end
+function s.retcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()~=tp
+end
+function s.droperation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_CARD,0,id)
+	Duel.Draw(1-tp,2,REASON_EFFECT)
 end
 --Metal Ability
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)

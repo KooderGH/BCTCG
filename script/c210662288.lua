@@ -22,15 +22,16 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
-    --Add lv4 Monster
+    --Excavate (Search Ability)
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e3:SetCode(EVENT_DESTROYED)
-    e3:SetTarget(s.drtg)
-    e3:SetOperation(s.drop)
+    e3:SetRange(LOCATION_MZONE)
+    e3:SetCountLimit(1)
+    e3:SetTarget(s.srtg)
+    e3:SetOperation(s.srop)
     c:RegisterEffect(e3)
 end
 --GY Attack Up function
@@ -61,19 +62,34 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
 	end
 end
---Destroy and add function
-function s.drfilter(c)
-    return c:IsLevelBelow(3) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
+--Excavate Search Ability
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=5 end
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.drfilter,tp,LOCATION_DECK,0,2,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+function s.filter(c)
+	return c:IsLevelBelow(3) and c:IsRace(RACE_ZOMBIE) and c:IsAbleToHand()
 end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.drfilter,tp,LOCATION_DECK,0,2,2,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+	--Effect
+	local c=e:GetHandler()
+	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<5 then return end
+	Duel.ConfirmDecktop(tp,5)
+	local g=Duel.GetDecktopGroup(tp,5)
+	Duel.DisableShuffleCheck()
+	if g:IsExists(s.filter,1,nil) then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+		local tg=g:FilterSelect(tp,s.filter,1,2,nil)
+		if #tg>0 then
+			Duel.SendtoHand(tg,nil,REASON_EFFECT)
+			Duel.ConfirmCards(1-tp,tg)
+			Duel.ShuffleHand(tp)
+			g:RemoveCard(tg)
+		end
+	end
+	local ct=#g
+	if ct>0 then
+		Duel.MoveToDeckTop(g,tp)
+		Duel.SortDecktop(tp,tp,ct)
+	end
 end

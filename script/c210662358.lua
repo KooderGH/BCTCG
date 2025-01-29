@@ -16,16 +16,16 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
     --Metal Mechanic
     local e3=Effect.CreateEffect(c)
-    e3:SetCode(EFFECT_DESTROY_REPLACE)
     e3:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
     e3:SetRange(LOCATION_MZONE)
+    e3:SetCode(EFFECT_DESTROY_REPLACE)
     e3:SetTarget(s.desatktg)
     c:RegisterEffect(e3)
     --self destroy
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
     e4:SetRange(LOCATION_MZONE)
     e4:SetCode(EFFECT_SELF_DESTROY)
     e4:SetCondition(s.sdcon)
@@ -52,8 +52,8 @@ function s.srop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,s.dfilter,tp,LOCATION_GRAVE,0,2,2,nil)
     if #g>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end
 --Metal Ability
@@ -62,6 +62,7 @@ function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return c:IsFaceup() end
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
     e1:SetCode(EFFECT_UPDATE_DEFENSE)
     e1:SetValue(-50)
     e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE)

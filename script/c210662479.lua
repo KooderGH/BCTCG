@@ -22,7 +22,7 @@ function s.initial_effect(c)
     --Rebound Ability
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_BATTLE_START)
+    e2:SetCode(EVENT_ATTACK_ANNOUNCE)
     e2:SetCondition(s.reboundcon)
     e2:SetOperation(s.reboundop)
     c:RegisterEffect(e2)
@@ -62,7 +62,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --Rebound Ability Function
 function s.reboundcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle()
+    return Duel.GetTurnPlayer()==tp
 end
 function s.reboundop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToBattle(e) then

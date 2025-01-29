@@ -90,7 +90,7 @@ function s.skipcon(e)
 end
 --Rebound Ability Function
 function s.reboundcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle()
+    return Duel.GetTurnPlayer()==tp
 end
 function s.reboundop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToBattle(e) then

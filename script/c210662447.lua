@@ -75,7 +75,7 @@ function s.addop(e,tp,eg,ep,ev,re,r,rp)
     ct=ct+1
     c:SetTurnCounter(ct)
     e:SetValue(ct)
-    if ct==15 then
+    if ct==7 then
         Duel.Win(tp,0x65)
         if re then re:Reset() end
         ct=0

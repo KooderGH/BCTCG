@@ -9,12 +9,12 @@ function s.initial_effect(c)
     e1:SetValue(1)
     c:RegisterEffect(e1)
     --Rebound Ability
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e2:SetCode(EVENT_BATTLE_START)
-    e2:SetCondition(s.reboundcon)
-    e2:SetOperation(s.reboundop)
-    c:RegisterEffect(e2)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e3:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e3:SetCondition(s.reboundcon)
+    e3:SetOperation(s.reboundop)
+    c:RegisterEffect(e3)
     --Curse Ability
     local e3=Effect.CreateEffect(c)
     e3:SetCategory(CATEGORY_DISABLE)
@@ -39,7 +39,7 @@ function s.initial_effect(c)
 end
 --Rebound Ability Function
 function s.reboundcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsRelateToBattle()
+    return Duel.GetTurnPlayer()==tp
 end
 function s.reboundop(e,tp,eg,ep,ev,re,r,rp)
     if e:GetHandler():IsRelateToBattle(e) then

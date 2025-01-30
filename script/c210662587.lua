@@ -11,17 +11,11 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_MZONE)
     e1:SetTarget(s.desatktg)
     c:RegisterEffect(e1)
-    --Can make a second attack (Multi-hit)
+    --Can attack directly
     local e2=Effect.CreateEffect(c)
     e2:SetType(EFFECT_TYPE_SINGLE)
-    e2:SetCode(EFFECT_EXTRA_ATTACK)
-    e2:SetValue(1)
+    e2:SetCode(EFFECT_DIRECT_ATTACK)
     c:RegisterEffect(e2)
-    --Can attack directly
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetCode(EFFECT_DIRECT_ATTACK)
-    c:RegisterEffect(e3)
 end
 --Shield Mechanic
 function s.desatktg(e,tp,eg,ep,ev,re,r,rp,chk)

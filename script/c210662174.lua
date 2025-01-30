@@ -90,5 +90,5 @@ function s.retcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.droperation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)
-	Duel.Draw(1-tp,2,REASON_EFFECT)
+	Duel.Draw(1-tp,1,REASON_EFFECT)
 end

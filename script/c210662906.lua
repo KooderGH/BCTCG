@@ -60,22 +60,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
---Hide Function
-function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end
-end
-function s.spellop(e,tp,eg,ep,ev,re,r,rp)
-    if not e:GetHandler():IsRelateToEffect(e) then return end
-    local c=e:GetHandler()
-    Duel.MoveToField(c,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
-    local e1=Effect.CreateEffect(c)
-    e1:SetCode(EFFECT_CHANGE_TYPE)
-    e1:SetType(EFFECT_TYPE_SINGLE)
-    e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-    e1:SetReset(RESET_EVENT+RESETS_STANDARD-RESET_TURN_SET)
-    e1:SetValue(TYPE_SPELL+TYPE_CONTINUOUS)
-    c:RegisterEffect(e1)
-end
 --Can target 1 S/T (Long Distance Attack) Function
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chkc then return chkc:IsOnField() end

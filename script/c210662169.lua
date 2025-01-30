@@ -17,7 +17,7 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e3)
-    --defense attack (Alien Ability)
+    
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
     e4:SetCode(EFFECT_DEFENSE_ATTACK)

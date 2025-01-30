@@ -39,22 +39,14 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Unnafected by other cards' effects
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_IMMUNE_EFFECT)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetValue(s.immunefilter)
-    c:RegisterEffect(e4)
     --Freeze Ability
-    local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,1))
-    e6:SetType(EFFECT_TYPE_IGNITION)
-    e6:SetRange(LOCATION_MZONE)
-    e6:SetCountLimit(1)
-    e6:SetOperation(s.freezeop)
-    c:RegisterEffect(e6)
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(1)
+    e4:SetOperation(s.freezeop)
+    c:RegisterEffect(e4)
 end
 function s.filter(c)
 	return c:IsFaceup() and c:IsCode(210662008)
@@ -115,9 +107,6 @@ end
 function s.sdcon(e)
     local c=e:GetHandler()
     return c:GetAttack()>=3300
-end
-function s.immunefilter(e,te)
-    return te:GetOwner()~=e:GetOwner()
 end
 --Freeze Function
 function s.freezeop(e,tp,eg,ep,ev,re,r,rp)

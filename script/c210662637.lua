@@ -1,4 +1,4 @@
--- Baron Seal
+-- Omens
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
@@ -39,32 +39,24 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_SELF_DESTROY)
     e3:SetCondition(s.sdcon)
     c:RegisterEffect(e3)
-    --Unnafected by other cards' effects
-    local e4=Effect.CreateEffect(c)
-    e4:SetType(EFFECT_TYPE_SINGLE)
-    e4:SetCode(EFFECT_IMMUNE_EFFECT)
-    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e4:SetRange(LOCATION_MZONE)
-    e4:SetValue(s.immunefilter)
-    c:RegisterEffect(e4)
     --Freeze Ability
-    local e6=Effect.CreateEffect(c)
-    e6:SetDescription(aux.Stringid(id,1))
-    e6:SetType(EFFECT_TYPE_IGNITION)
-    e6:SetRange(LOCATION_MZONE)
-    e6:SetCountLimit(2)
-    e6:SetOperation(s.freezeop)
-    c:RegisterEffect(e6)
+    local e4=Effect.CreateEffect(c)
+    e4:SetDescription(aux.Stringid(id,1))
+    e4:SetType(EFFECT_TYPE_IGNITION)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetCountLimit(2)
+    e4:SetOperation(s.freezeop)
+    c:RegisterEffect(e4)
 end
 function s.filter(c)
 	return c:IsFaceup() and c:IsCode(210662554)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-    return Duel.CheckReleaseGroup(c:GetControler(),s.filter,2,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+    return Duel.CheckReleaseGroup(c:GetControler(),s.filter,3,false,1,true,c,c:GetControler(),nil,false,nil,nil)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.filter,2,2,false,true,true,c,nil,nil,false,nil,nil)
+	local g=Duel.SelectReleaseGroup(tp,s.filter,3,3,false,true,true,c,nil,nil,false,nil,nil)
 	if g then
 		g:KeepAlive()
 		e:SetLabelObject(g)

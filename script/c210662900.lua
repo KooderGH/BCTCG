@@ -34,16 +34,17 @@ function s.initial_effect(c)
     e3:SetTarget(s.spamtg)
     e3:SetOperation(s.spamop)
     c:RegisterEffect(e3)
-    --return hand (Peon Ability)
+    --Add Holo Bot
     local e4=Effect.CreateEffect(c)
-    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-    e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
-    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e4:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+    e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+    e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e4:SetCode(EVENT_DESTROYED)
-    e4:SetTarget(s.destg)
-    e4:SetOperation(s.desop)
+    e4:SetTarget(s.ghtg)
+    e4:SetOperation(s.ghop)
     c:RegisterEffect(e4)
 end
+s.listed_names={210662932}
 --Special Summon SS Function
 function s.spcon(e,c)
     if c==nil then return true end
@@ -91,14 +92,17 @@ function s.spamop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
---Peon Ability
-function s.destg(e,tp,eg,ev,ep,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
+--Ghostification
+function s.ghtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210662932,0,TYPES_TOKEN,1200,500,4,RACE_CYBERSE,ATTRIBUTE_DARK,POS_FACEUP) end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
 end
-function s.desop(e,tp,eg,ev,ep,re,r,rp)
-    local c=e:GetHandler()
-    if c:IsRelateToEffect(e) then
-        Duel.SendtoHand(c,nil,REASON_EFFECT)
-    end
+function s.ghop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,210662932,0,TYPES_TOKEN,1350,500,4,RACE_CYBERSE,ATTRIBUTE_DARK,POS_FACEUP) then
+		local token=Duel.CreateToken(tp,210662932)
+		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
+	end
 end

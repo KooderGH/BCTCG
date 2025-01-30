@@ -24,15 +24,6 @@ function s.initial_effect(c)
     e2:SetTarget(s.sumtg)
     e2:SetOperation(s.sumop)
     c:RegisterEffect(e2)
-    --Base Destroyer Ability
-    local e3=Effect.CreateEffect(c)
-    e3:SetType(EFFECT_TYPE_SINGLE)
-    e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-    e3:SetRange(LOCATION_MZONE)
-    e3:SetCode(EFFECT_UPDATE_ATTACK)
-    e3:SetCondition(s.bdcon)
-    e3:SetValue(500)
-    c:RegisterEffect(e3)
 end
 function s.zombiefilter(c)
 	return c:IsRace(RACE_ZOMBIE) and c:IsFaceup()
@@ -76,10 +67,4 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
         c:SetTurnCounter(ct)
         Duel.SpecialSummon(e:GetHandler(),0,tp,tp,true,false,POS_FACEUP)
     end
-end
---Base Destroyer Function
-function s.bdcon(e)
-    local ph=Duel.GetCurrentPhase()
-    return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
-        and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()==nil
 end

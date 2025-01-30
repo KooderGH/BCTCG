@@ -1,4 +1,4 @@
--- Li'l Blue Bot
+-- Li'l Original Bot
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)

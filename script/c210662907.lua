@@ -48,6 +48,7 @@ function s.initial_effect(c)
     e5:SetOperation(s.desop)
     c:RegisterEffect(e5)
 end
+--SS requirement
 function s.dictactorwizadronfilter(c)
     return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE) and c:IsFaceup()
 end

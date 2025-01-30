@@ -2,23 +2,18 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Hide
-    local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e1:SetCode(EVENT_SUMMON_SUCCESS)
-    e1:SetRange(LOCATION_MZONE)
-    e1:SetCountLimit(1)
-    e1:SetTarget(s.spelltarget)
-    e1:SetOperation(s.spellop)
-    c:RegisterEffect(e1)
-    local e2=e1:Clone()
-    e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-    c:RegisterEffect(e2)
-    local e3=e1:Clone()
-    e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
-    c:RegisterEffect(e3)
+    --No Normal Summon
+    c:EnableUnsummonable()
+    --special summon tribute
+    local e0=Effect.CreateEffect(c)
+    e0:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+    e0:SetType(EFFECT_TYPE_FIELD)
+    e0:SetRange(LOCATION_HAND)
+    e0:SetCode(EFFECT_SPSUMMON_PROC)
+    e0:SetCondition(s.spcon)
+    e0:SetTarget(s.sptg)
+    e0:SetOperation(s.spop)
+    c:RegisterEffect(e0)
     --Can make a second attack (Multi-hit)
     local e4=Effect.CreateEffect(c)
     e4:SetType(EFFECT_TYPE_SINGLE)
@@ -35,6 +30,29 @@ function s.initial_effect(c)
     e5:SetTarget(s.destg)
     e5:SetOperation(s.desop)
     c:RegisterEffect(e5)
+end
+--SS requirement
+function s.botfilter(c)
+    return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_CYBERSE) and c:IsFaceup()
+end
+function s.spcon(e,c)
+    if c==nil then return true end
+    return Duel.CheckReleaseGroup(c:GetControler(),s.botfilter,1,false,1,true,c,c:GetControler(),nil,false,nil,nil)
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
+    local g=Duel.SelectReleaseGroup(tp,s.botfilter,1,1,false,true,true,c,nil,nil,false,nil,nil)
+    if g then
+        g:KeepAlive()
+        e:SetLabelObject(g)
+    return true
+    end
+    return false
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
+    local g=e:GetLabelObject()
+    if not g then return end
+    Duel.Release(g,REASON_COST)
+    g:DeleteGroup()
 end
 --Hide Function
 function s.spelltarget(e,tp,eg,ep,ev,re,r,rp,chk)

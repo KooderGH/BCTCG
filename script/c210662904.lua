@@ -26,7 +26,7 @@ function s.initial_effect(c)
     e3:SetCode(EFFECT_UPDATE_ATTACK)
     e3:SetCondition(s.con)
     e3:SetTarget(s.tg)
-    e3:SetValue(500)
+    e3:SetValue(200)
     c:RegisterEffect(e3)
     --Add Monster
     local e4=Effect.CreateEffect(c)

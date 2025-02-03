@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_COUNTER)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCondition(s.ctcon)
@@ -48,8 +48,8 @@ function s.initial_effect(c)
 	e4:SetCode(EVENT_PHASE+PHASE_END)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetCondition(s.ctcon)
-	e4:SetOperation(s.ctop)
+	e4:SetCondition(s.ctcon2)
+	e4:SetOperation(s.ctop2)
 	c:RegisterEffect(e4)
 end
 --add counter on link summon
@@ -57,7 +57,7 @@ function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 function s.ctfilter(c)
-	return c:IsMonster()
+	return c:IsType(TYPES)
 end
 local function getcount(tp)
 	local tottype=0
@@ -105,9 +105,9 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 -- Add 1 counter to this card
-function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
+function s.ctcon2(e,tp,eg,ep,ev,re,r,rp)
 	return tp~=ep
 end
-function s.ctop(e,tp,eg,ep,ev,re,r,rp)
+function s.ctop2(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():AddCounter(COUNTER_FW,1)
 end

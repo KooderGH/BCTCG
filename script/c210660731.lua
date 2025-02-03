@@ -109,6 +109,6 @@ end
 function s.winop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:GetCounter(0x4006)==3 then
-		Duel.Win(tp,WIN_REASON_VENNOMINAGA)
+		Duel.Win(tp,0x64)
 	end
 end

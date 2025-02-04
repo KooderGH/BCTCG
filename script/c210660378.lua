@@ -110,6 +110,18 @@ function s.initial_effect(c)
 	e15:SetCondition(s.splimcon)
 	e15:SetValue(aux.FALSE)
 	c:RegisterEffect(e15)
+	--Cannot banish
+	local e16=Effect.CreateEffect(c)
+	e16:SetType(EFFECT_TYPE_FIELD)
+	e16:SetCode(EFFECT_CANNOT_REMOVE)
+	e16:SetRange(LOCATION_FZONE)
+	e16:SetTargetRange(LOCATION_GRAVE,0)
+	e16:SetCondition(s.contp)
+	c:RegisterEffect(e16)
+	local e17=e16:Clone()
+	e17:SetTargetRange(0,LOCATION_GRAVE)
+	e17:SetCondition(s.conntp)
+	c:RegisterEffect(e17)
 end
 -- Special Summon condition
 function s.spcon(e,c)

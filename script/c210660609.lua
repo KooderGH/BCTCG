@@ -83,7 +83,11 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not c:IsRelateToEffect(e) then return end
     local sumtype=1
-    if (r&REASON_BATTLE)~=0 then sumtype=2 end
+    if (r&REASON_BATTLE)~=0 then 
+        sumtype=2
+    elseif (r&REASON_EFFECT)~=0 then
+        sumtype=3
+    end
     if Duel.SpecialSummon(c,sumtype,tp,tp,false,false,POS_FACEUP)~=0 then
         e:SetLabel(ev)
     end
@@ -113,7 +117,7 @@ function s.sumop2(e,tp,eg,ep,ev,re,r,rp)
 end
 --(2) *2
 function s.sumcon3(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
+    return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+3
 end
 function s.sumtg3(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end

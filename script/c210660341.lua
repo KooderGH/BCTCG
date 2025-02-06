@@ -61,6 +61,7 @@ function s.initial_effect(c)
 	e7:SetCost(s.thcost)
 	e7:SetTarget(s.thtg)
 	e7:SetOperation(s.thop)
+	c:RegisterEffect(e7)
 	--(2) end
 	--(3) Start
 	--Recovery
@@ -136,7 +137,7 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local tc=Duel.GetFirstMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil)
+	local tc=Duel.SelectMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil)
 	if tc then
 		Duel.SendtoHand(tc,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,tc)
@@ -160,7 +161,8 @@ function s.gthop(e,tp,eg,ep,ev,re,r,rp)
 end
 --e9
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.GetTurnPlayer()==tp
+		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end

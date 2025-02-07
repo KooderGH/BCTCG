@@ -53,11 +53,12 @@ function s.initial_effect(c)
 	--Search
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,0))
-	e7:SetCategory(CATEGORY_TOHAND)
-	e7:SetType(EFFECT_TYPE_QUICK_O)
-	e7:SetCode(EVENT_FREE_CHAIN)
+	e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e7:SetType(EFFECT_TYPE_QUICK_O) 
+	e7:SetCode(EVENT_PHASE+PHASE_END)
 	e7:SetRange(LOCATION_HAND)
-	e7:SetCondition(function(_,tp) return Duel.IsTurnPlayer(1-tp) end)
+	e7:SetCountLimit(1)
+	e7:SetCondition(s.thcon)
 	e7:SetCost(s.thcost)
 	e7:SetTarget(s.thtg)
 	e7:SetOperation(s.thop)
@@ -69,7 +70,7 @@ function s.initial_effect(c)
 	e8:SetDescription(aux.Stringid(id,1))
 	e8:SetCategory(CATEGORY_TOHAND)
 	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e8:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
+	e8:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e8:SetCode(EVENT_TO_GRAVE)
 	e8:SetTarget(s.gthtg)
 	e8:SetOperation(s.gthop)
@@ -84,6 +85,7 @@ function s.initial_effect(c)
 	e9:SetCode(EVENT_PHASE+PHASE_STANDBY)
 	e9:SetRange(LOCATION_HAND)
 	e9:SetCountLimit(1)
+	e9:SetCondition(s.spcon)
 	e9:SetTarget(s.sptg)
 	e9:SetOperation(s.spop)
 	c:RegisterEffect(e9)
@@ -106,42 +108,45 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.mvalue(e,fp,rp,r)
-	return 4-Duel.GetFieldGroupCount(fp,0,LOCATION_SZONE)
+	return 4-Duel.GetFieldGroupCount(fp,LOCATION_SZONE,0)
 end
 function s.svalue(e,fp,rp,r)
-	return 4-Duel.GetFieldGroupCount(fp,0,LOCATION_MZONE|LOCATION_FZONE)
+	return 4-Duel.GetFieldGroupCount(fp,LOCATION_MZONE|LOCATION_FZONE,0)
 end
 function s.aclimit(e,re,tp)
 	if not re:IsHasType(EFFECT_TYPE_ACTIVATE) then return false end
 	if re:IsActiveType(TYPE_FIELD) then
-		return not Duel.GetFieldCard(tp,0,LOCATION_FZONE) and Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
+		return not Duel.GetFieldCard(1-tp,LOCATION_FZONE,0) and Duel.GetFieldGroupCount(1-tp,LOCATION_ONFIELD,0)>3
 	elseif re:IsActiveType(TYPE_PENDULUM) then
-		return Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
+		return Duel.GetFieldGroupCount(1-tp,LOCATION_ONFIELD,0)>3
 	end
 	return false
 end
 function s.setlimit(e,c,tp)
-	return c:IsFieldSpell() and not Duel.GetFieldCard(tp,0,LOCATION_FZONE) and Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>3
+	return c:IsFieldSpell() and not Duel.GetFieldCard(1-tp,LOCATION_FZONE,0) and Duel.GetFieldGroupCount(1-tp,LOCATION_ONFIELD,0)>4
 end
 --e7
-function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsDiscardable() end
-	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.IsTurnPlayer(1-tp)
 end
-function s.thfilter(c)
-	return c:IsRace(RACE_PSYCHIC) and c:IsAbleToHand()
+function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return e:GetHandler():IsDiscardable() end
+    Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thfilter(c)
+    return c:IsRace(RACE_PSYCHIC) and c:IsAbleToHand()
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local tc=Duel.SelectMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil)
-	if tc then
-		Duel.SendtoHand(tc,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,tc)
-	end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
+    end
 end
 --e8
 function s.filter(c)
@@ -150,19 +155,24 @@ end
 function s.gthtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:GetControler()==tp and chkc:IsLocation(LOCATION_REMOVED) and s.filter(chkc) end
 	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_REMOVED,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_REMOVED,0,1,2,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,#g,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_REMOVED)
 end
 function s.gthop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
-	local sg=g:Filter(Card.IsRelateToEffect,nil,e)
-	Duel.SendtoHand(sg,nil,REASON_EFFECT)
+    local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_REMOVED,0,nil)
+    if #g==0 then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local sg=g:Select(tp,1,2,nil) -- Select up to 2 cards
+    if #sg>0 then
+        Duel.SendtoHand(sg,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,sg) -- Show the cards to the opponent
+    end
 end
 --e9
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()==tp
+end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetTurnPlayer()==tp
-		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end

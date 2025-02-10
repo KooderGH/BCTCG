@@ -26,7 +26,6 @@ end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then 
         return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,2,nil)
-        and Duel.IsExistingMatchingCard(Card.IsSummonable,tp,LOCATION_HAND,0,1,nil,true,nil)
     end
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,2,tp,LOCATION_DECK)
     Duel.SetOperationInfo(0,CATEGORY_SUMMON,nil,1,0,0)

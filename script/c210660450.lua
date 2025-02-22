@@ -165,7 +165,7 @@ function s.initial_effect(c)
 end
 --(1)
 function s.cfilter(c,tp)
-	return c:IsPreviousControler(tp) and c:IsPreviousLocation(LOCATION_MZONE)
+	return c:IsPreviousControler(tp) and c:IsPreviousLocation(LOCATION_MZONE) and c:IsRace(RACE_DRAGON)
 		and c:IsReason(REASON_EFFECT)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)

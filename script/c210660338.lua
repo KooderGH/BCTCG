@@ -45,21 +45,32 @@ function s.initial_effect(c)
 end
 
 -- Effect 1 
--- Filter function: non-Warrior monsters
 function s.destroyfilter(c)
     return c:IsMonster() and not c:IsRace(RACE_WARRIOR)
 end
--- Target function: non-Warrior monsters on the field
+-- Target non-Warrior monsters on the field
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.destroyfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
     local g=Duel.GetMatchingGroup(s.destroyfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
     Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
 end
--- Operation function: destroy all non-Warrior monsters
+
+-- Operation function: destroy all non-Warrior monsters and apply restriction to Dragons
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local sg=Duel.GetMatchingGroup(s.destroyfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
-    Duel.Destroy(sg,REASON_EFFECT)
+    if Duel.Destroy(sg,REASON_EFFECT)>0 then
+        local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetType(EFFECT_TYPE_FIELD)
+        e2:SetCode(EFFECT_CANNOT_ACTIVATE)
+		e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH+EFFECT_FLAG_CLIENT_HINT)
+        e2:SetRange(LOCATION_MZONE+LOCATION_GRAVE+LOCATION_REMOVED+LOCATION_HAND)
+        e2:SetTargetRange(1,0)
+        e2:SetValue(function(_,re) return re:IsMonsterEffect() and re:GetHandler():IsRace(RACE_DRAGON) end)
+        e2:SetReset(RESET_PHASE+PHASE_END)
+        Duel.RegisterEffect(e2,tp)
+    end
 end
+
 -- Effect 2
 -- Gain ATK for each Equip Spell
 function s.atkval(e,c)

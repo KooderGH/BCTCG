@@ -21,9 +21,12 @@ function s.initial_effect(c)
     --gain atk
     local e3=Effect.CreateEffect(c)
     e3:SetCategory(CATEGORY_ATKCHANGE)
-    e3:SetType(EFFECT_TYPE_IGNITION)
+    e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_FREE_CHAIN)
     e3:SetRange(LOCATION_MZONE)
+	e3:SetHintTiming(0,TIMING_STANDBY_PHASE)
     e3:SetCountLimit(1,id)
+	e3:SetCondition(s.atkcon)
     e3:SetTarget(s.atktg)
     e3:SetOperation(s.atkop)
     c:RegisterEffect(e3)
@@ -49,11 +52,14 @@ function s.spcon(e,c)
 	return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
 --ATK Gain function
+function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
+    return Duel.GetTurnPlayer()~=tp
+end
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
 end
 function s.atkop(e,tp,eg,ep,ev,re,r,rp)
-    local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE,0,nil)
+    local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
     local tc=g:GetFirst()
     while tc do
         local e1=Effect.CreateEffect(e:GetHandler())
@@ -64,6 +70,14 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
         e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE+PHASE_END,2)
         tc:RegisterEffect(e1)
         tc=g:GetNext()
+		local e2=Effect.CreateEffect(e:GetHandler())
+        e2:SetType(EFFECT_TYPE_FIELD)
+        e2:SetCode(EFFECT_REVERSE_DAMAGE)
+        e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+        e2:SetTargetRange(0,1)
+		e2:SetValue(1)
+        e2:SetReset(RESET_PHASE+PHASE_END)
+        Duel.RegisterEffect(e2,tp)
     end
 end
 function s.adval(e,c)

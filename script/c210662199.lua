@@ -10,34 +10,49 @@ function s.initial_effect(c)
     e1:SetValue(150)
     e1:SetCondition(aux.IsUnionState)
     c:RegisterEffect(e1)
-    --Add Monster
+    --Excavate (Search Ability)
     local e2=Effect.CreateEffect(c)
-    e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
     e2:SetCode(EVENT_DESTROYED)
-    e2:SetTarget(s.addtg)
-    e2:SetOperation(s.addop)
+    e2:SetCountLimit(1)
+    e2:SetTarget(s.srtg)
+    e2:SetOperation(s.srop)
     c:RegisterEffect(e2)
 end
 --Union filter
 function s.unfilter(c)
     return c:IsMonster() and c:IsFaceup()
 end
---Destroy and add function
-function s.addfilter(c)
-    return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsAbleToHand()
+--Excavate Search Ability
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=5 end
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
-function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,2,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+function s.filter(c)
+	return c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsAbleToHand()
 end
-function s.addop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,2,2,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+	--Effect
+	local c=e:GetHandler()
+	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<5 then return end
+	Duel.ConfirmDecktop(tp,5)
+	local g=Duel.GetDecktopGroup(tp,5)
+	Duel.DisableShuffleCheck()
+	if g:IsExists(s.filter,1,nil) then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+		local tg=g:FilterSelect(tp,s.filter,1,2,nil)
+		if #tg>0 then
+			Duel.SendtoHand(tg,nil,REASON_EFFECT)
+			Duel.ConfirmCards(1-tp,tg)
+			Duel.ShuffleHand(tp)
+			g:RemoveCard(tg)
+		end
+	end
+	local ct=#g
+	if ct>0 then
+		Duel.MoveToDeckTop(g,tp)
+		Duel.SortDecktop(tp,tp,ct)
+	end
 end

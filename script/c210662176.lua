@@ -21,15 +21,15 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_MZONE)
     e2:SetValue(ATTRIBUTE_WIND)
     c:RegisterEffect(e2)
-    --Add Monster
+    --Excavate (Search Ability)
     local e3=Effect.CreateEffect(c)
-    e3:SetDescription(aux.Stringid(id,0))
+    e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e3:SetType(EFFECT_TYPE_IGNITION)
     e3:SetRange(LOCATION_MZONE)
     e3:SetCountLimit(1)
-    e3:SetTarget(s.addtg)
-    e3:SetOperation(s.addop)
+    e3:SetTarget(s.srtg)
+    e3:SetOperation(s.srop)
     c:RegisterEffect(e3)
     --Weaken Ability
     local e4=Effect.CreateEffect(c)
@@ -62,21 +62,36 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.Release(g,REASON_COST)
     g:DeleteGroup()
 end
---Add function
-function s.addfilter(c)
-    return c:IsLevel(3) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsAbleToHand()
+--Excavate Search Ability
+function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=5 end
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
-function s.addtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
+function s.srfilter(c)
+	return c:IsLevel(4) and c:IsAttribute(ATTRIBUTE_WATER) and c:IsRace(RACE_AQUA) and c:IsAbleToHand()
 end
-function s.addop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
+function s.srop(e,tp,eg,ep,ev,re,r,rp)
+	--Effect
+	local c=e:GetHandler()
+	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<10 then return end
+	Duel.ConfirmDecktop(tp,15)
+	local g=Duel.GetDecktopGroup(tp,15)
+	Duel.DisableShuffleCheck()
+	if g:IsExists(s.srfilter,1,nil) then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+		local tg=g:FilterSelect(tp,s.srfilter,1,1,nil)
+		if #tg>0 then
+			Duel.SendtoHand(tg,nil,REASON_EFFECT)
+			Duel.ConfirmCards(1-tp,tg)
+			Duel.ShuffleHand(tp)
+			g:RemoveCard(tg)
+		end
+	end
+	local ct=#g
+	if ct>0 then
+		Duel.MoveToDeckTop(g,tp)
+		Duel.SortDecktop(tp,tp,ct)
+	end
 end
 --Weaken Ability Function
 function s.weakencon(e,tp,eg,ep,ev,re,r,rp)

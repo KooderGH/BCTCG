@@ -31,7 +31,7 @@ function s.srtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.filter(c)
-	return c:IsLevelAbove(5) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_PSYCHIC) and c:IsAbleToHand()
+	return c:IsLevel(5) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_PSYCHIC) and c:IsAbleToHand()
 end
 function s.srop(e,tp,eg,ep,ev,re,r,rp)
 	--Effect

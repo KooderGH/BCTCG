@@ -108,8 +108,8 @@ function s.srop(e,tp,eg,ep,ev,re,r,rp)
 	--Effect
 	local c=e:GetHandler()
 	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<10 then return end
-	Duel.ConfirmDecktop(tp,15)
-	local g=Duel.GetDecktopGroup(tp,15)
+	Duel.ConfirmDecktop(tp,10)
+	local g=Duel.GetDecktopGroup(tp,10)
 	Duel.DisableShuffleCheck()
 	if g:IsExists(s.srfilter,1,nil) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)

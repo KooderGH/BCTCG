@@ -10,10 +10,10 @@ function s.initial_effect(c)
 	c:EnableUnsummonable()
 	--spsummon
 	local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
-    e1:SetRange(LOCATION_HAND)
+	e1:SetRange(LOCATION_HAND)
 	e1:SetCondition(s.spcon)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
@@ -38,15 +38,25 @@ function s.initial_effect(c)
 	e4:SetValue(s.adval)
 	c:RegisterEffect(e4)
 	--Destroy and draw lv4 or lower machine
-    local e5=Effect.CreateEffect(c)
-    e5:SetDescription(aux.Stringid(id,1))
-    e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-    e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e5:SetCode(EVENT_DESTROYED)
-    e5:SetTarget(s.drtg)
-    e5:SetOperation(s.opdraw)
-    c:RegisterEffect(e5)
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,1))
+	e5:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e5:SetCode(EVENT_DESTROYED)
+	e5:SetTarget(s.drtg)
+	e5:SetOperation(s.opdraw)
+	c:RegisterEffect(e5)
+	--Change ignition
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,2))
+	e6:SetType(EFFECT_TYPE_IGNITION)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetTargetRange(0,LOCATION_MZONE)
+	e6:SetCountLimit(1)
+	e6:SetCondition(s.chcon)
+	e6:SetOperation(s.chop)
+	c:RegisterEffect(e6)
 end
 --Special summon function
 function s.spcon(e,c)
@@ -75,5 +85,19 @@ function s.opdraw(e,tp,eg,ep,ev,re,r,rp)
 	if #g>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
+	end
+end
+--Change Pos Function
+function s.chfilter(c)
+	return c:IsCanTurnSet() and c:GetAttack()>c:GetBaseAttack()
+end
+function s.chcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.chfilter,tp,0,LOCATION_MZONE,1,nil)
+end
+function s.chop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetMatchingGroup(s.chfilter,tp,0,LOCATION_MZONE,nil)
+	if #tc>0 then
+		Duel.ChangePosition(tc,POS_FACEDOWN_DEFENSE)
+		Duel.ChangePosition(tc,POS_FACEUP_ATTACK)
 	end
 end

@@ -2,29 +2,25 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --draw
-    local e1=Effect.CreateEffect(c)
-    e1:SetCategory(CATEGORY_DRAW)	
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetCode(EVENT_TO_GRAVE)
-    e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-    e1:SetCountLimit(1,id)
-    e1:SetOperation(s.drop)
-    c:RegisterEffect(e1)
+    --Traitless Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_UPDATE_ATTACK)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(s.stval)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e5)
 end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    local c=e:GetHandler()
-    if Duel.IsPlayerCanDraw(1-tp,1) then
-        local e1=Effect.CreateEffect(c)
-        e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_FIELD)
-        e1:SetRange(LOCATION_GRAVE)
-        e1:SetCode(EVENT_PHASE+PHASE_DRAW)
-        e1:SetReset(RESET_PHASE+PHASE_END,2)
-        e1:SetCountLimit(1)
-        e1:SetOperation(s.drawop)
-        c:RegisterEffect(e1)
-    end
-end
-function s.drawop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Draw(tp,1,REASON_EFFECT)
+--Traitless Ability Function
+function s.stval(e,c)
+    local tp=c:GetControler()
+    local v=Duel.GetLP(tp)
+    if v>=10000 then return 500 end
+    if v>=7000 and v<10000 then return 300 end
+    if v>=4000 and v<7000 then return 300 end
+    if v>=2000 and v<4000 then return 200 end
+    if v>=0 and v<2000 then return 100 end
 end

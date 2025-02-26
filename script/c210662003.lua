@@ -40,13 +40,12 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
         Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
     end
 end
-function s.stcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetLP(tp)<=4000
-end
+--Traitless Ability Function
 function s.stval(e,c)
     local tp=c:GetControler()
     local v=Duel.GetLP(tp)
-    if v>=7000 then return 400 end
+    if v>=10000 then return 500 end
+    if v>=7000 and v<10000 then return 300 end
     if v>=4000 and v<7000 then return 300 end
     if v>=2000 and v<4000 then return 200 end
     if v>=0 and v<2000 then return 100 end

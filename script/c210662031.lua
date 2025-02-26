@@ -2,30 +2,25 @@
 --Scripted By Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --Draw lv3 Traitless Monster
-    local e1=Effect.CreateEffect(c)
-    e1:SetDescription(aux.Stringid(id,0))
-    e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-    e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-    e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-    e1:SetCode(EVENT_DESTROYED)
-    e1:SetTarget(s.drtg)
-    e1:SetOperation(s.drop)
-    c:RegisterEffect(e1)
+    --Traitless Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_UPDATE_ATTACK)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(s.stval)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e5)
 end
---Destroy and draw function
-function s.drfilter(c)
-    return c:IsLevel(3) and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_WARRIOR) and c:IsAbleToHand()
-end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(s.drfilter,tp,LOCATION_DECK,0,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
-end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-    local g=Duel.SelectMatchingCard(tp,s.drfilter,tp,LOCATION_DECK,0,1,1,nil)
-    if #g>0 then
-        Duel.SendtoHand(g,nil,REASON_EFFECT)
-        Duel.ConfirmCards(1-tp,g)
-    end
+--Traitless Ability Function
+function s.stval(e,c)
+    local tp=c:GetControler()
+    local v=Duel.GetLP(tp)
+    if v>=10000 then return 500 end
+    if v>=7000 and v<10000 then return 300 end
+    if v>=4000 and v<7000 then return 300 end
+    if v>=2000 and v<4000 then return 200 end
+    if v>=0 and v<2000 then return 100 end
 end

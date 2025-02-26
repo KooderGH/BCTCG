@@ -2,7 +2,7 @@
 --Scripted by Konstak
 local s,id=GetID()
 function s.initial_effect(c)
-    --to defense
+    --To Defense
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_POSITION)
@@ -17,8 +17,19 @@ function s.initial_effect(c)
     local e3=e1:Clone()
     e3:SetCode(EVENT_SPSUMMON_SUCCESS)
     c:RegisterEffect(e3)
+    --Traitless Ability
+    local e4=Effect.CreateEffect(c)
+    e4:SetType(EFFECT_TYPE_SINGLE)
+    e4:SetCode(EFFECT_UPDATE_ATTACK)
+    e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e4:SetRange(LOCATION_MZONE)
+    e4:SetValue(s.stval)
+    c:RegisterEffect(e4)
+    local e5=e4:Clone()
+    e5:SetCode(EFFECT_UPDATE_DEFENSE)
+    c:RegisterEffect(e5)
 end
---e2
+--to defense function
 function s.deftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     if chk==0 then return e:GetHandler():IsAttackPos() end
     Duel.SetOperationInfo(0,CATEGORY_POSITION,e:GetHandler(),1,0,0)
@@ -28,4 +39,15 @@ function s.defop(e,tp,eg,ep,ev,re,r,rp)
     if c:IsFaceup() and c:IsAttackPos() and c:IsRelateToEffect(e) then
         Duel.ChangePosition(c,POS_FACEUP_DEFENSE)
     end
+end
+function s.stcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetLP(tp)<=4000
+end
+function s.stval(e,c)
+    local tp=c:GetControler()
+    local v=Duel.GetLP(tp)
+    if v>=7000 then return 400 end
+    if v>=4000 and v<7000 then return 300 end
+    if v>=2000 and v<4000 then return 200 end
+    if v>=0 and v<2000 then return 100 end
 end

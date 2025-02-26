@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--spsummon
 	local e0=Effect.CreateEffect(c)
-	e0:SetDescription(aux.Stringid(0))
+	e0:SetDescription(aux.Stringid(id,0))
 	e0:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e0:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e0:SetCode(EVENT_ATTACK_ANNOUNCE)

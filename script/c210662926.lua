@@ -33,7 +33,7 @@ function s.initial_effect(c)
     --Opponent drop Money draw
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,3))
-    e4:SetCategory(CATEGORY_DRAW)	
+    e4:SetCategory(CATEGORY_DRAW)
     e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
     e4:SetCode(EVENT_TO_GRAVE)
     e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)

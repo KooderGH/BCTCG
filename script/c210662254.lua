@@ -14,7 +14,7 @@ function s.initial_effect(c)
     local e2=e1:Clone()
     e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
     c:RegisterEffect(e2)
-    --once normal summoned, SS as many Zollows as possible
+    --once normal summoned, SS as many as possible
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_SPECIAL_SUMMON)

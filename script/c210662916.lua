@@ -61,7 +61,7 @@ function s.crittg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.critop(e,tp,eg,ep,ev,re,r,rp)
     local bc=e:GetHandler():GetBattleTarget()
-    if bc:IsRelateToBattle() then
+    if bc:IsRelateToBattle() and Duel.TossCoin(tp,1)==COIN_HEADS then
         Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
 end

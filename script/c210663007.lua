@@ -145,7 +145,7 @@ function s.lpop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Functions for effect 3.3 (Double attack)
 function s.atkfilter(c)
-    return c:IsFaceup() and (c:IsCode(210663010,210663005,210663009,210663008,210663004)) and not c:IsCode(id) -- Lost & Found cards
+    return c:IsFaceup() and (c:IsCode(210663010) or c:IsCode(210663005) or c:IsCode(210663009) or c:IsCode(210663008) or c:IsCode(210663004)) and not c:IsCode(id) -- Lost & Found cards
 end
 function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.IsExistingMatchingCard(s.atkfilter,tp,LOCATION_MZONE,0,1,nil)
@@ -169,7 +169,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Functions for effect 3.4 (Add Lost & Found monster)
 function s.thfilter(c)
-    return c:IsCode(210663010,210663005,210663009,210663008,210663004) and not c:IsCode(id) and c:IsMonster() and c:IsAbleToHand()
+    return (c:IsCode(210663010) or c:IsCode(210663005) or c:IsCode(210663009) or c:IsCode(210663008) or c:IsCode(210663004)) and not c:IsCode(id) and c:IsMonster() and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end

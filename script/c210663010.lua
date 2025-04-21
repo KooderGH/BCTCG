@@ -1,12 +1,13 @@
 --Jizo's Wedding Cake
 --Scripted by Konstak
 --Effect
--- (1) If you control a monster that is not a WIND Attribute monster, destroy this card.
--- (2) If you control a WIND Attribute monster, you can Special Summon this card from your hand.
--- (3) If an attack is declared involving this card and a Warrior monster: Banish that Warrior monster.
--- (4) You can only use 1 of these effects of "Jizo's Wedding Cake" per turn, and only once that turn.
--- * You can Target 1 card on the field (Ignition); Negate its effects.
--- * If this card is sent to the GY: You can target 1 card on the field; Negate its effects. You cannot activate this effect if you control a non WIND monster.
+--(1) If you control a monster that is not a WIND Attribute monster, destroy this card.
+--(2) If you control a WIND Attribute monster, you can Special Summon this card from your hand.
+--(3) If an attack is declared involving this card and a Warrior monster: Banish that Warrior monster.
+--(4) You can only use 1 of these effects of "Jizo's Wedding Cake" per turn, and only once that turn.
+--* You can Target 1 card on the field (Ignition); Negate its effects.
+--* If this card is sent to the GY: You can target 1 card on the field; Negate its effects. You cannot activate this effect if you control a non WIND monster.
+--* If this card is destroyed by a card effect: You can add 1 "Lost & Found" from your Deck or GY to your hand.
 local s,id=GetID()
 function s.initial_effect(c)
     --self destroy (1)
@@ -25,7 +26,7 @@ function s.initial_effect(c)
     e2:SetRange(LOCATION_HAND)
     e2:SetCondition(s.spcon)
     c:RegisterEffect(e2)
-    --Can banish Warrior monsters (3)
+    --Banish Warrior monster when battling (3)
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,0))
     e3:SetCategory(CATEGORY_REMOVE)
@@ -34,7 +35,7 @@ function s.initial_effect(c)
     e3:SetTarget(s.bntg)
     e3:SetOperation(s.bnop)
     c:RegisterEffect(e3)
-    --Can target 1 card on the field. destroy that target (Ignition) (4)
+    --Target 1 card on the field; negate its effects (4.1)
     local e4=Effect.CreateEffect(c)
     e4:SetDescription(aux.Stringid(id,1))
     e4:SetCategory(CATEGORY_DISABLE)
@@ -44,7 +45,7 @@ function s.initial_effect(c)
     e4:SetTarget(s.destg)
     e4:SetOperation(s.desop)
     c:RegisterEffect(e4)
-    --Once sent to GY target 1 card on the field. destroy that target (5)
+    --When sent to GY, target 1 card on the field; negate its effects (4.2)
     local e5=Effect.CreateEffect(c)
     e5:SetDescription(aux.Stringid(id,1))
     e5:SetCategory(CATEGORY_DISABLE)
@@ -56,6 +57,18 @@ function s.initial_effect(c)
     e5:SetTarget(s.destg)
     e5:SetOperation(s.desop)
     c:RegisterEffect(e5)
+    --If destroyed by card effect, add Lost & Found card (4.3)
+    local e6=Effect.CreateEffect(c)
+    e6:SetDescription(aux.Stringid(id,2))
+    e6:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+    e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+    e6:SetProperty(EFFECT_FLAG_DELAY)
+    e6:SetCode(EVENT_DESTROYED)
+    e6:SetCountLimit(1,id)
+    e6:SetCondition(s.thcon)
+    e6:SetTarget(s.thtg)
+    e6:SetOperation(s.thop)
+    c:RegisterEffect(e6)
 end
 --Self Destroy Function
 function s.sdfilter(c)
@@ -73,11 +86,11 @@ function s.spcon(e,c)
 	local tp=e:GetHandlerPlayer()
 	return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,1,nil) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 end
---Banish Zombies function
+--Banish Warrior monster function
 function s.bntg(e,tp,eg,ep,ev,re,r,rp,chk)
     local bc=e:GetHandler():GetBattleTarget()
     if chk==0 then return bc and bc:IsFaceup() and bc:IsRace(RACE_WARRIOR) end
-    Duel.SetOperationInfo(0,CATEGORY_DESTROY,bc,1,0,0)
+    Duel.SetOperationInfo(0,CATEGORY_REMOVE,bc,1,0,0)
 end
 function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     local bc=e:GetHandler():GetBattleTarget()
@@ -85,7 +98,7 @@ function s.bnop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Remove(bc,POS_FACEUP,REASON_EFFECT)
     end
 end
---Target 1 card on the field; disable that target.
+--Target 1 card on the field; negate its effects
 function s.desfilter(c)
     return c:IsMonster() and not c:IsAttributeExcept(ATTRIBUTE_WIND)
 end
@@ -124,5 +137,24 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
             e3:SetReset(RESET_EVENT+RESETS_STANDARD)
             tc:RegisterEffect(e3)
         end
+    end
+end
+--Functions for effect 4.3 (Add Lost & Found when destroyed)
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+    return e:GetHandler():IsReason(REASON_EFFECT)
+end
+function s.thfilter(c)
+    return (c:IsCode(210663007) or c:IsCode(210663005) or c:IsCode(210663009) or c:IsCode(210663008) or c:IsCode(210663004)) and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
+    if #g>0 then
+        Duel.SendtoHand(g,nil,REASON_EFFECT)
+        Duel.ConfirmCards(1-tp,g)
     end
 end

@@ -71,7 +71,7 @@ end
 --Functions for effect 3 (Special Summon tokens)
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-        and Duel.IsPlayerCanSpecialSummonMonster(tp,210662932,0,TYPES_TOKEN,0,1500,4,RACE_MACHINE,ATTRIBUTE_FIRE) end
+        and Duel.IsPlayerCanSpecialSummonMonster(tp,210668009,0,TYPES_TOKEN,0,1500,4,RACE_MACHINE,ATTRIBUTE_FIRE) end
     local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
     if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then ft=1 end
     Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,ft,0,0)
@@ -79,11 +79,11 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
     local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
-    if ft<=0 or not Duel.IsPlayerCanSpecialSummonMonster(tp,210662932,0,TYPES_TOKEN,0,1500,4,RACE_MACHINE,ATTRIBUTE_FIRE) then return end
+    if ft<=0 or not Duel.IsPlayerCanSpecialSummonMonster(tp,210668009,0,TYPES_TOKEN,0,1500,4,RACE_MACHINE,ATTRIBUTE_FIRE) then return end
     if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then ft=1 end
     local tokens = {}
     for i=1,ft do
-        local token=Duel.CreateToken(tp,210662932)
+        local token=Duel.CreateToken(tp,210668009)
         table.insert(tokens, token)
     end
     for _,token in ipairs(tokens) do
@@ -109,7 +109,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Functions for effect 4 (Destroy tokens when leaving field)
 function s.desfilter(c)
-    return c:IsCode(210662932) --Small Hermit token
+    return c:IsCode(210668009) --Small Hermit token
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end

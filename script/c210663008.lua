@@ -16,11 +16,10 @@
 --* 4: Gain 500 ATK
 --* 5: Halve their ATK
 --* 6: Gain 2000 ATK
---(6) This card cannot be targeted by effects or attacks longs you control a level 6 or higher monster on the field.
+--(6) This card cannot be targeted by effects or attacks as long as you control a level 6 or higher monster on the field.
 local s,id=GetID()
 function s.initial_effect(c)
     --Can only be summoned 3 times per duel (1)
-    c:SetUniqueOnField(0,0,id,LOCATION_MZONE)
     local e0=Effect.CreateEffect(c)
     e0:SetType(EFFECT_TYPE_SINGLE)
     e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
@@ -93,8 +92,13 @@ function s.initial_effect(c)
     e11:SetCondition(s.tgcon)
     e11:SetValue(1)
     c:RegisterEffect(e11)
-    local e12=e11:Clone()
+    local e12=Effect.CreateEffect(c)
+    e12:SetType(EFFECT_TYPE_SINGLE)
+    e12:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+    e12:SetRange(LOCATION_MZONE)
     e12:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+    e12:SetCondition(s.tgcon)
+    e12:SetValue(aux.imval1)
     c:RegisterEffect(e12)
     --Count summons
     if not s.global_check then
@@ -257,7 +261,7 @@ end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
     if not e:GetHandler():IsRelateToEffect(e) then return end
     local d=Duel.TossDice(tp,1)
-    local g=eg:Filter(Card.IsControler,nil,1-tp):Filter(Card.IsLevel,nil,d)
+    local g=eg:Filter(Card.IsControler,nil,1-tp):Filter(function(c) return c:HasLevel() and c:IsLevel(d) end,nil)
     if #g>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
     end

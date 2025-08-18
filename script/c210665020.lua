@@ -10,7 +10,6 @@ function s.initial_effect(c)
 	local e1=Ritual.AddProcGreater({handler=c,filter=s.awakenedfilter,lvtype=RITPROC_GREATER,sumpos=POS_FACEUP_ATTACK|POS_FACEDOWN_DEFENSE,location=LOCATION_HAND|LOCATION_GRAVE})
 	e1:SetCountLimit(1,id)
 	c:RegisterEffect(e1)
-	
 --standby phase, banish 4 cards then add to hand
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
@@ -28,20 +27,20 @@ end
 function s.awakenedfilter(c)
 	return c:IsCode(210661025) or c:IsCode(210661130) or c:IsCode(210661268) or c:IsCode(210661323) or c:IsCode(210661613)
 end
-
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return tp==Duel.GetTurnPlayer()
 end
-
 function s.thfilter(c)
 	return not c:IsCode(210665020)
 end
+function s.mmfilter(e,c,sump,sumtype,sumpos,targetp,se)
+		return c:IsCode(210660455)
+	end
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_GRAVE,0,4,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_GRAVE,0,4,4,nil)
 	Duel.Remove(g,POS_FACEUP,REASON_COST)
-	
 --cannot summon Wonder MOMOCO
 	local c=e:GetHandler()
 	local e1=Effect.CreateEffect(e:GetHandler())
@@ -60,12 +59,7 @@ function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	e3:SetCode(EFFECT_CANNOT_FLIP_SUMMON)
 	Duel.RegisterEffect(e3,tp)
 	aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,1),nil)
-	
 end
-function s.mmfilter(e,c,sump,sumtype,sumpos,targetp,se)
-		return c:IsCode(210660455)
-	end
-
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)

@@ -12,7 +12,6 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCost(Cost.SelfTribute)
 	e1:SetCondition(s.condition)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
@@ -39,8 +38,10 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetChainLimit(aux.FALSE)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,e:GetHandler())
-	Duel.Destroy(g,REASON_EFFECT)
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+	if #g>0 then
+		Duel.Destroy(g,REASON_EFFECT)
+	end
 end
 function s.spsummon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonLocation(LOCATION_GRAVE)

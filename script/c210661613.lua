@@ -6,6 +6,7 @@
 -- If this card is Special Summoned from the GY; Your opponent gains 4000 LP.
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableReviveLimit()
 -- destroy all cards
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -32,8 +33,8 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsRitualSummoned()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,e:GetHandler()) end
-	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,e:GetHandler())
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
 	Duel.SetChainLimit(aux.FALSE)
 end

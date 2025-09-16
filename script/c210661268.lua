@@ -9,6 +9,7 @@
 -- If this face-up card leaves the field; Gain 1000 LPs for each Spell and Trap card on the field.
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableReviveLimit
 -- Look up to 2 random cards, shuffle 1 into deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

@@ -9,6 +9,7 @@
 -- 3+: This card gains 500 ATK/DEF for each Face-up Spell Card on the field.
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableReviveLimit()
 -- When summoned with only FIRE Warrior Monsters, add up to 3 Equip Cards
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -61,7 +62,6 @@ function s.initial_effect(c)
 	e6:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e6)
 end
-local LOCATIONS_REMOVED_HAND_DECK_GRAVE=LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE
 function s.eqfilter(c)
 	return c:IsEquipSpell()
 end
@@ -93,12 +93,12 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsRitualSummoned() and c:GetFlagEffect(id)~=0
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATIONS_REMOVED_HAND_DECK_GRAVE,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATIONS_REMOVED_HAND_DECK_GRAVE)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATIONS_REMOVED_HAND_DECK_GRAVE,0,1,3,nil)
+	local g=Duel.SelectMatchingCard(tp,s.eqfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,3,nil)
 	if #g>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
@@ -107,20 +107,20 @@ end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_ATKCHANGE,g,1,0,0)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	local tc=Duel.GetFirstTarget()
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetCode(EFFECT_UPDATE_ATTACK)
-	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	e4:SetValue(-1000)
-	e4:SetReset(RESET_EVENT|RESETS_STANDARD)
-	tc:RegisterEffect(e4)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e1:SetValue(-1000)
+	e1:SetReset(RESET_EVENT|RESETS_STANDARD)
+	tc:RegisterEffect(e1)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():GetEquipGroup():IsExists(Card.IsAbleToGraveAsCost,1,nil) end

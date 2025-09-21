@@ -13,7 +13,6 @@ e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 e1:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
 e1:SetCode(EVENT_SUMMON_SUCCESS)
-e1:SetCondition(s.atcon)
 e1:SetTarget(s.tg)
 e1:SetOperation(s.op)
 e1:SetCountLimit(1,id)
@@ -48,86 +47,96 @@ c:RegisterEffect(e5)
 end
 --General WIND to hand filter
 function s.filter(c)
-return c:IsMonster() and c:IsAttribute(ATTRIBUTE_WIND and c:IsAbleToHand()
+return c:IsMonster() and c:IsAttribute(ATTRIBUTE_WIND) and c:IsAbleToHand()
 end
---Monster condition for WIND
-function s.atcon(e,tp,eg,ep,ev,re,r,rp,chk)
-return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute(ATTRIBUTE_WIND)),tp,LOCATION_MZONE,0,1,nil)
+function s.faceupfilter(c)
+return c:IsMonster() and c:IsAttribute(ATTRIBUTE_WIND)
 end
 --Grave to hand
 function s.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_GRAVE,0,1,nil) end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE
+if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_GRAVE,0,1,nil)
+    --Check Wind on field
+    and Duel.IsExistingMatchingCard(aux.FaceupFilter(s.faceupfilter),tp,LOCATION_ONFIELD,0,1,e:GetHandler()) end
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
     end
     function s.op(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_GRAVE,0,1,1,nil)
-    if #g>0 then
-        if Duel.SendtoHand(tc,nil,REASON_EFFECT)~=0 and tc:IsLocation(LOCATION_HAND) then
-            Duel.ConfirmCards(1-tp,tc)
-            local e1=Effect.CreateEffect(e:GetHandler())
-            e1:SetType(EFFECT_TYPE_FIELD)
-            e1:SetCode(EFFECT_CANNOT_SUMMON)
-            e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-            e1:SetTargetRange(1,0)
-            e1:SetTarget(s.sumlimit)
-            e1:SetLabel(tc:GetCode())
-            e1:SetReset(RESET_PHASE+PHASE_END)
-            Duel.RegisterEffect(e1,tp)
-            local e2=e1:Clone()
-            e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-            Duel.RegisterEffect(e2,tp)
-            local e3=e1:Clone()
-            e3:SetCode(EFFECT_CANNOT_MSET)
-            Duel.RegisterEffect(e3,tp)
-            local e4=e1:Clone()
-            e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-            e4:SetValue(s.aclimit)
-            Duel.RegisterEffect(e4,tp)
-            end
+    local tc=g:GetFirst()
+    if not tc then return end
+        if #g>0 then
+            if Duel.SendtoHand(tc,nil,REASON_EFFECT)~=0 and tc:IsLocation(LOCATION_HAND) then
+                Duel.ConfirmCards(1-tp,tc)
+                local e1=Effect.CreateEffect(e:GetHandler())
+                e1:SetType(EFFECT_TYPE_FIELD)
+                e1:SetCode(EFFECT_CANNOT_SUMMON)
+                e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+                e1:SetTargetRange(1,0)
+                e1:SetTarget(s.sumlimit)
+                e1:SetLabel(tc:GetCode())
+                e1:SetReset(RESET_PHASE|PHASE_END)
+                Duel.RegisterEffect(e1,tp)
+                local e2=e1:Clone()
+                e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+                Duel.RegisterEffect(e2,tp)
+                local e3=e1:Clone()
+                e3:SetCode(EFFECT_CANNOT_MSET)
+                Duel.RegisterEffect(e3,tp)
+                local e4=e1:Clone()
+                e4:SetCode(EFFECT_CANNOT_ACTIVATE)
+                e4:SetValue(s.aclimit)
+                Duel.RegisterEffect(e4,tp)
+                end
         end
     end
+function s.sumlimit(e,c)
+ return c:IsCode(e:GetLabel())
+                end
+function s.aclimit(e,re,tp)
+    return re:GetHandler():IsCode(e:GetLabel()) and re:IsMonsterEffect()
 end
 --Effect 2: Check mzone empty
 function s.gycon(e,tp,eg,ep,ev,re,r,rp)
-return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD) and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)==0
+    return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD) and Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)==0
 end
 --Floor 3 check
 function s.gytg(e,tp,eg,ep,ev,re,r,rp,chk)
-if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_GRAVE) and s.filter(chkc,e,tp) end
-    if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
-        ft=math.min(ft,3)
-            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-            local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,1,ft,nil,e,tp)
-            Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,#g,tp,LOCATION_GRAVE)
+    if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_GRAVE) and s.filter(chkc,e,tp) end
+        if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
+    ft=math.min(ft,3)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+    local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,ft,nil,e,tp)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,#g,tp,LOCATION_GRAVE)
 end
 --Add group to hand
 function s.gyop(e,tp,eg,ep,ev,re,r,rp)
 local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
 if tg then
     local g=tg:Filter(Card.IsRelateToEffect,nil,e)
-    if #g>0 then
-        if Duel.SendtoHand(tc,nil,REASON_EFFECT)~=0 and tc:IsLocation(LOCATION_HAND) then
-            Duel.ConfirmCards(1-tp,tc)
-            local e1=Effect.CreateEffect(e:GetHandler())
-            e1:SetType(EFFECT_TYPE_FIELD)
-            e1:SetCode(EFFECT_CANNOT_SUMMON)
-            e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-            e1:SetTargetRange(1,0)
-            e1:SetTarget(s.sumlimit)
-            e1:SetLabel(tc:GetCode())
-            e1:SetReset(RESET_PHASE+PHASE_END)
-            Duel.RegisterEffect(e1,tp)
-            local e2=e1:Clone()
-            e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-            Duel.RegisterEffect(e2,tp)
-            local e3=e1:Clone()
-            e3:SetCode(EFFECT_CANNOT_MSET)
-            Duel.RegisterEffect(e3,tp)
-            local e4=e1:Clone()
-            e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-            e4:SetValue(s.aclimit)
-            Duel.RegisterEffect(e4,tp)
+    local tc=g:GetFirst()
+    if not tc then return end
+        if #g>0 then
+            if Duel.SendtoHand(tc,nil,REASON_EFFECT)~=0 and tc:IsLocation(LOCATION_HAND) then
+                Duel.ConfirmCards(1-tp,tc)
+                local e1=Effect.CreateEffect(e:GetHandler())
+                e1:SetType(EFFECT_TYPE_FIELD)
+                e1:SetCode(EFFECT_CANNOT_SUMMON)
+                e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+                e1:SetTargetRange(1,0)
+                e1:SetTarget(s.sumlimit)
+                e1:SetLabel(tc:GetCode())
+                e1:SetReset(RESET_PHASE|PHASE_END)
+                Duel.RegisterEffect(e1,tp)
+                local e2=e1:Clone()
+                e2:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+                Duel.RegisterEffect(e2,tp)
+                local e3=e1:Clone()
+                e3:SetCode(EFFECT_CANNOT_MSET)
+                Duel.RegisterEffect(e3,tp)
+                local e4=e1:Clone()
+                e4:SetCode(EFFECT_CANNOT_ACTIVATE)
+                e4:SetValue(s.aclimit)
+                Duel.RegisterEffect(e4,tp)
             end
         end
     end
@@ -136,16 +145,16 @@ end
 function s.directtarget(e,tp,eg,ep,ev,re,r,rp,chk)
 if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_GRAVE) and s.filter(chkc,e,tp) end
     if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
-        ft=math.min(ft,5)
         Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-        local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,1,ft,nil,e,tp)
+        local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,1,5,e,tp)
         Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,#g,tp,LOCATION_GRAVE)
 end
 --Group to hand
 function s.directoperation(e,tp,eg,ep,ev,re,r,rp)
-local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
+local tg=Duel.GetTargetCards(e)
 if tg then
     local g=tg:Filter(Card.IsRelateToEffect,nil,e)
+    local tc=g:GetFirst()
     if #g>0 then
         if Duel.SendtoHand(tc,nil,REASON_EFFECT)~=0 and tc:IsLocation(LOCATION_HAND) then
             Duel.ConfirmCards(1-tp,tc)
@@ -170,5 +179,6 @@ if tg then
             Duel.RegisterEffect(e4,tp)
             end
         end
+    if not tc then return end
     end
 end

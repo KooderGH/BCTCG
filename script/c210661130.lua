@@ -53,7 +53,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 -- Add 1 Spell or Trap card
 	local e7=Effect.CreateEffect(c)
-	e7:SetDescription(aux.Stringid(id,3))
+	e7:SetDescription(aux.Stringid(id,1))
 	e7:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND+CATEGORY_LVCHANGE)
 	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e7:SetCode(EVENT_DESTROYED)

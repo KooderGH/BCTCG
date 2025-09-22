@@ -5,7 +5,6 @@
 -- Gains 700 atk during your turn only.
 -- When this card Destroy's a Monster by Battle; You can Special Summon one DARK monster from your hand.
 -- Cannot be returned to hand or tributed while on the field.
--- When this card leaves the field; banish it.
 local s,id=GetID()
 function s.initial_effect(c)
 	--pierce
@@ -47,13 +46,6 @@ function s.initial_effect(c)
 	local e6=e4:Clone()
 	e6:SetCode(EFFECT_CANNOT_TO_HAND)
 	c:RegisterEffect(e6)
-	--Self banish
-	local e7=Effect.CreateEffect(c)
-	e7:SetType(EFFECT_TYPE_SINGLE)
-	e7:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
-	e7:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CANNOT_NEGATE)
-	e7:SetValue(LOCATION_REMOVED)
-	c:RegisterEffect(e7)
 end
 
 --e2
@@ -78,21 +70,3 @@ function s.soperation(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
 end
---e5
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(id,tp,LOCATION_MZONE,0,1,nil,tp)
-end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		--Banish it if it leaves the field
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CLIENT_HINT)
-		e1:SetReset(RESET_EVENT+RESETS_REDIRECT)
-		e1:SetValue(LOCATION_REMOVED)
-		c:RegisterEffect(e1,true)
-	end
-end
-

@@ -1,9 +1,10 @@
 --The White Rabbit
---Scripted by Gideon. Got help from Naim and Larry.
+--Scripted by Gideon. Got help from Naim and Larry. Effect 4 by Kooder.
 --Effect
 --You can discard one card; Special Summon this card from your hand.
 --When this card is Special Summoned; return one monster your opponent controls to their hand. You cannot deal any battle damage to your opponent the turn you use this effect.
 --When this card is removed from the field, deal 1000 damage to your opponent.
+--If this card is in your GY, you can discard 2 cards from your hand; Special Summon this card from your GY.
 local s,id=GetID()
 function s.initial_effect(c)
 	--special summon
@@ -36,6 +37,16 @@ function s.initial_effect(c)
 	e3:SetTarget(s.btarget)
 	e3:SetOperation(s.boperation)
 	c:RegisterEffect(e3)
+	--Discard 2 cards to SP Summon
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,1))
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_GRAVE)
+	e4:SetCost(Cost.Discard(nil,false,2))
+	e4:SetTarget(s.selfsptg)
+	e4:SetOperation(s.selfspop)
+	c:RegisterEffect(e4)
 end
 --e1
 function s.spcon(e,c)
@@ -101,4 +112,15 @@ end
 function s.boperation(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
+end
+function s.selfsptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,tp,0)
+end
+function s.selfspop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	c:IsRelateToEffect(e)
+	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end

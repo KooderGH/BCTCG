@@ -73,7 +73,7 @@ function s.setfilter2(c,typ)
 	return c:GetType()==typ and c:IsSSetable()
 end
 function s.dhfilter(c)
-	return c:IsFaceup() and c:IsCode(210660481) or c:IsCode(210660698) or c:IsCode(210660634) or c:IsCode(210660431) or c:IsCode(210660226) or c:IsCode(210660261) or c:IsCode(210660194) or c:IsCode(210660774) or c:IsCode(210660212) or c:IsCode(210660195) or c:IsCode(210660196) or c:IsCode(210660533)
+	return c:IsFaceup() and c:IsMonster() and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_WARRIOR)
 end
 function s.dhcount(e)
     local tp=e:GetHandlerPlayer()

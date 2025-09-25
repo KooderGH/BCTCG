@@ -75,8 +75,8 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local b2=Duel.IsPlayerCanDiscardDeck(1-tp,1)
 	if chk==0 then return b1 or b2 end
 	local op=Duel.SelectEffect(tp,
-		{b1,aux.Stringid(id,1)},
-		{b2,aux.Stringid(id,2)})
+		{b1,aux.Stringid(id,2)},
+		{b2,aux.Stringid(id,3)})
 	e:SetLabel(op)
 	if op==1 then
 		e:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -89,7 +89,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetLabel()==1 then
-		--Target 1 card, return it to the top of the deck
+		-- Add 1 SV-001
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local g=Duel.SelectMatchingCard(tp,s.svfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,3,nil)
 		if #g>0 then

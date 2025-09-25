@@ -89,7 +89,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetLabel()==1 then
-		--Target 1 card, return it to the top of the deck
+		-- Target 1 card, return it to the top of the deck
 		local tc=Duel.GetFirstTarget()
 		if not (tc:IsRelateToEffect(e) and tc:IsControler(1-tp)) then return end
 		Duel.SendtoDeck(tc,nil,SEQ_DECKTOP,REASON_EFFECT)

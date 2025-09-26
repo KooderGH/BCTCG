@@ -4,7 +4,7 @@
 -- When this card is Summoned; Add 1 "MARCO", "ERI", or "FIO" from your Deck or GY to your hand.
 -- This card gains 300 ATK for each "Metal Slug" Banner monster on the field.
 -- If this card inflicts battle damage to your opponent, activate 1 of these effects:
--- * Add 1 SV-001 from your Deck, GY, or Bansh to your hand.
+-- * Add 1 SV-001 from your Deck, GY, or Banish to your hand.
 -- * Send 2 cards from the top of their Deck to the GY.
 local s,id=GetID()
 function s.initial_effect(c)
@@ -43,7 +43,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 end
 function s.thfilter(c)
-	return c:IsCode(210661215) or c:IsCode(210661217) or c:IsCode(210661218)
+	return c:IsAbleToHand() and c:IsCode(210661215) or c:IsCode(210661217) or c:IsCode(210661218)
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK|LOCATION_GRAVE,0,1,nil) end
@@ -64,15 +64,15 @@ function s.atkval(e,c)
 	return Duel.GetMatchingGroupCount(s.msfilter,0,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*300
 end
 function s.svfilter(c)
-	return c:IsCode(210661219)
+	return c:IsAbleToHand() and c:IsCode(210661219)
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return chkc:IsLocation(LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE) and chkc:IsControler(tp) and s.svfilter(chkc) end
-	local b1=Duel.IsExistingMatchingCard(s.avfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,nil)
-	local b2=Duel.IsPlayerCanDiscardDeck(1-tp,1)
+	if chk==0 then return true end
+	local b1=Duel.IsExistingMatchingCard(s.svfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,nil)
+	local b2=Duel.IsPlayerCanDiscardDeck(1-tp,2)
 	if chk==0 then return b1 or b2 end
 	local op=Duel.SelectEffect(tp,
 		{b1,aux.Stringid(id,2)},
@@ -98,6 +98,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		end
 	else
 		-- 2 Cards from the top deck to the GY
-		Duel.DiscardDeck(1-tp,2,REASON_EFFECT)
+		local bt=Duel.GetDecktopGroup(1-tp,2)
+		Duel.SendtoGrave(bt,REASON_EFFECT)
 	end
 end

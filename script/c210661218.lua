@@ -73,11 +73,10 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) end
+	if chkc then return (chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE)) or (chkc:IsLocation(LOCATION_HAND) and chkc:IsControler(tp) and s.mteffilter(chkc)) end
 	local b1=Duel.IsExistingMatchingCard(s.mteffilter,tp,LOCATION_HAND,0,1,nil)
 	local b2=Duel.IsExistingMatchingCard(s.monsterfilter,1-tp,LOCATION_MZONE,0,1,nil)
-	if chk==0 then return b1 or b2 and Duel.IsExistingTarget(s.mteffilter,tp,LOCATION_GRAVE,0,1,nil,e,tp)
-		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
+	if chk==0 then return b1 or b2 end
 	local op=Duel.SelectEffect(tp,
 		{b1,aux.Stringid(id,2)},
 		{b2,aux.Stringid(id,3)})

@@ -70,7 +70,7 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return true end
+	if chk==0 then return chkc:IsLocation(LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE) and chkc:IsControler(tp) and s.svfilter(chkc) end
 	local b1=Duel.IsExistingMatchingCard(s.avfilter,tp,LOCATION_REMOVED|LOCATION_DECK|LOCATION_GRAVE,0,1,nil)
 	local b2=Duel.IsPlayerCanDiscardDeck(1-tp,1)
 	if chk==0 then return b1 or b2 end

@@ -102,7 +102,7 @@ end
 function s.fmfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_MACHINE)
 end
-function s.spfilter(c)
+function s.thfilter(c)
 	return c:IsSpell() and c:IsAbleToHand()
 end
 function s.spcon(e,c)

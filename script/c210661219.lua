@@ -71,7 +71,7 @@ function s.initial_effect(c)
 	local e8=Effect.CreateEffect(c)
 	e8:SetDescription(aux.Stringid(id,1))
 	e8:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e8:SetCode(EVENT_BATTLE_DESTROYED)
 	e8:SetCondition(s.thcon)
 	e8:SetTarget(s.thtg)
@@ -102,7 +102,7 @@ end
 function s.fmfilter(c)
 	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_FIRE) and c:IsRace(RACE_MACHINE)
 end
-function s.spfilter(c)
+function s.thfilter(c)
 	return c:IsSpell() and c:IsAbleToHand()
 end
 function s.spcon(e,c)

@@ -1,20 +1,11 @@
 --Gunduros 
---Scripted by poka-poka
---(1) You cannot Special Summon this card from your hand.
+--Scripted by poka-poka - changed by Gid
 --(2) When this card is Tribute Summoned, you can add up to 5 FIRE Dragon monsters from your GY to your hand, then, you can Normal Summon 1 monster from your hand.
 --(3) If this card is Special Summoned, target up to 2 monsters your opponent controls; Destroy them.
 --(4) When this card is destroyed by a card effect, Target 3 dragon monsters you control; Destroy them, and if you do, Special Summon as many FIRE Dragon monster's from your GY as possible except "Gunduros".
 --(5) When this card is destroyed by battle: Target 1 spell or trap card on your opponent's side of the field; Destroy it.
 local s,id=GetID()
 function s.initial_effect(c)
-	--Effect 1 : Cannot be special summoned from the Hand
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e1:SetCondition(s.splimcon)
-	e1:SetValue(aux.FALSE)
-	c:RegisterEffect(e1)
 	--Effect 2 : When this card is Tribute Summoned, you can add up to 5 FIRE Dragon monsters from your GY to your hand, then, you can Normal Summon 1 monster from your hand.
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_SUMMON)
@@ -55,10 +46,6 @@ function s.initial_effect(c)
 	e5:SetTarget(s.battletg)
 	e5:SetOperation(s.battleop)
 	c:RegisterEffect(e5)
-end
---(1)
-function s.splimcon(e,tp,eg,ep,ev,re,r,rp)
-    return e:GetHandler():IsLocation(LOCATION_HAND)
 end
 --(2)
 function s.tscon(e,tp,eg,ep,ev,re,r,rp)

@@ -2,7 +2,7 @@
 --Scripted by Gideon
 --Effect
 -- (1) Cannot be Normal Summoned Set. Must be Special Summoned by its own effect and cannot be Special Summoned by other ways. This card's Summon cannot be negated. If a monster(s) you control is destroyed by an card effect: You can pay half your LP; Special Summon this card from your hand or GY into Defense Position. Then move this card to your Extra Monster Zone. Neither player can activate cards or effects in response to this card effect.
--- (2) Cannot be returned to hand or banished.
+-- (2) Cannot be returned to hand, tributed or banished.
 -- (3) Cannot be targeted by card effects.
 -- (4) This card cannot move to attack position. (If a effect would move it, it would switch to defense position instead)
 -- (5) Unaffected by effects other than its own
@@ -65,6 +65,10 @@ function s.initial_effect(c)
     local e5=e4:Clone()
     e5:SetCode(EFFECT_CANNOT_REMOVE)
     c:RegisterEffect(e5)
+    --Cannot tribute (new)
+    local e16=e4:Clone()
+    e16:SetCode(EFFECT_UNRELEASABLE_SUM)
+    c:RegisterEffect(e16)
     --(2)Finish
     --(3)Start
     --Cannot be targeted (self)

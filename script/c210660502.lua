@@ -1,13 +1,14 @@
 --Myrcia
---Scripted By Gideon & (6) by poka-poka
+--Scripted By Gideon & (6) by poka-poka. Effect 7 by Kooder
 -- (1) When this card is Normal Summoned; you can Special Summon one Light Spellcaster from your hand.
 -- (2) When this card is Tributed: You can Target 1 card per 2 levels this card had on the field; Negate their effects.
 -- (3) When an Spellcaster is Tributed except "Myrcia"; You can draw 2 card.
 -- (4) When a monster your opponent control's is Tribute summoned: You can reduce it's level to 1; Add the difference to this card.
 -- (5) If this card is in your GY: You can banish 3 Spell cards from your GY; Special Summon this card.
 -- (6) When this card is Tributed; Add 1 Spell card from your banish zone to your hand.
--- (7) You can only use each above effect of "Myrcia" once per turn and used only once while it is face-up on the field.
--- (8) You can only control 1 Myrcia
+-- (7) You can active this effect if "Myrcia" level is 8 or higher: For each 4 levels on this card, Target 1 LIGHT Spellcaster from your GY; Special Summon those monster(s) and raise their level by 4.
+-- (8) You can only use each above effect of "Myrcia" once per turn and used only once while it is face-up on the field.
+-- (9) You can only control 1 Myrcia
 local s,id=GetID()
 function s.initial_effect(c)
 	--Can only control one
@@ -84,6 +85,18 @@ function s.initial_effect(c)
 	e7:SetTarget(s.thtg2)
 	e7:SetOperation(s.thop2)
 	c:RegisterEffect(e7)
+	-- SP Summon for each 4 level and raise their level by 4
+	local e8=Effect.CreateEffect(c)
+	e8:SetDescription(aux.Stringid(id,6))
+	e8:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e8:SetType(EFFECT_TYPE_IGNITION)
+	e8:SetRange(LOCATION_MZONE)
+	e8:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e8:SetCountLimit(1)
+	e8:SetCondition(s.spcon1)
+	e8:SetTarget(s.sptg1)
+	e8:SetOperation(s.spop1)
+	c:RegisterEffect(e8)
 end
 --e1
 function s.filter(c,e,tp)
@@ -230,5 +243,39 @@ function s.thop2(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
+    end
+end
+--e8
+function s.spcon1(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsLevelAbove(8)
+end
+function s.spfilter(c,e,tp)
+	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_SPELLCASTER) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.sptg1(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	local c=e:GetHandler()
+	local lv=c.GetLevel(c)
+	local count=math.floor(lv/4)
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+    if chk==0 then return ft>=count and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,count,nil,e,tp) end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,count,tp,LOCATION_GRAVE)
+end
+function s.spop1(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local lv=c.GetLevel(c)
+	local count=math.floor(lv/4)
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+    if ft<count then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_GRAVE,0,count,count,nil,e,tp)
+    if #g>0 then
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+		for tc in g:Iter() do
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_UPDATE_LEVEL)
+			e1:SetValue(4)
+			tc:RegisterEffect(e1)
+		end
     end
 end

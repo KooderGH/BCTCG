@@ -1,5 +1,5 @@
 --Pegasa
---Scripted By poka-poka
+--Scripted By poka-poka. Effect 5 by Kooder
 local s,id=GetID()
 function s.initial_effect(c)
 	--Can only control one
@@ -50,6 +50,15 @@ function s.initial_effect(c)
     e4:SetTarget(s.thdestg)
     e4:SetOperation(s.thdesop)
     c:RegisterEffect(e4)
+	-- Effect 5 : Increase the level of LIGHT Spellcasters on the field by 3
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_FIELD)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
+	e5:SetCode(EFFECT_UPDATE_LEVEL)
+	e5:SetTarget(s.tg)
+	e5:SetValue(3)
+	c:RegisterEffect(e5)
 end
 
 -- Condition: When opponent activates Spell card
@@ -153,4 +162,8 @@ function s.thdesop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
+end
+-- Target: LIGHT Spellcasters
+function s.tg(e,c)
+	return c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_SPELLCASTER)
 end

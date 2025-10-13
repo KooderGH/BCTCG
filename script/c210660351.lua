@@ -1,5 +1,5 @@
 --Twinstars
---Scripted By Konstak, help from Snooze for the tribute effect
+--Scripted By Konstak, help from Snooze for the tribute effect. Effect 5 and 6 by Kooder
 local s,id=GetID()
 function s.initial_effect(c)
 	--Can only control one
@@ -47,6 +47,32 @@ function s.initial_effect(c)
     e5:SetTarget(s.trtg)
     e5:SetOperation(s.trop)
     c:RegisterEffect(e5)
+	-- Destroy 1 Spell/Trap
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,1))
+	e6:SetCategory(CATEGORY_DESTROY)
+	e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e6:SetCode(EVENT_DESTROYED)
+	e6:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_NO_TURN_RESET)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetCountLimit(1)
+	e6:SetCondition(s.descon)
+	e6:SetTarget(s.destg)
+	e6:SetOperation(s.desop)
+	c:RegisterEffect(e6)
+	-- Destroy 1 Monster
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,2))
+	e7:SetCategory(CATEGORY_DESTROY)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e7:SetCode(EVENT_DESTROYED)
+	e7:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_NO_TURN_RESET)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetCountLimit(1)
+	e7:SetCondition(s.descon1)
+	e7:SetTarget(s.destg1)
+	e7:SetOperation(s.desop1)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.spfilter(c)
@@ -104,4 +130,38 @@ function s.trop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
+end
+
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsLocation(LOCATION_GRAVE) and e:GetHandler():IsReason(REASON_BATTLE)
+end
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsSpellTrap,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectTarget(tp,Card.IsSpellTrap,tp,0,LOCATION_ONFIELD,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.Destroy(tc,REASON_EFFECT)
+	end
+end
+
+function s.descon1(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsLocation(LOCATION_GRAVE) and e:GetHandler():IsReason(REASON_EFFECT)
+end
+function s.destg1(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsMonster,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectTarget(tp,Card.IsMonster,tp,0,LOCATION_ONFIELD,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function s.desop1(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.Destroy(tc,REASON_EFFECT)
+	end
 end

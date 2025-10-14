@@ -1,10 +1,11 @@
 --Mighty Sphinx Korps
---Scripted by Konstak and Gideon. 
+--Scripted by Konstak and Gideon. Effect 5 by Kooder
 --Effect
 -- (1) You can Special Summon this card from your hand when your LP are 6000 or lower.
 -- (2) Cannot be tributed.
 -- (3) When this card is Summoned: You can reveal as many Earth Machine type monsters in your hand; Draw from your deck equal to the number of cards your revealed. At the end phase: Shuffle your deck and send your entire hand at the bottom of your deck.
 -- (4) When this card is destroyed, you can select 3 Earth Machine Type monsters from your GY; Shuffle them to your deck, then, Draw 1 card.
+-- (5) If this card is in your GY while your LPs are 6100 or higher, During your Main Phase: You can set your LPs to 6000; Special Summon this card from your GY. You can only use this effect of "Mighty Sphinx Korps" once per Duel.
 local s,id=GetID()
 function s.initial_effect(c)
     --Special Summon this card (1)
@@ -54,6 +55,16 @@ function s.initial_effect(c)
     e7:SetTarget(s.gravtg)
     e7:SetOperation(s.gravop)
     c:RegisterEffect(e7)
+	-- Set LP to 6000 then SP Summon
+	local e8=Effect.CreateEffect(c)
+	e8:SetDescription(aux.Stringid(id,2))
+	e8:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e8:SetType(EFFECT_TYPE_IGNITION)
+	e8:SetRange(LOCATION_GRAVE)
+	e8:SetCost(s.spcon1)
+	e8:SetTarget(s.sptg1)
+	e8:SetOperation(s.spop1)
+	c:RegisterEffect(e8)
 end
 function s.spcon(e)
 	local tp=e:GetHandlerPlayer()
@@ -123,5 +134,21 @@ function s.gravop(e,tp,eg,ep,ev,re,r,rp)
 	if ct==3 then
 		Duel.BreakEffect()
 		Duel.Draw(tp,1,REASON_EFFECT)
+	end
+end
+--e8
+function s.spcon1(e)
+	local tp=e:GetHandlerPlayer()
+	return Duel.GetLP(tp)>=6100
+end
+function s.sptg1(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.spop1(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SetLP(tp,6000)
 	end
 end

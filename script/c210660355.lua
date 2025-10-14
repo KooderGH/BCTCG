@@ -9,6 +9,7 @@ function s.initial_effect(c)
     e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
     e1:SetCode(EFFECT_SPSUMMON_PROC)
     e1:SetRange(LOCATION_HAND)
+	e1:SetLabel(2)
     e1:SetCondition(s.spcon)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
@@ -66,7 +67,7 @@ end
 function s.spcon(e,c)
     if c==nil then return true end
     local tp=e:GetHandlerPlayer()
-    return Duel.CheckLPCost(c:GetControler(),1000)
+    return Duel.CheckLPCost(c:GetControler(),1000) and Duel.GetMatchingGroupCount(s.filter,tp,LOCATION_ONFIELD,0,nil)>=e:GetLabel()
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     Duel.PayLPCost(tp,1000)

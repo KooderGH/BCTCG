@@ -1,10 +1,11 @@
 --Mighty Drednot
---Scripted by Konstak
+--Scripted by Konstak. New effect 4 by Kooder
 --Effect
 -- (1) You can pay 500 LP to Special Summon this card from your hand.
 -- (2) Cannot be tributed.
 -- (3) When this card is Summoned: You can target one EARTH Machine monster from your GY; Special Summon it.
--- (4) You can only activate each effect of "Mighty Drednot" once per turn.
+-- (4) If this card is discarded from your Hand; Add 1 EARTH Machine monster from your Deck to your Hand except "Mighty Drednot".
+-- (5) You can only activate each effect of "Mighty Drednot" once per turn.
 local s,id=GetID()
 function s.initial_effect(c)
 	--spsummon
@@ -45,6 +46,17 @@ function s.initial_effect(c)
 	local e6=e4:Clone()
 	e6:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e6)
+	-- Add 1 EARTH Machine expect Drednot to your hand
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,1))
+	e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e7:SetCode(EVENT_TO_GRAVE)
+	e7:SetCountLimit(1,{id,2},EFFECT_COUNT_CODE_OATH)
+	e7:SetCondition(s.thcon)
+	e7:SetTarget(s.thtg)
+	e7:SetOperation(s.thop)
+	c:RegisterEffect(e7)
 end
 --Special summon function
 function s.spcon(e,c)
@@ -71,4 +83,25 @@ function s.op(e,tp,eg,ep,ev,re,r,rp)
     if #g>0 then
         Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
     end
+end
+-- Add 1 EARTH Machine expect Drednot to your hand
+function s.thfilter(c)
+    return c:IsAbleToHand() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and (not c:IsCode(210660305))
+end
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+	e:SetLabel(e:GetHandler():GetPreviousControler())
+	return e:GetHandler():IsPreviousLocation(LOCATION_HAND) and r&(REASON_DISCARD)==REASON_DISCARD
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end

@@ -1,10 +1,11 @@
 --Mighty Carrowsell
---Scripted by Gideon
+--Scripted by Gideon. Effect 6 by Kooder.
 -- (1) You can Special Summon this card from the GY by banishing one other card from your GY.
 -- (2) Cannot be used as Fusion Material and cannot be used as Link Material.
 -- (3) If you control 3 or more EARTH Machine monsters (Quick): You can target one card on the field; Return it to the owners hand.
 -- (4) When this card battles, before damage calculation: Equip this card to the opposing monster. On next Standby Phase: Destroy the monster this card is equipped to, and if you do, gain LP equal to the ATK the destroyed monster had on the field.
 -- (5) When this equipped card is destroyed; Add this card to your hand.
+-- (6) If this card is discarded from your Hand; Add 1 EARTH Machine monster from your GY to your hand except "Mighty Carrowsell".
 local s,id=GetID()
 function s.initial_effect(c)
 local e1=Effect.CreateEffect(c)
@@ -63,6 +64,16 @@ local e1=Effect.CreateEffect(c)
     e6:SetTarget(s.thtg)
     e6:SetOperation(s.thop)
     c:RegisterEffect(e6)
+	-- Add 1 EARTH Machine expect Carrowsell to your hand
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,3))
+	e7:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e7:SetCode(EVENT_TO_GRAVE)
+	e7:SetCondition(s.thcon1)
+	e7:SetTarget(s.thtg1)
+	e7:SetOperation(s.thop1)
+	c:RegisterEffect(e7)
 end
 --e1
 function s.costfilter(c)
@@ -186,5 +197,26 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 		Duel.SendtoHand(c,nil,REASON_EFFECT)
+	end
+end
+--e6
+function s.thfilter(c)
+    return c:IsAbleToHand() and c:IsAttribute(ATTRIBUTE_EARTH) and c:IsRace(RACE_MACHINE) and (not c:IsCode(210660674))
+end
+function s.thcon1(e,tp,eg,ep,ev,re,r,rp)
+	e:SetLabel(e:GetHandler():GetPreviousControler())
+	return e:GetHandler():IsPreviousLocation(LOCATION_HAND) and r&(REASON_DISCARD)==REASON_DISCARD
+end
+function s.thtg1(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop1(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
 	end
 end

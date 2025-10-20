@@ -8,6 +8,7 @@
 -- (5) Cannot be tributed. Cannot be used as link material.
 -- (6) During your opponent's end phase, you can banish this face-up card on the field; You can search and add one monster from your deck to your hand. Skip your next draw phase when you use this effect.
 -- (7) effect If you control a fiend monster; Banish this card from the field then end the turn (mandatory).
+-- (8) If you have 6 or more cards in your Banish Zone, Once per turn, During your Main Phase 1: You can activate this effect; Draw 1 card from your Deck. It is now the End Phase.
 local s,id=GetID()
 function s.initial_effect(c)
     --to defense (1)

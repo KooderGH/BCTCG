@@ -1,5 +1,5 @@
 --Ice Cat
---Scripted by Konstak during beta, Scripted by Poka. Strings fixed by Gideon.
+--Scripted by Konstak during beta, Scripted by Poka. Strings fixed by Gideon. Effect 7 by Kooder.
 --Effect
 -- (1) Cannot be Normal Summoned/Set. Can only be Special Summoned (from your hand) while you control no monsters and cannot be Special Summoned by other means.
 -- (2) During either player's turn (Quick): You can Target 1 card on the field and banish this card on the field; negate that target until the end of this turn. You can only use this effect of "Ice Cat" once per turn. During your opponent's end phase after using this effect, move this card from your banish zone to GY.
